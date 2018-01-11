@@ -12,8 +12,8 @@ public class OmoForm implements MorfCharacteristicsAccessInterface {
     private final LinkedList myDependent = new LinkedList<>();
     private final LinkedList myMain = new LinkedList<>();
 
-    public OmoForm(int initialFormHashCode, byte typeOfSpeech, long morfCharacteristics) {
-        this.initialFormKey = initialFormHashCode;
+    public OmoForm(int initialFormKey, byte typeOfSpeech, long morfCharacteristics) {
+        this.initialFormKey = initialFormKey;
         this.typeOfSpeech = typeOfSpeech;
         this.morfCharacteristics = morfCharacteristics;
     }

@@ -9,7 +9,7 @@ public interface MorfCharacteristicsAccessInterface {
     public String getInitialFormString();
     @Override
     public String toString();
-     public boolean haveMainForm();
+    public boolean haveMainForm();
     public boolean haveDependentForm();
     public void addDependentForm(OmoForm mainForm);    
     public boolean haveCommunication();

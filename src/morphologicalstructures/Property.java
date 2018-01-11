@@ -14,8 +14,6 @@
  * 3.0 Unported (CC BY-SA 3.0) along with this program.
  * If not, see <https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode>
  *
- * Thanks to Sergey Politsyn and Katherine Politsyn for their help in the development of the library.
- *
  *
  * Copyright (C) 2017 Александр Поречный alex.porechny@mail.ru
  *
@@ -32,8 +30,6 @@
  * Вы должны были получить копию Attribution-NonCommercial-ShareAlike 3.0
  * Unported (CC BY-SA 3.0) вместе с этой программой.
  * Если нет, см. <https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode>
- *
- * Благодарим Полицыных Сергея и Екатерину за оказание помощи в разработке библиотеки.
  */
 package morphologicalstructures;
 
@@ -49,8 +45,8 @@ import org.xml.sax.SAXException;
 
 public final class Property {
 
-    public static String pathBDWordForm = "dictionary.format.wordFormString.bd";
-    public static String pathBDInitialForm = "dictionary.format.initialFormString.bd";
+    public static String pathBDWordForm = "dictionary.wordFormString.bd";
+    public static String pathBDInitialForm = "dictionary.initialFormString.bd";
 
     static {
         loadProperty();

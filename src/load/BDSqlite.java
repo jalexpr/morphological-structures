@@ -14,7 +14,6 @@ public class BDSqlite {
 
     private Statement statmt;
     
-    //dictionary.format.wordFormString.db
     public BDSqlite(String nameBD) {
         Connection conn;
         try {
@@ -24,8 +23,6 @@ public class BDSqlite {
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(BDSqlite.class.getName()).log(Level.SEVERE, "База не подключена!", ex);
         }
-
-        System.out.println("База Подключена!");
     }
     
     public void execute(String query) {
@@ -51,7 +48,5 @@ public class BDSqlite {
         } catch (SQLException ex) {
             Logger.getLogger(BDSqlite.class.getName()).log(Level.SEVERE, "Соединения закрыты с ошибкой", ex);
         }
-
-        System.out.println("Соединения c бд закрыта!");
     }
 }
