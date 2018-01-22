@@ -1,0 +1,16 @@
+
+apply plugin: 'java'
+
+version '2.10.3'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+jar {
+    destinationDir = file("${buildDir}/jars")
+}

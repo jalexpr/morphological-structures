@@ -45,8 +45,12 @@ import org.xml.sax.SAXException;
 
 public final class Property {
 
-    public static String pathBDWordForm = "dictionary.wordFormString.bd";
-    public static String pathBDInitialForm = "dictionary.initialFormString.bd";
+    public final static String MYREPOSITORY                         = "https://github.com/jalexpr/MorphologicalStructures";
+    public final static String PATH_ZIP_DICTIONARY                    = "dictionary/dictionary.zip";
+    public final static String PATH_BD_WORD_FORM                    = "dictionary/dictionary.wordFormString.bd";
+    public final static String PATH_BD_INITIAL_FORM                 = "dictionary/dictionary.initialFormString.bd";
+    public final static String PATH_HASH_AND_MORF_CHARACTERISTICS   = "dictionary.format.morfCharacteristic";
+    public final static int CONTROL_VALUE                           = -1;
 
     static {
         loadProperty();
