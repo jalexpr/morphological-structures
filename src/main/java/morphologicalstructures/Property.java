@@ -15,21 +15,23 @@
  * If not, see <https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode>
  *
  *
- * Copyright (C) 2017 Александр Поречный alex.porechny@mail.ru
+ * Copyright (C) 2017 РђР»РµРєСЃР°РЅРґСЂ РџРѕСЂРµС‡РЅС‹Р№ alex.porechny@mail.ru
  *
- * Эта программа свободного ПО: Вы можете распространять и / или изменять ее
- * в соответствии с условиями Attribution-NonCommercial-ShareAlike 3.0 Unported
- * (CC BY-SA 3.0), опубликованными Creative Commons.
+ * Р­С‚Р° РїСЂРѕРіСЂР°РјРјР° СЃРІРѕР±РѕРґРЅРѕРіРѕ РџРћ: Р’С‹ РјРѕР¶РµС‚Рµ СЂР°СЃРїСЂРѕСЃС‚СЂР°РЅСЏС‚СЊ Рё / РёР»Рё РёР·РјРµРЅСЏС‚СЊ РµРµ
+ * РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ СѓСЃР»РѕРІРёСЏРјРё Attribution-NonCommercial-ShareAlike 3.0 Unported
+ * (CC BY-SA 3.0), РѕРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹РјРё Creative Commons.
  *
- * Эта программа распространяется в надежде, что она будет полезна,
- * но БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ; без подразумеваемой гарантии
- * КОММЕРЧЕСКАЯ ПРИГОДНОСТЬ ИЛИ ПРИГОДНОСТЬ ДЛЯ ОПРЕДЕЛЕННОЙ ЦЕЛИ.
- * См. Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-SA 3.0)
- * для более подробной информации.
+ * Р­С‚Р° РїСЂРѕРіСЂР°РјРјР° СЂР°СЃРїСЂРѕСЃС‚СЂР°РЅСЏРµС‚СЃСЏ РІ РЅР°РґРµР¶РґРµ, С‡С‚Рѕ РѕРЅР° Р±СѓРґРµС‚ РїРѕР»РµР·РЅР°,
+ * РЅРѕ Р‘Р•Р— РљРђРљРРҐ-Р›РР‘Рћ Р“РђР РђРќРўРР™; Р±РµР· РїРѕРґСЂР°Р·СѓРјРµРІР°РµРјРѕР№ РіР°СЂР°РЅС‚РёРё
+ * РљРћРњРњР•Р Р§Р•РЎРљРђРЇ РџР РР“РћР”РќРћРЎРўР¬ РР›Р РџР РР“РћР”РќРћРЎРўР¬ Р”Р›РЇ РћРџР Р•Р”Р•Р›Р•РќРќРћР™ Р¦Р•Р›Р.
+ * РЎРј. Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+ * РґР»СЏ Р±РѕР»РµРµ РїРѕРґСЂРѕР±РЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё.
  *
- * Вы должны были получить копию Attribution-NonCommercial-ShareAlike 3.0
- * Unported (CC BY-SA 3.0) вместе с этой программой.
- * Если нет, см. <https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode>
+ * Р’С‹ РґРѕР»Р¶РЅС‹ Р±С‹Р»Рё РїРѕР»СѓС‡РёС‚СЊ РєРѕРїРёСЋ Attribution-NonCommercial-ShareAlike 3.0
+ * Unported (CC BY-SA 3.0) РІРјРµСЃС‚Рµ СЃ СЌС‚РѕР№ РїСЂРѕРіСЂР°РјРјРѕР№.
+ * Р•СЃР»Рё РЅРµС‚, СЃРј. <https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode>
+ *
+ * Р‘Р»Р°РіРѕРґР°СЂРёРј РЎРµСЂРіРµСЏ Рё Р•РєР°С‚РµСЂРёРЅСѓ РџРѕР»РёС†С‹РЅС‹С… Р·Р° РѕРєР°Р·Р°РЅРёРµ РїРѕРјРѕС‰Рё РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ Р±РёР±Р»РёРѕС‚РµРєРё.
  */
 package morphologicalstructures;
 
@@ -63,7 +65,7 @@ public final class Property {
             Node root = document.getDocumentElement();
             readProperty(root);
         } catch (ParserConfigurationException | SAXException | IOException ex) {
-            String messages = "Не удается найти property.xml\r\nПрименены параметры по умолчанию!\r\n";
+            String messages = "РќРµ СѓРґР°РµС‚СЃСЏ РЅР°Р№С‚Рё property.xml\r\nРџСЂРёРјРµРЅРµРЅС‹ РїР°СЂР°РјРµС‚СЂС‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ!\r\n";
             Logger.getLogger(Property.class.getName()).log(Level.WARNING, messages);
         }
     }
