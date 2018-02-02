@@ -77,11 +77,16 @@ public class ConversionDictionary {
         HashMap<Integer, IdAndString> mapStringAndId = new HashMap<>();
         try {
             int id = 0;
-            mapStringAndId.put(0, new IdAndString("?????_??_???????", 0));
+            mapStringAndId.put(0, new IdAndString("??_??_???????", 0));
             while (outReader.ready()) {
                 id++;
-                IdAndString stringAndID = new IdAndString(outReader.readLine(), id);
+                String word = outReader.readLine();
+                IdAndString stringAndID = new IdAndString(word, id);
                 mapStringAndId.put(stringAndID.hashCode(), stringAndID);
+                if(word.matches("ё")) {
+                    stringAndID = new IdAndString(word.replace("ё", "e"), id);
+                    mapStringAndId.put(stringAndID.hashCode(), stringAndID);
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,7 +122,6 @@ public class ConversionDictionary {
 
     public void conversionFile() {
         try {
-            //?????????? ?????? ???????, ? ??????? ???????? ????????? ??????????
             inReader.readLine();
             while (inReader.ready()) {
                 saveLemma(inReader.readLine());
