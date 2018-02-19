@@ -2,20 +2,23 @@
 package morphologicalstructures;
 
 import java.util.LinkedList;
-import load.BDInitialFormString;
 
+import grammeme.MorfologyParameters;
+import load.BDFormString;
 public class OmoForm implements MorfCharacteristicsAccessInterface {
 
     private final int initialFormKey;
+    private final int myFormKey;
     private final byte typeOfSpeech;
     private final long morfCharacteristics;
     private final LinkedList myDependent = new LinkedList<>();
     private final LinkedList myMain = new LinkedList<>();
 
-    public OmoForm(int initialFormKey, byte typeOfSpeech, long morfCharacteristics) {
+    public OmoForm(int initialFormKey, int myFormKey, byte typeOfSpeech, long morfCharacteristics) {
         this.initialFormKey = initialFormKey;
         this.typeOfSpeech = typeOfSpeech;
         this.morfCharacteristics = morfCharacteristics;
+        this.myFormKey = myFormKey;
     }
 
     /**
@@ -24,7 +27,12 @@ public class OmoForm implements MorfCharacteristicsAccessInterface {
      */
     @Override
     public String getInitialFormString() {
-        return BDInitialFormString.getStringById(initialFormKey, true);
+        return BDFormString.getStringById(initialFormKey, true);
+    }
+
+    @Override
+    public String getMyFormString() {
+        return BDFormString.getStringById(myFormKey, false);
     }
 
     /**
@@ -41,7 +49,7 @@ public class OmoForm implements MorfCharacteristicsAccessInterface {
      * @return
      */
     @Override
-    public long getMorfCharacteristics() {
+    public long getAllMorfCharacteristics() {
         return morfCharacteristics;
     }
 
@@ -53,6 +61,16 @@ public class OmoForm implements MorfCharacteristicsAccessInterface {
     @Override
     public long getTheMorfCharacteristic(long IDENTIFIER) {
         return morfCharacteristics & IDENTIFIER;
+    }
+
+    @Override
+    public long getTheMorfCharacteristic(Class clazz) {
+        if(clazz.getSimpleName().equals("Voice")) {
+            return morfCharacteristics & MorfologyParameters.Voice.IDENTIFIER;
+        } else if (clazz.getSimpleName().equals("Time")) {
+            return morfCharacteristics & MorfologyParameters.Time.IDENTIFIER;
+        }
+        return 0;
     }
 
     @Override
@@ -83,5 +101,15 @@ public class OmoForm implements MorfCharacteristicsAccessInterface {
     
     private void addMainForm(OmoForm dependentForm) {
         myDependent.add(dependentForm);
+    }
+
+    @Override
+    public int getMyFormKey() {
+        return myFormKey;
+    }
+
+    @Override
+    public int getInitialFormKey() {
+        return initialFormKey;
     }
 }

@@ -7,7 +7,7 @@ public class NumberOmoForm extends OmoForm{
     private final String strNumber;
     
     public NumberOmoForm(String strNumber) {
-        super(-1, TypeOfSpeech.NUMERAL, 0);
+        super(-1, -1, TypeOfSpeech.NUMERAL, 0);
         this.strNumber = strNumber;
     }
     
