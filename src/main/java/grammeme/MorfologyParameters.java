@@ -106,7 +106,6 @@ public interface MorfologyParameters {
      * Падеж
      */
     public interface Case {
-
         /**
          * именительный падеж
          */
@@ -155,7 +154,6 @@ public interface MorfologyParameters {
          * звательный падеж
          */
         public static final long VOATIVE = 0x9L << 7;
-
         public static final long IDENTIFIER = 0xFL << 7;
     }
 
@@ -492,7 +490,7 @@ public interface MorfologyParameters {
          * устаревшее
          */
         public static final long ARCH = 0x1L << SHIFTBIT << 32;
-        
+
         public static final long IDENTIFIER = 0xFFFFFFFFL << SHIFTBIT;
     }
 
@@ -504,10 +502,10 @@ public interface MorfologyParameters {
         public static final byte NOUN = 0x11;
 
         public static final byte ADJECTIVEFULL = 0x12;
-        public static final byte ADJECTIVESHORT = 0x17;
+        public static final byte ADJECTIVESHORT = 0x13;
 
         public static final byte VERB = 0x14;
-        public static final byte INFINITIVE = 0x17;
+        public static final byte INFINITIVE = 0x15;
 
         public static final byte PARTICIPLEFULL = 0x16;
         public static final byte PARTICIPLE = 0x17;
@@ -532,9 +530,9 @@ public interface MorfologyParameters {
 
         public static final byte IDENTIFIER = 0x1F;
     }
-    
+
     public static class IdentifierMorfParameters {
-            
+
         public static final List<Long> IDENTIFIERLIST = new ArrayList<>();
 
         static {
