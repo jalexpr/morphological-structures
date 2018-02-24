@@ -49,6 +49,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import load.FileOpen;
 
+import static morphologicalstructures.Property.START_ID_INITIAL_SAVE;
+
 public class ConversionDictionary {
 
     private static final byte[] controlValue;
@@ -56,7 +58,7 @@ public class ConversionDictionary {
     private FileOutputStream outHashCodeAndMorfCharacteristics;
     private HashMap<Integer, IdAndString> stringWordFormAndId;
     private HashMap<Integer, IdAndString> stringInitialFormAndId;
-    private int idInitialSave = 536870912;
+    private int idInitialSave = START_ID_INITIAL_SAVE;
 
     static {
         controlValue = getBytes(PropertyForConversion.CONTROL_VALUE);// new byte[]{-1, -1, -1, -1};
@@ -124,7 +126,11 @@ public class ConversionDictionary {
         try {
             inReader.readLine();
             while (inReader.ready()) {
-                saveLemma(inReader.readLine());
+                String word = inReader.readLine();
+                saveLemma(word);
+                if(word.matches("ё")) {
+                    saveLemma(word.replace("ё", "e"));
+                }
             }
 
         } catch (IOException ex) {

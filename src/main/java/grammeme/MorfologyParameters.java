@@ -38,9 +38,6 @@
 
 package grammeme;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public interface MorfologyParameters {
 
     /**
@@ -106,7 +103,6 @@ public interface MorfologyParameters {
      * Падеж
      */
     public interface Case {
-
         /**
          * именительный падеж
          */
@@ -155,7 +151,6 @@ public interface MorfologyParameters {
          * звательный падеж
          */
         public static final long VOATIVE = 0x9L << 7;
-
         public static final long IDENTIFIER = 0xFL << 7;
     }
 
@@ -492,7 +487,7 @@ public interface MorfologyParameters {
          * устаревшее
          */
         public static final long ARCH = 0x1L << SHIFTBIT << 32;
-        
+
         public static final long IDENTIFIER = 0xFFFFFFFFL << SHIFTBIT;
     }
 
@@ -504,10 +499,10 @@ public interface MorfologyParameters {
         public static final byte NOUN = 0x11;
 
         public static final byte ADJECTIVEFULL = 0x12;
-        public static final byte ADJECTIVESHORT = 0x17;
+        public static final byte ADJECTIVESHORT = 0x13;
 
         public static final byte VERB = 0x14;
-        public static final byte INFINITIVE = 0x17;
+        public static final byte INFINITIVE = 0x15;
 
         public static final byte PARTICIPLEFULL = 0x16;
         public static final byte PARTICIPLE = 0x17;
@@ -532,27 +527,5 @@ public interface MorfologyParameters {
 
         public static final byte IDENTIFIER = 0x1F;
     }
-    
-    public static class IdentifierMorfParameters {
-            
-        public static final List<Long> IDENTIFIERLIST = new ArrayList<>();
 
-        static {
-            IDENTIFIERLIST.add(Alone.IDENTIFIER);
-            IDENTIFIERLIST.add(TerminationForm.IDENTIFIER);
-            IDENTIFIERLIST.add(Name.IDENTIFIER);
-            IDENTIFIERLIST.add(TepePronoun.IDENTIFIER);
-            IDENTIFIERLIST.add(Voice.IDENTIFIER);
-            IDENTIFIERLIST.add(Act.IDENTIFIER);
-            IDENTIFIERLIST.add(Mood.IDENTIFIER);
-            IDENTIFIERLIST.add(Time.IDENTIFIER);
-            IDENTIFIERLIST.add(Liso.IDENTIFIER);
-            IDENTIFIERLIST.add(Transitivity.IDENTIFIER);
-            IDENTIFIERLIST.add(Animacy.IDENTIFIER);
-            IDENTIFIERLIST.add(Gender.IDENTIFIER);
-            IDENTIFIERLIST.add(Numbers.IDENTIFIER);
-            IDENTIFIERLIST.add(Case.IDENTIFIER);
-            IDENTIFIERLIST.add(View.IDENTIFIER);
-        }
-    }
 }

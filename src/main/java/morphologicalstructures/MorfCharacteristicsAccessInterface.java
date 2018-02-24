@@ -1,16 +1,22 @@
 
 package morphologicalstructures;
 
+
 public interface MorfCharacteristicsAccessInterface {
-    
-    public byte getTypeOfSpeech();
-    public long getMorfCharacteristics();
-    public long getTheMorfCharacteristic(long IDENTIFIER);
-    public String getInitialFormString();
-    @Override
-    public String toString();
+
     public boolean haveMainForm();
     public boolean haveDependentForm();
-    public void addDependentForm(OmoForm mainForm);    
     public boolean haveCommunication();
+    public byte getTypeOfSpeech();
+    public int getMyFormKey();
+    public int getInitialFormKey();
+    public long getAllMorfCharacteristics();
+    public long getTheMorfCharacteristics(Long...IDENTIFIERS);
+    public long getTheMorfCharacteristics(Class...clazzes);
+    @Override
+    public String toString();
+    public String getInitialFormString();
+    public String getMyFormString();
+    public void addDependentForm(OmoForm mainForm);
+
 }
