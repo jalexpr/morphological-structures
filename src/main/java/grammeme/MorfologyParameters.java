@@ -38,9 +38,6 @@
 
 package grammeme;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public interface MorfologyParameters {
 
     /**
@@ -531,26 +528,4 @@ public interface MorfologyParameters {
         public static final byte IDENTIFIER = 0x1F;
     }
 
-    public static class IdentifierMorfParameters {
-
-        public static final List<Long> IDENTIFIERLIST = new ArrayList<>();
-
-        static {
-            IDENTIFIERLIST.add(Alone.IDENTIFIER);
-            IDENTIFIERLIST.add(TerminationForm.IDENTIFIER);
-            IDENTIFIERLIST.add(Name.IDENTIFIER);
-            IDENTIFIERLIST.add(TepePronoun.IDENTIFIER);
-            IDENTIFIERLIST.add(Voice.IDENTIFIER);
-            IDENTIFIERLIST.add(Act.IDENTIFIER);
-            IDENTIFIERLIST.add(Mood.IDENTIFIER);
-            IDENTIFIERLIST.add(Time.IDENTIFIER);
-            IDENTIFIERLIST.add(Liso.IDENTIFIER);
-            IDENTIFIERLIST.add(Transitivity.IDENTIFIER);
-            IDENTIFIERLIST.add(Animacy.IDENTIFIER);
-            IDENTIFIERLIST.add(Gender.IDENTIFIER);
-            IDENTIFIERLIST.add(Numbers.IDENTIFIER);
-            IDENTIFIERLIST.add(Case.IDENTIFIER);
-            IDENTIFIERLIST.add(View.IDENTIFIER);
-        }
-    }
 }
