@@ -53,29 +53,58 @@ import static morphologicalstructures.Property.START_ID_INITIAL_SAVE;
 
 public class ConversionDictionary {
 
-    private static final byte[] controlValue;
-    private BufferedReader inReader;
-    private FileOutputStream outHashCodeAndMorfCharacteristics;
-    private HashMap<Integer, IdAndString> stringWordFormAndId;
-    private HashMap<Integer, IdAndString> stringInitialFormAndId;
+    private static final byte[] CONTROL_VALUE;
+    private static BufferedReader readerSourceDictionary;
+    private static FileOutputStream streamKeyAndHashAndMorfCharacteristics;
+    private static HashMap<Integer, IdAndString> stringWordFormAndId;
+    private static HashMap<Integer, IdAndString> stringInitialFormAndId;
     private int idInitialSave = START_ID_INITIAL_SAVE;
+    private static BDSqlite CONNECT_BD_INITIAL_FORM;
+    private static BDSqlite CONNECT_BD_WORD_FORM;
 
     static {
-        controlValue = getBytes(PropertyForConversion.CONTROL_VALUE);// new byte[]{-1, -1, -1, -1};
+        CONTROL_VALUE = getBytes(PropertyForConversion.CONTROL_VALUE);// new byte[]{-1, -1, -1, -1};
     }
 
-    public ConversionDictionary() {
-        init();
+    private ConversionDictionary() {}
+
+    public static void conversionDictionary(String sourceDictionaryPath, String encoding) {
+        initFiles(sourceDictionaryPath, encoding);
+        conversionDictionary();
     }
 
-    private void init() {
-        inReader = FileOpen.openBufferedReaderStream(PropertyForConversion.PATH_NUMBER_FORMAT, PropertyForConversion.ENCODING);
-        outHashCodeAndMorfCharacteristics = FileOpen.openFileInputStream(PropertyForConversion.PATH_HASH_AND_MORF_CHARACTERISTICS);
-        stringWordFormAndId = generateMapIdAndString(FileOpen.openBufferedReaderStream(PropertyForConversion.PATH_WORD_FORM_STRING, PropertyForConversion.ENCODING));
-        stringInitialFormAndId = new HashMap<>();
+    //TODO:PATH_KEY_HASH_AND_MORF_CHARACTERISTICS in ZIP
+    private static void initFiles(String sourceDictionaryPath, String encoding) {
+        readerSourceDictionary = FileOpen.openBufferedReaderStream(sourceDictionaryPath, encoding);
+        streamKeyAndHashAndMorfCharacteristics = FileOpen.openFileInputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
+        CONNECT_BD_INITIAL_FORM = new BDSqlite(PropertyForConversion.PATH_BD_INITIAL_FORM);
+        CONNECT_BD_WORD_FORM = new BDSqlite(PropertyForConversion.PATH_BD_WORD_FORM);
     }
 
-    private HashMap<Integer, IdAndString> generateMapIdAndString(BufferedReader outReader) {
+    private static void conversionDictionary() {
+        /**
+         * Поиск первой леммы
+         *
+         * Чтение леммы
+         * Удаление лишних тегов
+         * Приводим внижний регистр
+         * Написать метод, который распознает значение характеристики и переводит в шкалу.
+         * Для начальных формы записать в БД, записать в файл в формате ключ от БД, хэш-код, часть речи характеристика
+         * Для производный форм, проверить в мапе существует ли похожый хэш,
+         * если сущесвтует, то прерить одинаковый ли стринг,
+         *  если нет, то вывести в лог,
+         *  если да, то записать файл в формате ключ в БД (берем из мапы) хэшкод, характиристика
+         * если не сущевтует, то добавить в БД, добавить в мап где ключ это хэшкод а значение ключ в БД
+         *  и записать в файл
+         * проверить слово на йо, если да, то повторить операцию выше, но ключ берется тот же для слова, а не создается новый.
+         *
+         * повторят пока не пройдем все лемы
+         *
+         * закрыть все соединения
+        **/
+    }
+
+    private static HashMap<Integer, IdAndString> generateMapIdAndString(BufferedReader outReader) {
         HashMap<Integer, IdAndString> mapStringAndId = new HashMap<>();
         try {
             int id = 0;
@@ -124,9 +153,9 @@ public class ConversionDictionary {
 
     public void conversionFile() {
         try {
-            inReader.readLine();
-            while (inReader.ready()) {
-                String word = inReader.readLine();
+            readerSourceDictionary.readLine();
+            while (readerSourceDictionary.ready()) {
+                String word = readerSourceDictionary.readLine();
                 saveLemma(word);
                 if(word.matches("ё")) {
                     saveLemma(word.replace("ё", "e"));
@@ -156,10 +185,10 @@ public class ConversionDictionary {
         stringInitialFormAndId.put(0, new IdAndString("?????_??_???????", 0));
         try {
             idInitialSave++;
-            outHashCodeAndMorfCharacteristics.write(getBytes(initialFormParameters[0].hashCode()));
-            outHashCodeAndMorfCharacteristics.write(Byte.decode("0x" + initialFormParameters[1]));
-            outHashCodeAndMorfCharacteristics.write(getBytes(new BigInteger(initialFormParameters[2], 16).longValue()));
-            outHashCodeAndMorfCharacteristics.write(getBytes(idInitialSave));
+            streamKeyAndHashAndMorfCharacteristics.write(getBytes(initialFormParameters[0].hashCode()));
+            streamKeyAndHashAndMorfCharacteristics.write(Byte.decode("0x" + initialFormParameters[1]));
+            streamKeyAndHashAndMorfCharacteristics.write(getBytes(new BigInteger(initialFormParameters[2], 16).longValue()));
+            streamKeyAndHashAndMorfCharacteristics.write(getBytes(idInitialSave));
 
             IdAndString stringAndID = new IdAndString(initialFormParameters[0], idInitialSave);
             stringInitialFormAndId.put(stringAndID.myId, stringAndID);
@@ -209,9 +238,9 @@ public class ConversionDictionary {
         int hashCodeForm = 0;
         try {
             hashCodeForm = wordlFormParameters[0].hashCode();
-            outHashCodeAndMorfCharacteristics.write(getBytes(hashCodeForm));
-            outHashCodeAndMorfCharacteristics.write(getBytes(new BigInteger(wordlFormParameters[1], 16).longValue()));
-            outHashCodeAndMorfCharacteristics.write(getBytes(stringWordFormAndId.get(hashCodeForm).myId));
+            streamKeyAndHashAndMorfCharacteristics.write(getBytes(hashCodeForm));
+            streamKeyAndHashAndMorfCharacteristics.write(getBytes(new BigInteger(wordlFormParameters[1], 16).longValue()));
+            streamKeyAndHashAndMorfCharacteristics.write(getBytes(stringWordFormAndId.get(hashCodeForm).myId));
         } catch (IOException ex) {
             Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
@@ -222,18 +251,18 @@ public class ConversionDictionary {
 
     private void saveEndLemma() {
         try {
-            outHashCodeAndMorfCharacteristics.write(controlValue);
+            streamKeyAndHashAndMorfCharacteristics.write(CONTROL_VALUE);
         } catch (IOException ex) {
             Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void closeFiles() {
-        FileOpen.closeFile(inReader);
-        FileOpen.closeFile(outHashCodeAndMorfCharacteristics);
+        FileOpen.closeFile(readerSourceDictionary);
+        FileOpen.closeFile(streamKeyAndHashAndMorfCharacteristics);
     }
 
-    private class IdAndString {
+    private static class IdAndString {
 
         public final String myString;
         public final int myId;
@@ -301,11 +330,5 @@ public class ConversionDictionary {
 
     public static void main(String[] args) {
 
-        ConversionDictionary.createdInitianAndWordFormString();
-        ConversionDictionary converFile = new ConversionDictionary();
-        converFile.saveInBD(PropertyForConversion.PATH_BD_WORD_FORM, false);
-        converFile.conversionFile();
-        converFile.saveInBD(PropertyForConversion.PATH_BD_INITIAL_FORM, true);
-        converFile.closeFiles();
     }
 }
