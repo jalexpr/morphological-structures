@@ -45,7 +45,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import morphologicalstructures.Property;
 
-public class FileOpen {
+public class FileHelper {
 
     public static Scanner openScannerFromZipFile(String pathZipFile, String pathFile, String encoding) throws Exception {
         try {
@@ -53,7 +53,7 @@ public class FileOpen {
         } catch (FileNotFoundException ex) {
             String messages = String.format("Ошибка при чтении файла.%sПроверте наличие %s, в случае отсуствия скачайте с репозитория %s%s",
                     System.lineSeparator(), pathFile, Property.MYREPOSITORY, System.lineSeparator());
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, messages, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
             throw new Exception();
         }
     }
@@ -79,11 +79,11 @@ public class FileOpen {
             bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(pathFile), encoding));
         } catch (FileNotFoundException ex) {
             String messages = String.format("Ошибка при чтении файла.\r\nПроверте наличие %s\r\n", pathFile);
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, messages, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
         } catch (UnsupportedEncodingException ex) {
             String messages = String.format("Ошибка при чтении файла.\r\n1)Проверте кодировку %s в соотвевствии с параметрами в property.xml.\r\n2)При отсутствии property.xml кодировка по умолчанию %s\r\n\r\n",
                     pathFile, encoding);
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, messages, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
         }
 
         return bufferedReader;
@@ -96,7 +96,7 @@ public class FileOpen {
             fileInputStream = new FileOutputStream(pathFile);
         } catch (FileNotFoundException ex) {
             String messages = String.format("Ошибка при чтении файла.\r\nПроверте наличие %s\r\n", pathFile);
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, messages, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
         }
 
         return fileInputStream;
@@ -109,11 +109,11 @@ public class FileOpen {
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile), encoding));
         } catch (FileNotFoundException ex) {
             String messages = String.format("Ошибка при чтении файла.\r\nПроверте наличие %s\r\n", pathFile);
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, messages, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
         } catch (UnsupportedEncodingException ex) {
             String messages = String.format("Ошибка при чтении файла.\r\n1)Проверте кодировку %s в соотвевствии с параметрами в property.xml.\r\n2)При отсутствии property.xml кодировка по умолчанию %s\r\n\r\n",
                     pathFile, encoding);
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, messages, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
         }
 
         return bufferedWriter;
@@ -121,10 +121,24 @@ public class FileOpen {
 
     public static String readLine(BufferedReader bufferedReader) {
         try {
-            return bufferedReader.readLine();
+            if(ready(bufferedReader)) {
+                return bufferedReader.readLine();
+            } else {
+                return "";
+            }
         } catch (IOException ex) {
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
             return "";
+        }
+
+    }
+
+    public static boolean ready(BufferedReader bufferedReader) {
+        try {
+            return bufferedReader.ready();
+        } catch (IOException ex) {
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
 
@@ -132,7 +146,7 @@ public class FileOpen {
         try {
             inputStream.close();
         } catch (IOException ex) {
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, "Не удалось закрыть файл!", ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, "Не удалось закрыть файл!", ex);
         }
     }
 
@@ -140,7 +154,7 @@ public class FileOpen {
         try {
             inputStream.close();
         } catch (IOException ex) {
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -152,7 +166,7 @@ public class FileOpen {
         try {
             reader.close();
         } catch (IOException ex) {
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -160,7 +174,7 @@ public class FileOpen {
         try {
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(FileOpen.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

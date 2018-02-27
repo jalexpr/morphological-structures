@@ -47,7 +47,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import load.FileOpen;
+import load.FileHelper;
 
 import static morphologicalstructures.Property.START_ID_INITIAL_SAVE;
 
@@ -56,8 +56,8 @@ public class ConversionDictionary {
     private static final byte[] CONTROL_VALUE;
     private static BufferedReader readerSourceDictionary;
     private static FileOutputStream streamKeyAndHashAndMorfCharacteristics;
-    private static HashMap<Integer, IdAndString> stringWordFormAndId;
-    private static HashMap<Integer, IdAndString> stringInitialFormAndId;
+//    private static HashMap<Integer, IdAndString> stringWordFormAndId;
+//    private static HashMap<Integer, IdAndString> stringInitialFormAndId;
     private int idInitialSave = START_ID_INITIAL_SAVE;
     private static BDSqlite CONNECT_BD_INITIAL_FORM;
     private static BDSqlite CONNECT_BD_WORD_FORM;
@@ -75,19 +75,17 @@ public class ConversionDictionary {
 
     //TODO:PATH_KEY_HASH_AND_MORF_CHARACTERISTICS in ZIP
     private static void initFiles(String sourceDictionaryPath, String encoding) {
-        readerSourceDictionary = FileOpen.openBufferedReaderStream(sourceDictionaryPath, encoding);
-        streamKeyAndHashAndMorfCharacteristics = FileOpen.openFileInputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
+        readerSourceDictionary = FileHelper.openBufferedReaderStream(sourceDictionaryPath, encoding);
+        streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileInputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
         CONNECT_BD_INITIAL_FORM = new BDSqlite(PropertyForConversion.PATH_BD_INITIAL_FORM);
         CONNECT_BD_WORD_FORM = new BDSqlite(PropertyForConversion.PATH_BD_WORD_FORM);
     }
 
     private static void conversionDictionary() {
+        searchFirstLemma();
+
         /**
-         * Поиск первой леммы
-         *
-         * Чтение леммы
-         * Удаление лишних тегов
-         * Приводим внижний регистр
+         * проводит в единный формат для конвертации
          * Написать метод, который распознает значение характеристики и переводит в шкалу.
          * Для начальных формы записать в БД, записать в файл в формате ключ от БД, хэш-код, часть речи характеристика
          * Для производный форм, проверить в мапе существует ли похожый хэш,
@@ -104,74 +102,82 @@ public class ConversionDictionary {
         **/
     }
 
-    private static HashMap<Integer, IdAndString> generateMapIdAndString(BufferedReader outReader) {
-        HashMap<Integer, IdAndString> mapStringAndId = new HashMap<>();
-        try {
-            int id = 0;
-            mapStringAndId.put(0, new IdAndString("??_??_???????", 0));
-            while (outReader.ready()) {
-                id++;
-                String word = outReader.readLine();
-                IdAndString stringAndID = new IdAndString(word, id);
-                mapStringAndId.put(stringAndID.hashCode(), stringAndID);
-                if(word.matches("ё")) {
-                    stringAndID = new IdAndString(word.replace("ё", "e"), id);
-                    mapStringAndId.put(stringAndID.hashCode(), stringAndID);
-                }
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return mapStringAndId;
+    private static void searchFirstLemma() {
+        while(!FileHelper.readLine(readerSourceDictionary).trim().equals("<lemmata>")){}
     }
 
-    private void saveInBD(String nameBD, boolean isInitialForm) {
-        if (isInitialForm) {
-            saveInBD(nameBD, stringInitialFormAndId);
-        } else {
-            saveInBD(nameBD, stringWordFormAndId);
+    private static void conversionLemmas() {
+        while(FileHelper.ready(readerSourceDictionary)) {
+            String stringLemma = FileHelper.readLine(readerSourceDictionary);
+
         }
     }
 
-    private void saveInBD(String nameBD, HashMap<Integer, IdAndString> stringFormAndId) {
-        BDSqlite outBD = new BDSqlite(nameBD);
-        outBD.execute("CREATE TABLE if not exists 'Form' ('id' INTEGER NOT NULL, 'StringForm' TEXT NOT NULL, PRIMARY KEY('id'))");
-        saveStringAndIdInBD(stringFormAndId, outBD);
-        outBD.closeDB();
-    }
-
-    private void saveStringAndIdInBD(HashMap<Integer, IdAndString> stringFormAndId, BDSqlite outDBWordFormString) {
-
-        outDBWordFormString.execute("BEGIN TRANSACTION");
-        for (Object obj : stringFormAndId.values()) {
-            IdAndString idAndString = (IdAndString) obj;
-            outDBWordFormString.execute(String.format("INSERT INTO 'Form' ('id','StringForm') VALUES (%d, '%s'); ", idAndString.myId, idAndString.myString));
+    public static String conversionLemma(String oldLemma) {
+        String newLemma = deleteTegs(oldLemma);
+        newLemma = leadToClearStyle(newLemma);
+        String[] arr = newLemma.split("</[fl]>");
+        for(String line : arr) {
+            System.out.println(line);
         }
-        outDBWordFormString.execute("END TRANSACTION");
+        return newLemma;
     }
 
-    public void conversionFile() {
-        try {
-            readerSourceDictionary.readLine();
-            while (readerSourceDictionary.ready()) {
-                String word = readerSourceDictionary.readLine();
-                saveLemma(word);
-                if(word.matches("ё")) {
-                    saveLemma(word.replace("ё", "e"));
-                }
-            }
-
-        } catch (IOException ex) {
-            Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static String deleteTegs(String oldLemma) {
+        String newLemma = oldLemma.toLowerCase();
+        newLemma = newLemma.replaceAll("[ ]+", "");
+        newLemma = newLemma.replaceAll("<lemmaid=\"[\\d]+\"rev=\"[\\d]+\">", "");
+        newLemma = newLemma.replaceAll("</lemma>", "");
+        newLemma = newLemma.replaceAll("[tv]=", "");
+        newLemma = newLemma.replaceAll("[\"]", "");
+        newLemma = newLemma.replaceAll("<[lfg]", "<");
+        newLemma = newLemma.replaceAll("/>", ">");
+        return newLemma;
     }
 
-    private void saveLemma(String strForms) {
-        saveInitialForm(strForms);
-        saveWordForms(strForms);
-        saveEndLemma();
+    private static String leadToClearStyle(String oldLemma) {
+        String newLemma = oldLemma;
+        return newLemma;
     }
+//    private static HashMap<Integer, IdAndString> generateMapIdAndString(BufferedReader outReader) {
+//        HashMap<Integer, IdAndString> mapStringAndId = new HashMap<>();
+//        try {
+//            int id = 0;
+//            mapStringAndId.put(0, new IdAndString("??_??_???????", 0));
+//            while (outReader.ready()) {
+//                id++;
+//                String word = outReader.readLine();
+//                IdAndString stringAndID = new IdAndString(word, id);
+//                mapStringAndId.put(stringAndID.hashCode(), stringAndID);
+//                if(word.matches("ё")) {
+//                    stringAndID = new IdAndString(word.replace("ё", "e"), id);
+//                    mapStringAndId.put(stringAndID.hashCode(), stringAndID);
+//                }
+//            }
+//        } catch (IOException ex) {
+//            Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        return mapStringAndId;
+//    }
+
+
+//    private void saveInBD(String nameBD, HashMap<Integer, IdAndString> stringFormAndId) {
+//        BDSqlite outBD = new BDSqlite(nameBD);
+//        outBD.execute("CREATE TABLE if not exists 'Form' ('id' INTEGER NOT NULL, 'StringForm' TEXT NOT NULL, PRIMARY KEY('id'))");
+//        saveStringAndIdInBD(stringFormAndId, outBD);
+//        outBD.closeDB();
+//    }
+
+//    private void saveStringAndIdInBD(HashMap<Integer, IdAndString> stringFormAndId, BDSqlite outDBWordFormString) {
+
+//        outDBWordFormString.execute("BEGIN TRANSACTION");
+//        for (Object obj : stringFormAndId.values()) {
+//            IdAndString idAndString = (IdAndString) obj;
+//            outDBWordFormString.execute(String.format("INSERT INTO 'Form' ('id','StringForm') VALUES (%d, '%s'); ", idAndString.myId, idAndString.myString));
+//        }
+//        outDBWordFormString.execute("END TRANSACTION");
+//    }
 
     private void saveInitialForm(String strForms) {
         String strInitialForm;
@@ -182,7 +188,7 @@ public class ConversionDictionary {
         }
         String[] initialFormParameters = strInitialForm.split(" ");
 
-        stringInitialFormAndId.put(0, new IdAndString("?????_??_???????", 0));
+//        stringInitialFormAndId.put(0, new IdAndString("?????_??_???????", 0));
         try {
             idInitialSave++;
             streamKeyAndHashAndMorfCharacteristics.write(getBytes(initialFormParameters[0].hashCode()));
@@ -190,8 +196,8 @@ public class ConversionDictionary {
             streamKeyAndHashAndMorfCharacteristics.write(getBytes(new BigInteger(initialFormParameters[2], 16).longValue()));
             streamKeyAndHashAndMorfCharacteristics.write(getBytes(idInitialSave));
 
-            IdAndString stringAndID = new IdAndString(initialFormParameters[0], idInitialSave);
-            stringInitialFormAndId.put(stringAndID.myId, stringAndID);
+//            IdAndString stringAndID = new IdAndString(initialFormParameters[0], idInitialSave);
+//            stringInitialFormAndId.put(stringAndID.myId, stringAndID);
         } catch (IOException ex) {
             Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NumberFormatException ex) {
@@ -223,15 +229,6 @@ public class ConversionDictionary {
         return bytes;
     }
 
-    private void saveWordForms(String strLemma) {
-
-        String[] arrayWordForms = strLemma.split("\"");
-
-        for (int i = 1; i < arrayWordForms.length; i++) {
-            saveForm(arrayWordForms[i]);
-        }
-    }
-
     private void saveForm(String strForm) {
 
         String[] wordlFormParameters = strForm.split(" ");
@@ -240,12 +237,11 @@ public class ConversionDictionary {
             hashCodeForm = wordlFormParameters[0].hashCode();
             streamKeyAndHashAndMorfCharacteristics.write(getBytes(hashCodeForm));
             streamKeyAndHashAndMorfCharacteristics.write(getBytes(new BigInteger(wordlFormParameters[1], 16).longValue()));
-            streamKeyAndHashAndMorfCharacteristics.write(getBytes(stringWordFormAndId.get(hashCodeForm).myId));
+//            streamKeyAndHashAndMorfCharacteristics.write(getBytes(stringWordFormAndId.get(hashCodeForm).myId));
         } catch (IOException ex) {
             Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, strForm, ex);
-            System.err.println(stringWordFormAndId.get(hashCodeForm));
         }
     }
 
@@ -258,48 +254,14 @@ public class ConversionDictionary {
     }
 
     public void closeFiles() {
-        FileOpen.closeFile(readerSourceDictionary);
-        FileOpen.closeFile(streamKeyAndHashAndMorfCharacteristics);
-    }
-
-    private static class IdAndString {
-
-        public final String myString;
-        public final int myId;
-
-        public IdAndString(String string, int id) {
-            myString = string;
-            myId = id;
-        }
-
-        @Override
-        public int hashCode() {
-            return myString.hashCode(); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final IdAndString other = (IdAndString) obj;
-            if (!this.myString.equals(other.myString)) {
-                return false;
-            }
-            return true;
-        }
+        FileHelper.closeFile(readerSourceDictionary);
+        FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
     }
 
     public static void createdInitianAndWordFormString() {
-        BufferedReader inDictionary = FileOpen.openBufferedReaderStream("dictionary.format.number.txt", PropertyForConversion.ENCODING);
-        BufferedWriter outInitianString = FileOpen.openBufferedWriterStream(PropertyForConversion.PATH_INITIAL_FORM_STRING, PropertyForConversion.ENCODING);
-        BufferedWriter outWordString = FileOpen.openBufferedWriterStream(PropertyForConversion.PATH_WORD_FORM_STRING, PropertyForConversion.ENCODING);
+        BufferedReader inDictionary = FileHelper.openBufferedReaderStream("dictionary.format.number.txt", PropertyForConversion.ENCODING);
+        BufferedWriter outInitianString = FileHelper.openBufferedWriterStream(PropertyForConversion.PATH_INITIAL_FORM_STRING, PropertyForConversion.ENCODING);
+        BufferedWriter outWordString = FileHelper.openBufferedWriterStream(PropertyForConversion.PATH_WORD_FORM_STRING, PropertyForConversion.ENCODING);
 
         try {
             inDictionary.readLine();
@@ -329,6 +291,8 @@ public class ConversionDictionary {
     }
 
     public static void main(String[] args) {
-
+        String old = " <lemma id=\"1\" rev=\"1\"><l t=\"ёж\"><g v=\"NOUN\"/><g v=\"anim\"/><g v=\"masc\"/></l><f t=\"ёж\"><g v=\"sing\"/><g v=\"nomn\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"gent\"/></f><f t=\"ежу\"><g v=\"sing\"/><g v=\"datv\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"accs\"/></f><f t=\"ежом\"><g v=\"sing\"/><g v=\"ablt\"/></f><f t=\"еже\"><g v=\"sing\"/><g v=\"loct\"/></f><f t=\"ежи\"><g v=\"plur\"/><g v=\"nomn\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"gent\"/></f><f t=\"ежам\"><g v=\"plur\"/><g v=\"datv\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"accs\"/></f><f t=\"ежами\"><g v=\"plur\"/><g v=\"ablt\"/></f><f t=\"ежах\"><g v=\"plur\"/><g v=\"loct\"/></f></lemma>";
+        System.out.print(conversionLemma(old));
     }
+
 }
