@@ -8,9 +8,9 @@ import morphologicalstructures.Property;
 
 public class BDFormString {
 
-    private final static BDSqlite BD_INITIAL_FORM_STRING = new BDSqlite(Property.PATH_BD_INITIAL_FORM);
-    private final static BDSqlite BD_WORD_FORM_STRING = new BDSqlite(Property.PATH_BD_WORD_FORM);
-    private final static int START_ID_INITIAL_SAVE = Property.START_ID_INITIAL_SAVE;
+    public final static BDSqlite BD_INITIAL_FORM_STRING = new BDSqlite(Property.PATH_BD_INITIAL_FORM);
+    public final static BDSqlite BD_WORD_FORM_STRING = new BDSqlite(Property.PATH_BD_WORD_FORM);
+    public final static int START_ID_INITIAL_SAVE = Property.START_ID_INITIAL_SAVE;
 
     public static String getStringById(int idKey) {
         if(idKey < START_ID_INITIAL_SAVE) {
@@ -45,7 +45,7 @@ public class BDFormString {
         }
         return null;
     }
-    
+
     public static void printSumme(boolean isInitialForm) {
 
         try {

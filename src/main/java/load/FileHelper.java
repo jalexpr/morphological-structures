@@ -142,6 +142,14 @@ public class FileHelper {
         }
     }
 
+    public static void write(FileOutputStream fileOutputStream, byte[] bytes) {
+        try {
+            fileOutputStream.write(bytes);
+        } catch (IOException ex) {
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static void closeFile(InputStream inputStream) {
         try {
             inputStream.close();

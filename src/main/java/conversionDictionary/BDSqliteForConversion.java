@@ -29,6 +29,14 @@ public class BDSqliteForConversion {
         bds.execute("CREATE TABLE if not exists 'Property' ('id' INTEGER NOT NULL, 'Attribute' TEXT NOT NULL, 'Value' TEXT NOT NULL, PRIMARY KEY('id'))");
     }
 
+    public static void saveInBD(int key, String stringFrom, boolean isInitialForm) {
+        if(!isInitialForm) {
+            saveInBD(BD_WORD_FORM_STRING,  key, stringFrom);
+        } else {
+            throw new RuntimeException("Попытка запись начальную форму в не ту БД!");
+        }
+    }
+
     public static int saveInBD(String stringFrom, boolean isInitialForm) {
         int keyInBb;
         if(isInitialForm) {

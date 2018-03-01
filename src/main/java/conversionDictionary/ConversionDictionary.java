@@ -40,22 +40,18 @@ package conversionDictionary;
 
 import static conversionDictionary.BDSqliteForConversion.closeBDs;
 import static conversionDictionary.BDSqliteForConversion.saveInBD;
-import static conversionDictionary.FormForConversion.getPrimitiveBytes;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.util.*;
 import load.FileHelper;
 
-
 public class ConversionDictionary {
 
     private static final byte[] CONTROL_VALUE;
-    private static int nextKeyInBdInitialForm = Property.;
-    private static int nextKeyInBdWordForm = 0;
     private static final String FIRST_TAG = "<(/lemma|lemma.?id=\"\\d+\".?rev=\"\\d+\")>";
     private static final String SPLIT_TAG = "</(l|f)>";
     private static final String DELETE_TAG = "(<(l|f|g) (t|v)=\"|/?>)";
-    private static final Map<String, String> MAP = new HashMap<>();
+    private static final Map<String, Integer> MAP_WORD_FORM = new HashMap<>();
     private static BufferedReader readerSourceDictionary;
     private static FileOutputStream streamKeyAndHashAndMorfCharacteristics;
 
@@ -79,6 +75,7 @@ public class ConversionDictionary {
 
     private static void conversionDictionary() {
         searchFirstLemma();
+        conversionLemmas();
 
         /**
          * проводит в единный формат для конвертации
@@ -100,30 +97,21 @@ public class ConversionDictionary {
 
     private static void searchFirstLemma() {
         while(!FileHelper.readLine(readerSourceDictionary).trim().equals("<lemmata>")){}
-        for(List<FormForConversion> formList : conversionLemmas()) {
-            for(FormForConversion form : formList) {
-                saveInBd(form);
-            }
-        }
     }
 
-    private static List<List<FormForConversion>> conversionLemmas() {
-        List lemmas = new ArrayList<>();
+    private static void conversionLemmas() {
         while(FileHelper.ready(readerSourceDictionary)) {
             String stringLemma = FileHelper.readLine(readerSourceDictionary);
-            lemmas.addAll(conversionLemma(stringLemma));
+            conversionAndSaveLemma(stringLemma);
         }
-        return lemmas;
     }
 
-    public static List<FormForConversion> conversionLemma(String lemmaString) {
-        List<FormForConversion> formList = new LinkedList<>();
+    public static void conversionAndSaveLemma(String lemmaString) {
         String[] tagList = getTagLemma(lemmaString);
-        formList.add(createdForm(splitCharacteristics(tagList[0]), true));
+        saveForm(splitCharacteristics(tagList[0]), true);
         for(int i = 1; i < tagList.length; i++) {
-            formList.add(createdForm(splitCharacteristics(tagList[i]), false));
+            saveForm(splitCharacteristics(tagList[i]), false);
         }
-        return formList;
     }
 
     public static String[] getTagLemma(String lemmaString) {
@@ -135,15 +123,80 @@ public class ConversionDictionary {
         return tag.replaceAll(DELETE_TAG, "").split("\"");
     }
 
-    public static FormForConversion createdForm(String[] stringCharacteristics, boolean isInitialForm) {
-        FormForConversion form = new FormForConversion();
-        form.setStringName(stringCharacteristics[0], isInitialForm);
-        form.setPartOfSpeec(getPartOfSpeech(stringCharacteristics));
-        form.setMorfCharacteristics(getMorfCharacteristics(stringCharacteristics));
-        if(!isInitialForm && MAP.containsKey(stringCharacteristics[0])) {
-            MAP.put(stringCharacteristics[0], stringCharacteristics[0]);
+    public static void saveForm(String[] stringCharacteristics, boolean isInitialForm) {
+        String stringForm = stringCharacteristics[0];
+        int key;
+        if(isInitialForm){
+            key = saveInBD(stringForm, isInitialForm);
+        } else {
+            if(MAP_WORD_FORM.containsKey(stringForm)) {
+                key = MAP_WORD_FORM.get(stringForm);
+                saveInBD(key, stringForm, isInitialForm);
+            } else {
+                key = saveInBD(stringForm, isInitialForm);
+                MAP_WORD_FORM.put(stringForm, key);
+            }
         }
-        return form;
+
+
+        saveInFile(key, stringCharacteristics, isInitialForm);
+    }
+
+    public static void saveInFile(int key, String[] stringCharacteristics, boolean isInitialForm) {
+        byte[] bytes = getByteFileFormat(key, stringCharacteristics);
+        FileHelper.write(streamKeyAndHashAndMorfCharacteristics, bytes);
+    }
+
+    public static byte[] getByteFileFormat(int key, String[] stringCharacteristics) {
+        List<Byte> byteList = new ArrayList<>();
+        byteList.addAll(Arrays.asList(getBytes(key)));
+        byteList.addAll(Arrays.asList(getBytes(stringCharacteristics[0].hashCode())));
+        byteList.addAll(Arrays.asList(getPartOfSpeech(stringCharacteristics)));
+        byteList.addAll(Arrays.asList(getBytes(getMorfCharacteristics(stringCharacteristics))));
+        return conversionByte(byteList);
+    }
+
+    public static byte[] conversionByte(List<Byte> byteList) {
+        byte[] bytes = new byte[byteList.size()];
+        for(int i = 0; i < byteList.size(); i++) {
+            bytes[i] = byteList.get(i);
+        }
+        return bytes;
+    }
+
+    public static Byte[] getBytes(int value) {
+        Byte[] bytes = new Byte[]{
+                (byte) (value >> 24),
+                (byte) (value >> 16),
+                (byte) (value >> 8),
+                (byte) (value)
+        };
+        return bytes;
+    }
+
+    public static byte[] getPrimitiveBytes(int value) {
+        byte[] bytes = new byte[]{
+                (byte) (value >> 24),
+                (byte) (value >> 16),
+                (byte) (value >> 8),
+                (byte) (value)
+        };
+        return bytes;
+    }
+
+
+    public static Byte[] getBytes(long value) {
+        Byte[] bytes = new Byte[]{
+                (byte) (value >> 56),
+                (byte) (value >> 48),
+                (byte) (value >> 40),
+                (byte) (value >> 32),
+                (byte) (value >> 24),
+                (byte) (value >> 16),
+                (byte) (value >> 8),
+                (byte) (value)
+        };
+        return bytes;
     }
 
     public static byte getPartOfSpeech(String[] stringPartOfSpeech) {
@@ -160,12 +213,6 @@ public class ConversionDictionary {
         return 0;
     }
 
-
-    public static void saveInBd(FormForConversion form) {
-        if(MAP.contains)
-        form.setKeyInBd(saveInBD(form.getStringFrom(), form.getIsInitialForm()));
-    }
-
     public static void closeFiles() {
         FileHelper.closeFile(readerSourceDictionary);
         FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
@@ -173,10 +220,8 @@ public class ConversionDictionary {
     }
 
     public static void main(String[] args) {
-        String old = " <lemma id=\"1\" rev=\"1\"><l t=\"ёж\"><g v=\"NOUN\"/><g v=\"anim\"/><g v=\"masc\"/></l><f t=\"ёж\"><g v=\"sing\"/><g v=\"nomn\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"gent\"/></f><f t=\"ежу\"><g v=\"sing\"/><g v=\"datv\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"accs\"/></f><f t=\"ежом\"><g v=\"sing\"/><g v=\"ablt\"/></f><f t=\"еже\"><g v=\"sing\"/><g v=\"loct\"/></f><f t=\"ежи\"><g v=\"plur\"/><g v=\"nomn\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"gent\"/></f><f t=\"ежам\"><g v=\"plur\"/><g v=\"datv\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"accs\"/></f><f t=\"ежами\"><g v=\"plur\"/><g v=\"ablt\"/></f><f t=\"ежах\"><g v=\"plur\"/><g v=\"loct\"/></f></lemma>";
-        System.out.print(conversionLemma(old));
+//        String old = " <lemma id=\"1\" rev=\"1\"><l t=\"ёж\"><g v=\"NOUN\"/><g v=\"anim\"/><g v=\"masc\"/></l><f t=\"ёж\"><g v=\"sing\"/><g v=\"nomn\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"gent\"/></f><f t=\"ежу\"><g v=\"sing\"/><g v=\"datv\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"accs\"/></f><f t=\"ежом\"><g v=\"sing\"/><g v=\"ablt\"/></f><f t=\"еже\"><g v=\"sing\"/><g v=\"loct\"/></f><f t=\"ежи\"><g v=\"plur\"/><g v=\"nomn\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"gent\"/></f><f t=\"ежам\"><g v=\"plur\"/><g v=\"datv\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"accs\"/></f><f t=\"ежами\"><g v=\"plur\"/><g v=\"ablt\"/></f><f t=\"ежах\"><g v=\"plur\"/><g v=\"loct\"/></f></lemma>";
+        ConversionDictionary.conversionDictionary("C:/TFWWT/MorphologicalStructures/dict.opcorpora.xml", "UTF-8");
     }
-
-
 
 }
