@@ -43,15 +43,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import load.FileHelper;
 
+import static conversionDictionary.BDSqliteForConversion.closeDB;
 import static morphologicalstructures.Property.START_ID_INITIAL_SAVE;
 
 public class ConversionDictionary {
@@ -77,6 +76,7 @@ public class ConversionDictionary {
     public static void conversionDictionary(String sourceDictionaryPath, String encoding) {
         initFiles(sourceDictionaryPath, encoding);
         conversionDictionary();
+        closeFiles();
     }
 
     //TODO:PATH_KEY_HASH_AND_MORF_CHARACTERISTICS in ZIP
@@ -89,6 +89,7 @@ public class ConversionDictionary {
 
     private static void conversionDictionary() {
         searchFirstLemma();
+        conversionLemmas();
 
         /**
          * проводит в единный формат для конвертации
@@ -115,14 +116,14 @@ public class ConversionDictionary {
     private static void conversionLemmas() {
         while(FileHelper.ready(readerSourceDictionary)) {
             String stringLemma = FileHelper.readLine(readerSourceDictionary);
-            List<Form> r = conversionLemma(stringLemma);
+            List<Form> forms = conversionLemma(stringLemma);
         }
     }
 
     public static List<Form> conversionLemma(String lemmaString) {
         List<Form> formList = new LinkedList<>();
         for(String tag : getTagLemma(lemmaString)) {
-            formList.add(createdT(tag.replaceAll(DELETE_TAG, "").split("\"")));
+            formList.add(createdForm(tag.replaceAll(DELETE_TAG, "").split("\"")));
         }
         return formList;
     }
@@ -132,7 +133,7 @@ public class ConversionDictionary {
         return lemmaStringTemp.split(SPLIT_TAG);
     }
 
-    public static Form createdT(String[] stringCharacteristics) {
+    public static Form createdForm(String[] stringCharacteristics) {
         Form form = new Form();
         form.setStringName(stringCharacteristics[0]);
         form.setPartOfSpeec(getPartOfSpeech(stringCharacteristics));
@@ -142,7 +143,7 @@ public class ConversionDictionary {
 
     public static byte getPartOfSpeech(String[] stringPartOfSpeech) {
         if(stringPartOfSpeech.length > 0) {
-            return 0;
+            return stringPartOfSpeech[1];
         }
         return 0;
     }
@@ -154,137 +155,37 @@ public class ConversionDictionary {
         return 0;
     }
 
-    private static String leadToClearStyle(String oldLemma) {
-        String newLemma = oldLemma;
-        return newLemma;
-    }
-//    private static HashMap<Integer, IdAndString> generateMapIdAndString(BufferedReader outReader) {
-//        HashMap<Integer, IdAndString> mapStringAndId = new HashMap<>();
-//        try {
-//            int id = 0;
-//            mapStringAndId.put(0, new IdAndString("??_??_???????", 0));
-//            while (outReader.ready()) {
-//                id++;
-//                String word = outReader.readLine();
-//                IdAndString stringAndID = new IdAndString(word, id);
-//                mapStringAndId.put(stringAndID.hashCode(), stringAndID);
-//                if(word.matches("ё")) {
-//                    stringAndID = new IdAndString(word.replace("ё", "e"), id);
-//                    mapStringAndId.put(stringAndID.hashCode(), stringAndID);
-//                }
-//            }
-//        } catch (IOException ex) {
-//            Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return mapStringAndId;
-//    }
-
-
-//    private void saveInBD(String nameBD, HashMap<Integer, IdAndString> stringFormAndId) {
-//        BDSqlite outBD = new BDSqlite(nameBD);
-//        outBD.execute("CREATE TABLE if not exists 'Form' ('id' INTEGER NOT NULL, 'StringForm' TEXT NOT NULL, PRIMARY KEY('id'))");
-//        saveStringAndIdInBD(stringFormAndId, outBD);
-//        outBD.closeDB();
-//    }
-
-//    private void saveStringAndIdInBD(HashMap<Integer, IdAndString> stringFormAndId, BDSqlite outDBWordFormString) {
-
-//        outDBWordFormString.execute("BEGIN TRANSACTION");
-//        for (Object obj : stringFormAndId.values()) {
-//            IdAndString idAndString = (IdAndString) obj;
-//            outDBWordFormString.execute(String.format("INSERT INTO 'Form' ('id','StringForm') VALUES (%d, '%s'); ", idAndString.myId, idAndString.myString));
-//        }
-//        outDBWordFormString.execute("END TRANSACTION");
-//    }
-
-    private void saveInitialForm(String strForms) {
-        String strInitialForm;
-        if (strForms.contains("\"")) {
-            strInitialForm = strForms.substring(0, strForms.indexOf("\""));
-        } else {
-            strInitialForm = strForms;
-        }
-        String[] initialFormParameters = strInitialForm.split(" ");
-
-//        stringInitialFormAndId.put(0, new IdAndString("?????_??_???????", 0));
+    private static HashMap<Integer, IdAndString> generateMapIdAndString(BufferedReader outReader) {
+        HashMap<Integer, IdAndString> mapStringAndId = new HashMap<>();
         try {
-            idInitialSave++;
-            streamKeyAndHashAndMorfCharacteristics.write(getBytes(initialFormParameters[0].hashCode()));
-            streamKeyAndHashAndMorfCharacteristics.write(Byte.decode("0x" + initialFormParameters[1]));
-            streamKeyAndHashAndMorfCharacteristics.write(getBytes(new BigInteger(initialFormParameters[2], 16).longValue()));
-            streamKeyAndHashAndMorfCharacteristics.write(getBytes(idInitialSave));
-
-//            IdAndString stringAndID = new IdAndString(initialFormParameters[0], idInitialSave);
-//            stringInitialFormAndId.put(stringAndID.myId, stringAndID);
-        } catch (IOException ex) {
-            Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NumberFormatException ex) {
-            System.err.println("");
-        }
-    }
-
-
-
-    private void saveForm(String strForm) {
-
-        String[] wordlFormParameters = strForm.split(" ");
-        int hashCodeForm = 0;
-        try {
-            hashCodeForm = wordlFormParameters[0].hashCode();
-            streamKeyAndHashAndMorfCharacteristics.write(getBytes(hashCodeForm));
-            streamKeyAndHashAndMorfCharacteristics.write(getBytes(new BigInteger(wordlFormParameters[1], 16).longValue()));
-//            streamKeyAndHashAndMorfCharacteristics.write(getBytes(stringWordFormAndId.get(hashCodeForm).myId));
-        } catch (IOException ex) {
-            Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, strForm, ex);
-        }
-    }
-
-    private void saveEndLemma() {
-        try {
-            streamKeyAndHashAndMorfCharacteristics.write(CONTROL_VALUE);
-        } catch (IOException ex) {
-            Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void closeFiles() {
-        FileHelper.closeFile(readerSourceDictionary);
-        FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
-    }
-
-    public static void createdInitianAndWordFormString() {
-        BufferedReader inDictionary = FileHelper.openBufferedReaderStream("dictionary.format.number.txt", PropertyForConversion.ENCODING);
-        BufferedWriter outInitianString = FileHelper.openBufferedWriterStream(PropertyForConversion.PATH_INITIAL_FORM_STRING, PropertyForConversion.ENCODING);
-        BufferedWriter outWordString = FileHelper.openBufferedWriterStream(PropertyForConversion.PATH_WORD_FORM_STRING, PropertyForConversion.ENCODING);
-
-        try {
-            inDictionary.readLine();
-            while (inDictionary.ready()) {
-                String[] str = inDictionary.readLine().split("\"");
-
-                String[] lemms = str[0].split(" ");
-                outInitianString.append(lemms[0]);
-                outInitianString.newLine();
-
-                for (int i = 1; i < str.length; i++) {
-                    outWordString.append(str[i].split(" ")[0]);
-                    outWordString.newLine();
+            int id = 0;
+            mapStringAndId.put(0, new IdAndString("??_??_???????", 0));
+            while (outReader.ready()) {
+                id++;
+                String word = outReader.readLine();
+                IdAndString stringAndID = new IdAndString(word, id);
+                mapStringAndId.put(stringAndID.hashCode(), stringAndID);
+                if(word.matches("ё")) {
+                    stringAndID = new IdAndString(word.replace("ё", "e"), id);
+                    mapStringAndId.put(stringAndID.hashCode(), stringAndID);
                 }
             }
         } catch (IOException ex) {
             Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                outInitianString.close();
-                outWordString.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
 
+        return mapStringAndId;
+    }
+
+
+    public static int saveFormInBd(String stringForm, boolean isInitialForm) {
+        return 0;
+    }
+
+    public static void closeFiles() {
+        FileHelper.closeFile(readerSourceDictionary);
+        FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
+        closeDB();
     }
 
     public static void main(String[] args) {
@@ -292,64 +193,6 @@ public class ConversionDictionary {
         System.out.print(conversionLemma(old));
     }
 
-    public static class Form {
 
-        private String stringName;
-        private byte partOfSpeec;
-        private long morfCharacteristics;
-
-        public void setStringName(String stringName) {
-            this.stringName = stringName;
-        }
-
-        public void setPartOfSpeec(byte partOfSpeec) {
-            this.partOfSpeec = partOfSpeec;
-        }
-
-        public void setMorfCharacteristics(long morfCharacteristics) {
-            this.morfCharacteristics = morfCharacteristics;
-        }
-
-        public byte[] getByteFileFormat() {
-            List<Byte> byteList = new ArrayList<>();
-            byteList.add(partOfSpeec);
-            byteList.add(partOfSpeec);
-            byteList.add(getBytes(morfCharacteristics));
-            return conversionByte(byteList);
-        }
-
-        private byte[] conversionByte(List<Byte> byteList) {
-            byte[] bytes = new byte[byteList.size()];
-            for(int i = 0; i < byteList.size(); i++) {
-                bytes[i] = byteList.get(i);
-            }
-            return bytes;
-        }
-        
-        private static byte[] getBytes(int value) {
-            byte[] bytes = new byte[]{
-                (byte) (value >> 24),
-                (byte) (value >> 16),
-                (byte) (value >> 8),
-                (byte) (value)
-            };
-            return bytes;
-        }
-
-        private static byte[] getBytes(long value) {
-            byte[] bytes = new byte[]{
-                (byte) (value >> 56),
-                (byte) (value >> 48),
-                (byte) (value >> 40),
-                (byte) (value >> 32),
-                (byte) (value >> 24),
-                (byte) (value >> 16),
-                (byte) (value >> 8),
-                (byte) (value)
-            };
-            return bytes;
-        }
-
-    }
 
 }
