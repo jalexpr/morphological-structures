@@ -52,7 +52,7 @@ public class FileHelper {
             return new Scanner(openZipFile(pathZipFile, pathFile), encoding);
         } catch (FileNotFoundException ex) {
             String messages = String.format("Ошибка при чтении файла.%sПроверте наличие %s, в случае отсуствия скачайте с репозитория %s%s",
-                    System.lineSeparator(), pathFile, Property.MYREPOSITORY, System.lineSeparator());
+                    System.lineSeparator(), pathFile, Property.MY_REPOSITORY, System.lineSeparator());
             Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
             throw new Exception();
         }

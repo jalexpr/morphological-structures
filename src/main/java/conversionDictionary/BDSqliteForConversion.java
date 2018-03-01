@@ -1,46 +1,58 @@
 package conversionDictionary;
 
+import load.BDFormString;
 import load.BDSqlite;
 
 public class BDSqliteForConversion {
 
-    private static int nextKeyInBdInitialForm;
-    private static int nextKeyInBdWordForm;
-    private static BDSqlite bdInitialForm = new BDSqlite(PropertyForConversion.PATH_BD_INITIAL_FORM);
-    private static BDSqlite bdWordForm = new BDSqlite(PropertyForConversion.PATH_BD_WORD_FORM);
+    private static int nextKeyInBdWordForm = 1;
+    private static int nextKeyInBdInitialForm = BDFormString.START_ID_INITIAL_SAVE;
+    private static final BDSqlite BD_INITIAL_FORM_STRING = BDFormString.BD_INITIAL_FORM_STRING;
+    private static final BDSqlite BD_WORD_FORM_STRING = BDFormString.BD_WORD_FORM_STRING;
 
     static {
-        bdInitialForm.execute("BEGIN TRANSACTION");
-        bdWordForm.execute("BEGIN TRANSACTION");
+        createDd(BD_INITIAL_FORM_STRING);
+        createDd(BD_WORD_FORM_STRING);
     }
 
+    private static void createDd(BDSqlite bds) {
+        addDataInBd(bds);
+        createTables(bds);
+        bds.execute("BEGIN TRANSACTION");
+    }
 
+    private static void addDataInBd(BDSqlite bds) {
+    }
+
+    private static void createTables(BDSqlite bds) {
+        bds.execute("CREATE TABLE if not exists 'Form' ('id' INTEGER NOT NULL, 'StringForm' TEXT NOT NULL, PRIMARY KEY('id'))");
+        bds.execute("CREATE TABLE if not exists 'Property' ('id' INTEGER NOT NULL, 'Attribute' TEXT NOT NULL, 'Value' TEXT NOT NULL, PRIMARY KEY('id'))");
+    }
 
     public static int saveInBD(String stringFrom, boolean isInitialForm) {
-        int key_in_db;
+        int keyInBb;
         if(isInitialForm) {
-            key_in_db = nextKeyInBdInitialForm++;
+            keyInBb = nextKeyInBdInitialForm++;
+            saveInBD(BD_INITIAL_FORM_STRING, keyInBb, stringFrom);
         } else {
-            key_in_db = nextKeyInBdWordForm++;
+            keyInBb = nextKeyInBdWordForm++;
+            saveInBD(BD_WORD_FORM_STRING,  keyInBb, stringFrom);
         }
-        outBD.execute("CREATE TABLE if not exists 'Form' ('id' INTEGER NOT NULL, 'StringForm' TEXT NOT NULL, PRIMARY KEY('id'))");
-        saveStringAndIdInBD(stringFormAndId, outBD);
-        outBD.closeDB();
-        return key_in_db;
+        return keyInBb;
     }
 
-    private void saveInBD(HashMap<Integer, IdAndString> stringFormAndId, BDSqlite outDBWordFormString) {
-
-        for (Object obj : stringFormAndId.values()) {
-            IdAndString idAndString = (IdAndString) obj;
-            outDBWordFormString.execute(String.format("INSERT INTO 'Form' ('id','StringForm') VALUES (%d, '%s'); ", idAndString.myId, idAndString.myString));
-        }
-        outDBWordFormString.execute("END TRANSACTION");
+    private static void saveInBD(BDSqlite outDBWordFormString, int key, String stringForm) {
+        outDBWordFormString.execute(String.format("INSERT INTO 'Form' ('id','StringForm') VALUES (%d, '%s'); ", key, stringForm));
     }
 
-    public static void closeDB() {
-        bdInitialForm.closeDB();
-        bdWordForm.closeDB();
+    public static void closeBDs() {
+        closeBD(BD_INITIAL_FORM_STRING);
+        closeBD(BD_WORD_FORM_STRING);
+    }
+
+    private static void closeBD(BDSqlite bDSqlite) {
+        bDSqlite.execute("END TRANSACTION");
+        bDSqlite.closeDB();
     }
 
 }

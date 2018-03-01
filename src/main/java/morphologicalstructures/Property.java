@@ -47,7 +47,7 @@ import org.xml.sax.SAXException;
 
 public final class Property {
 
-    public final static String MYREPOSITORY                         = "https://github.com/jalexpr/MorphologicalStructures";
+    public final static String MY_REPOSITORY                         = "https://github.com/jalexpr/MorphologicalStructures";
     public final static String PATH_ZIP_DICTIONARY                  = "dictionary/dictionary.zip";
     public final static String PATH_BD_WORD_FORM                    = "dictionary/dictionary.wordFormString.bd";
     public final static String PATH_BD_INITIAL_FORM                 = "dictionary/dictionary.initialFormString.bd";
