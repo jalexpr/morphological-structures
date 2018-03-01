@@ -44,7 +44,10 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import load.FileHelper;
@@ -61,6 +64,9 @@ public class ConversionDictionary {
     private int idInitialSave = START_ID_INITIAL_SAVE;
     private static BDSqlite CONNECT_BD_INITIAL_FORM;
     private static BDSqlite CONNECT_BD_WORD_FORM;
+    private static final String FIRST_TAG = "<(/lemma|lemma.?id=\"\\d+\".?rev=\"\\d+\")>";
+    private static final String SPLIT_TAG = "</(l|f)>";
+    private static final String DELETE_TAG = "(<(l|f|g) (t|v)=\"|/?>)";
 
     static {
         CONTROL_VALUE = getBytes(PropertyForConversion.CONTROL_VALUE);// new byte[]{-1, -1, -1, -1};
@@ -109,30 +115,43 @@ public class ConversionDictionary {
     private static void conversionLemmas() {
         while(FileHelper.ready(readerSourceDictionary)) {
             String stringLemma = FileHelper.readLine(readerSourceDictionary);
-
+            List<Form> r = conversionLemma(stringLemma);
         }
     }
 
-    public static String conversionLemma(String oldLemma) {
-        String newLemma = deleteTegs(oldLemma);
-        newLemma = leadToClearStyle(newLemma);
-        String[] arr = newLemma.split("</[fl]>");
-        for(String line : arr) {
-            System.out.println(line);
+    public static List<Form> conversionLemma(String lemmaString) {
+        List<Form> formList = new LinkedList<>();
+        for(String tag : getTagLemma(lemmaString)) {
+            formList.add(createdT(tag.replaceAll(DELETE_TAG, "").split("\"")));
         }
-        return newLemma;
+        return formList;
     }
 
-    private static String deleteTegs(String oldLemma) {
-        String newLemma = oldLemma.toLowerCase();
-        newLemma = newLemma.replaceAll("[ ]+", "");
-        newLemma = newLemma.replaceAll("<lemmaid=\"[\\d]+\"rev=\"[\\d]+\">", "");
-        newLemma = newLemma.replaceAll("</lemma>", "");
-        newLemma = newLemma.replaceAll("[tv]=", "");
-        newLemma = newLemma.replaceAll("[\"]", "");
-        newLemma = newLemma.replaceAll("<[lfg]", "<");
-        newLemma = newLemma.replaceAll("/>", ">");
-        return newLemma;
+    public static String[] getTagLemma(String lemmaString) {
+        String lemmaStringTemp = lemmaString.trim().toLowerCase().replaceAll(FIRST_TAG, "");
+        return lemmaStringTemp.split(SPLIT_TAG);
+    }
+
+    public static Form createdT(String[] stringCharacteristics) {
+        Form form = new Form();
+        form.setStringName(stringCharacteristics[0]);
+        form.setPartOfSpeec(getPartOfSpeech(stringCharacteristics));
+        form.setMorfCharacteristics(getMorfCharacteristics(stringCharacteristics));
+        return form;
+    }
+
+    public static byte getPartOfSpeech(String[] stringPartOfSpeech) {
+        if(stringPartOfSpeech.length > 0) {
+            return 0;
+        }
+        return 0;
+    }
+
+    public static long getMorfCharacteristics(String[] stringCharacteristics) {
+        for(int i = 2; i < stringCharacteristics.length; i++) {
+
+        }
+        return 0;
     }
 
     private static String leadToClearStyle(String oldLemma) {
@@ -205,29 +224,7 @@ public class ConversionDictionary {
         }
     }
 
-    private static byte[] getBytes(int value) {
-        byte[] bytes = new byte[]{
-            (byte) (value >> 24),
-            (byte) (value >> 16),
-            (byte) (value >> 8),
-            (byte) (value)
-        };
-        return bytes;
-    }
 
-    private static byte[] getBytes(long value) {
-        byte[] bytes = new byte[]{
-            (byte) (value >> 56),
-            (byte) (value >> 48),
-            (byte) (value >> 40),
-            (byte) (value >> 32),
-            (byte) (value >> 24),
-            (byte) (value >> 16),
-            (byte) (value >> 8),
-            (byte) (value)
-        };
-        return bytes;
-    }
 
     private void saveForm(String strForm) {
 
@@ -293,6 +290,66 @@ public class ConversionDictionary {
     public static void main(String[] args) {
         String old = " <lemma id=\"1\" rev=\"1\"><l t=\"ёж\"><g v=\"NOUN\"/><g v=\"anim\"/><g v=\"masc\"/></l><f t=\"ёж\"><g v=\"sing\"/><g v=\"nomn\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"gent\"/></f><f t=\"ежу\"><g v=\"sing\"/><g v=\"datv\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"accs\"/></f><f t=\"ежом\"><g v=\"sing\"/><g v=\"ablt\"/></f><f t=\"еже\"><g v=\"sing\"/><g v=\"loct\"/></f><f t=\"ежи\"><g v=\"plur\"/><g v=\"nomn\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"gent\"/></f><f t=\"ежам\"><g v=\"plur\"/><g v=\"datv\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"accs\"/></f><f t=\"ежами\"><g v=\"plur\"/><g v=\"ablt\"/></f><f t=\"ежах\"><g v=\"plur\"/><g v=\"loct\"/></f></lemma>";
         System.out.print(conversionLemma(old));
+    }
+
+    public static class Form {
+
+        private String stringName;
+        private byte partOfSpeec;
+        private long morfCharacteristics;
+
+        public void setStringName(String stringName) {
+            this.stringName = stringName;
+        }
+
+        public void setPartOfSpeec(byte partOfSpeec) {
+            this.partOfSpeec = partOfSpeec;
+        }
+
+        public void setMorfCharacteristics(long morfCharacteristics) {
+            this.morfCharacteristics = morfCharacteristics;
+        }
+
+        public byte[] getByteFileFormat() {
+            List<Byte> byteList = new ArrayList<>();
+            byteList.add(partOfSpeec);
+            byteList.add(partOfSpeec);
+            byteList.add(getBytes(morfCharacteristics));
+            return conversionByte(byteList);
+        }
+
+        private byte[] conversionByte(List<Byte> byteList) {
+            byte[] bytes = new byte[byteList.size()];
+            for(int i = 0; i < byteList.size(); i++) {
+                bytes[i] = byteList.get(i);
+            }
+            return bytes;
+        }
+        
+        private static byte[] getBytes(int value) {
+            byte[] bytes = new byte[]{
+                (byte) (value >> 24),
+                (byte) (value >> 16),
+                (byte) (value >> 8),
+                (byte) (value)
+            };
+            return bytes;
+        }
+
+        private static byte[] getBytes(long value) {
+            byte[] bytes = new byte[]{
+                (byte) (value >> 56),
+                (byte) (value >> 48),
+                (byte) (value >> 40),
+                (byte) (value >> 32),
+                (byte) (value >> 24),
+                (byte) (value >> 16),
+                (byte) (value >> 8),
+                (byte) (value)
+            };
+            return bytes;
+        }
+
     }
 
 }
