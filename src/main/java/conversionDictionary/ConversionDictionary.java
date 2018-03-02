@@ -38,26 +38,19 @@
 
 package conversionDictionary;
 
-import static conversionDictionary.BDSqliteForConversion.closeBDs;
-import static conversionDictionary.BDSqliteForConversion.saveInBD;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.util.*;
+
+import load.BDFormString;
 import load.FileHelper;
 
 public class ConversionDictionary {
 
-    private static final byte[] CONTROL_VALUE;
-    private static final String FIRST_TAG = "<(/lemma|lemma.?id=\"\\d+\".?rev=\"\\d+\")>";
-    private static final String SPLIT_TAG = "</(l|f)>";
-    private static final String DELETE_TAG = "(<(l|f|g) (t|v)=\"|/?>)";
-    private static final Map<String, Integer> MAP_WORD_FORM = new HashMap<>();
+    private static final byte[] CONTROL_VALUE = getPrimitiveBytes(PropertyForConversion.CONTROL_VALUE);
     private static BufferedReader readerSourceDictionary;
     private static FileOutputStream streamKeyAndHashAndMorfCharacteristics;
-
-    static {
-        CONTROL_VALUE = getPrimitiveBytes(PropertyForConversion.CONTROL_VALUE);
-    }
+    private static BDSqliteForConversion bds = new BDSqliteForConversion();
 
     private ConversionDictionary() {}
 
@@ -74,8 +67,8 @@ public class ConversionDictionary {
     }
 
     private static void conversionDictionary() {
-        searchFirstLemma();
-        conversionLemmas();
+
+        conversionLemmas(readerSourceDictionary);
 
         /**
          * проводит в единный формат для конвертации
@@ -95,77 +88,73 @@ public class ConversionDictionary {
         **/
     }
 
-    private static void searchFirstLemma() {
-        while(!FileHelper.readLine(readerSourceDictionary).trim().equals("<lemmata>")){}
-    }
-
-    private static void conversionLemmas() {
+    private static void conversionLemmas(BufferedReader readerSourceDictionary) {
+        List<Form> lemma;
         while(FileHelper.ready(readerSourceDictionary)) {
-            String stringLemma = FileHelper.readLine(readerSourceDictionary);
-            conversionAndSaveLemma(stringLemma);
+            lemma = conversionLemma(readerSourceDictionary);
+            saveLemma(lemma);
         }
     }
 
-    public static void conversionAndSaveLemma(String lemmaString) {
-        String[] tagList = getTagLemma(lemmaString);
-        saveForm(splitCharacteristics(tagList[0]), true);
-        for(int i = 1; i < tagList.length; i++) {
-            saveForm(splitCharacteristics(tagList[i]), false);
-        }
-    }
+    private static List<Form> conversionLemma(BufferedReader readerSourceDictionary) {
+        List<Form> forms = new LinkedList<>();
+        FileHelper.readLine(readerSourceDictionary);
+        Form initialForm = createForm(FileHelper.readLine(readerSourceDictionary), true);
+        forms.add(initialForm);
 
-    public static String[] getTagLemma(String lemmaString) {
-        String lemmaStringTemp = lemmaString.trim().toLowerCase().replaceAll(FIRST_TAG, "");
-        return lemmaStringTemp.split(SPLIT_TAG);
-    }
-
-    public static String[] splitCharacteristics(String tag) {
-        return tag.replaceAll(DELETE_TAG, "").split("\"");
-    }
-
-    public static void saveForm(String[] stringCharacteristics, boolean isInitialForm) {
-        String stringForm = stringCharacteristics[0];
-        int key;
-        if(isInitialForm){
-            key = saveInBD(stringForm, isInitialForm);
-        } else {
-            if(MAP_WORD_FORM.containsKey(stringForm)) {
-                key = MAP_WORD_FORM.get(stringForm);
-                saveInBD(key, stringForm, isInitialForm);
-            } else {
-                key = saveInBD(stringForm, isInitialForm);
-                MAP_WORD_FORM.put(stringForm, key);
+        while(FileHelper.ready(readerSourceDictionary)) {
+            String line = FileHelper.readLine(readerSourceDictionary);
+            if(line.trim().isEmpty()) {
+                break;
             }
+            forms.add(createForm(line, false));
         }
 
-
-        saveInFile(key, stringCharacteristics, isInitialForm);
+        return forms;
     }
 
-    public static void saveInFile(int key, String[] stringCharacteristics, boolean isInitialForm) {
-        byte[] bytes = getByteFileFormat(key, stringCharacteristics);
-        FileHelper.write(streamKeyAndHashAndMorfCharacteristics, bytes);
-    }
-
-    public static byte[] getByteFileFormat(int key, String[] stringCharacteristics) {
-        List<Byte> byteList = new ArrayList<>();
-        byteList.addAll(Arrays.asList(getBytes(key)));
-        byteList.addAll(Arrays.asList(getBytes(stringCharacteristics[0].hashCode())));
-        byteList.addAll(Arrays.asList(getPartOfSpeech(stringCharacteristics)));
-        byteList.addAll(Arrays.asList(getBytes(getMorfCharacteristics(stringCharacteristics))));
-        return conversionByte(byteList);
-    }
-
-    public static byte[] conversionByte(List<Byte> byteList) {
-        byte[] bytes = new byte[byteList.size()];
-        for(int i = 0; i < byteList.size(); i++) {
-            bytes[i] = byteList.get(i);
+    private static Form createForm(String line, boolean isInitialForm) {
+        String[] parameters = line.split("\t");
+        Form form = new Form(parameters[0], isInitialForm);
+        if(parameters.length > 1) {
+            form.setCharacteristics(parameters[1].split(","));
         }
-        return bytes;
+        return form;
     }
 
-    public static Byte[] getBytes(int value) {
-        Byte[] bytes = new Byte[]{
+    private static void saveLemma(List<Form> lemma) {
+        lemma.forEach((form -> {
+            saveForm(form);
+        }));
+    }
+
+    public static void saveForm(Form form) {
+        if(!form.isExistInBd()) {
+            bds.saveInBD(form);
+        }
+        saveInFile(form);
+    }
+
+    public static void saveInFile(Form form) {
+        FileHelper.write(streamKeyAndHashAndMorfCharacteristics, plusByte(form.getByteFileFormat(), CONTROL_VALUE));
+    }
+
+    public static byte[] plusByte(byte[] arrA, byte elmB) {
+        byte[] arrC = new byte[arrA.length + 1];
+        System.arraycopy(arrA, 0, arrC, 0, arrA.length);
+        arrC[arrA.length] = elmB;
+        return arrC;
+    }
+
+    public static byte[] plusByte(byte[] arrA, byte[] arrB) {
+        byte[] arrC = new byte[arrA.length + arrB.length];
+        System.arraycopy(arrA, 0, arrC, 0, arrA.length);
+        System.arraycopy(arrB, 0, arrC, arrA.length, arrB.length);
+        return arrC;
+    }
+
+    public static byte[] getBytes(int value) {
+        byte[] bytes = new byte[]{
                 (byte) (value >> 24),
                 (byte) (value >> 16),
                 (byte) (value >> 8),
@@ -185,8 +174,8 @@ public class ConversionDictionary {
     }
 
 
-    public static Byte[] getBytes(long value) {
-        Byte[] bytes = new Byte[]{
+    public static byte[] getBytes(long value) {
+        byte[] bytes = new byte[]{
                 (byte) (value >> 56),
                 (byte) (value >> 48),
                 (byte) (value >> 40),
@@ -216,12 +205,110 @@ public class ConversionDictionary {
     public static void closeFiles() {
         FileHelper.closeFile(readerSourceDictionary);
         FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
-        closeBDs();
+        bds.closeBDs();
     }
 
     public static void main(String[] args) {
 //        String old = " <lemma id=\"1\" rev=\"1\"><l t=\"ёж\"><g v=\"NOUN\"/><g v=\"anim\"/><g v=\"masc\"/></l><f t=\"ёж\"><g v=\"sing\"/><g v=\"nomn\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"gent\"/></f><f t=\"ежу\"><g v=\"sing\"/><g v=\"datv\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"accs\"/></f><f t=\"ежом\"><g v=\"sing\"/><g v=\"ablt\"/></f><f t=\"еже\"><g v=\"sing\"/><g v=\"loct\"/></f><f t=\"ежи\"><g v=\"plur\"/><g v=\"nomn\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"gent\"/></f><f t=\"ежам\"><g v=\"plur\"/><g v=\"datv\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"accs\"/></f><f t=\"ежами\"><g v=\"plur\"/><g v=\"ablt\"/></f><f t=\"ежах\"><g v=\"plur\"/><g v=\"loct\"/></f></lemma>";
-        ConversionDictionary.conversionDictionary("C:/TFWWT/MorphologicalStructures/dict.opcorpora.xml", "UTF-8");
+        ConversionDictionary.conversionDictionary("C:/TFWWT/MorphologicalStructures/dict.opcorpora.txt", "UTF-8");
+    }
+
+    protected static class Form {
+
+        public static final Map<String, Integer> STRING_INTEGER_WORD_FORM_MAP = new HashMap<>();
+        public static final Map<String, Integer> STRING_INTEGER_INITIAL_FORM_MAP = new HashMap<>();
+        private static final int START_ID_WORD_FORM = BDFormString.START_ID_WORD_FORM;
+
+        private String stringName;
+        private int key;
+        private byte partOfSpeech;
+        private byte[] morfCharacteristics;
+        private boolean isExistInBd;
+
+        public Form(String stringName, boolean isInitialForm) {
+            this.stringName = stringName.toLowerCase();
+            key = createKey(isInitialForm);
+        }
+
+        public String getStringName() {
+            return stringName;
+        }
+
+        public void setCharacteristics(String[] characteristics) {
+            setPartOfSpeech(conversionPartOfSpeech(characteristics[0]));
+            setMorfCharacteristics(getBytes(conversionMorfCharacteristics(characteristics)));
+        }
+
+        private void setPartOfSpeech(byte partOfSpeech) {
+            this.partOfSpeech = partOfSpeech;
+        }
+
+        private byte getPartOfSpeech() {
+            return partOfSpeech;
+        }
+
+        private static byte conversionPartOfSpeech(String partOfSpeech) {
+            return 0;
+        }
+
+        private static long conversionMorfCharacteristics(String[] morfCharacteristics) {
+            return 0;
+        }
+
+        private void setMorfCharacteristics(byte[] morfCharacteristics) {
+            this.morfCharacteristics = morfCharacteristics;
+        }
+
+        private byte[] getMorfCharacteristics() {
+            return morfCharacteristics;
+        }
+
+        private void setKey(int key) {
+            this.key = key;
+        }
+
+        public int getKey() {
+            return key;
+        }
+
+        public boolean isExistInBd() {
+            return isExistInBd;
+        }
+
+        private int createKey(boolean isInitialForm) {
+            if(isInitialForm) {
+                return createKey(STRING_INTEGER_INITIAL_FORM_MAP, 1);
+            } else {
+                return createKey(STRING_INTEGER_WORD_FORM_MAP, START_ID_WORD_FORM);
+            }
+        }
+
+        private int createKey(Map<String, Integer> stringFormMap, int startKey) {
+            if(stringFormMap.containsKey(getStringName())) {
+                isExistInBd = true;
+                return stringFormMap.get(getStringName());
+            } else {
+                isExistInBd = false;
+                int key = startKey + stringFormMap.size();
+                stringFormMap.put(getStringName(), key);
+                return key;
+            }
+        }
+
+        public boolean isInitialForm() {
+            return getKey() < START_ID_WORD_FORM;
+        }
+
+        public byte[] getByteFileFormat() {
+            byte[] hashCode = getBytes(getStringName().hashCode());
+            byte[] bytesFormat = plusByte(hashCode, getBytes(getKey()));
+            if(isInitialForm()) {
+                bytesFormat = plusByte(bytesFormat, getPartOfSpeech());
+            }
+            bytesFormat = plusByte(bytesFormat, getMorfCharacteristics());
+            return bytesFormat;
+        }
+
     }
 
 }
