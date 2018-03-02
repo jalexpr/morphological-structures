@@ -36,7 +36,7 @@
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
 
-package conversionDictionary;
+package conversiondictionary;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;

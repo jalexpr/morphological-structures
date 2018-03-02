@@ -1,8 +1,8 @@
-package conversionDictionary;
+package conversiondictionary;
 
 import load.BDFormString;
 import load.BDSqlite;
-import conversionDictionary.ConversionDictionary.Form;
+import conversiondictionary.ConversionDictionary.Form;
 
 public class BDSqliteForConversion {
 

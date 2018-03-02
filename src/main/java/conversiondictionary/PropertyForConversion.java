@@ -1,4 +1,4 @@
-package conversionDictionary;
+package conversiondictionary;
 
 import morphologicalstructures.Property;
 

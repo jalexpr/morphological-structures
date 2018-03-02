@@ -1,4 +1,4 @@
-package conversionDictionary;
+package conversiondictionary;
 
 import load.FileHelper;
 import org.tukaani.xz.LZMA2Options;
@@ -6,7 +6,6 @@ import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.LZMAOutputStream;
 
 import java.io.*;
-import java.lang.reflect.Field;
 
 import static load.FileHelper.openFileInputStream;
 import static load.FileHelper.openFileOutputStream;
