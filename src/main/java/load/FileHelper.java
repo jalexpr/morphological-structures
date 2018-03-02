@@ -89,16 +89,27 @@ public class FileHelper {
         return bufferedReader;
     }
 
-    public static FileOutputStream openFileInputStream(String pathFile) {
+    public static FileOutputStream openFileOutputStream(String pathFile) {
 
-        FileOutputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
         try {
-            fileInputStream = new FileOutputStream(pathFile);
+            fileOutputStream = new FileOutputStream(pathFile);
         } catch (FileNotFoundException ex) {
-            String messages = String.format("Ошибка при чтении файла.\r\nПроверте наличие %s\r\n", pathFile);
+            String messages = String.format("Ошибка при открытия файла.\r\nПроверте наличие %s\r\n", pathFile);
             Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
         }
+        return fileOutputStream;
+    }
 
+    public static FileInputStream openFileInputStream(String pathFile) {
+
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(pathFile);
+        } catch (FileNotFoundException ex) {
+            String messages = String.format("Ошибка при открытия файла.\r\nПроверте наличие %s\r\n", pathFile);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
+        }
         return fileInputStream;
     }
 

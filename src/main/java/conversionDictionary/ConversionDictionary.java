@@ -40,7 +40,10 @@ package conversionDictionary;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import load.BDFormString;
 import load.FileHelper;
@@ -63,7 +66,7 @@ public class ConversionDictionary {
     //TODO:PATH_KEY_HASH_AND_MORF_CHARACTERISTICS in ZIP
     private static void initFiles(String sourceDictionaryPath, String encoding) {
         readerSourceDictionary = FileHelper.openBufferedReaderStream(sourceDictionaryPath, encoding);
-        streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileInputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
+        streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileOutputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
     }
 
     private static void conversionDictionary() {
