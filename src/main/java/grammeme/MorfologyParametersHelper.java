@@ -1,24 +1,23 @@
 package grammeme;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import grammeme.MorfologyParameters.*;
-import java.util.Collection;
 
 public final class MorfologyParametersHelper {
 
-    public final static Map<Long, String> PARAMETERS_STRING = new HashMap<Long, String>();
-    public final static Map<Byte, String> TYPE_OF_SPEECH_STRING = new HashMap<Byte, String>();
+    public final static Map<Long, String> PARAMETERS_STRING = new HashMap<>();
+    public final static Map<String, Long> PARAMETERS_STRING_SHOT = new HashMap<>();
+    public final static Map<Byte, String> TYPE_OF_SPEECH_STRING = new HashMap<>();
+    public final static Map<String, Byte> TYPE_OF_SPEECH_STRING_SHOT = new HashMap<>();
     private final static Map<String, Long> IDENTIFIER_PARAMETERS_BY_CLASS = new HashMap<>();
 
     static {
         initIdentifierParametersMap();
         initStringParameters();
+        iniShotStringParameters();
     }
 
     private MorfologyParametersHelper() {}
@@ -46,6 +45,20 @@ public final class MorfologyParametersHelper {
                 initIdentifiearByParameterClass(TYPE_OF_SPEECH_STRING, parameterClass);
             }
         }
+    }
+
+    private static void iniShotStringParameters() {
+        TYPE_OF_SPEECH_STRING_SHOT.putAll(createShotStringParameters(TYPE_OF_SPEECH_STRING));
+        PARAMETERS_STRING_SHOT.putAll(createShotStringParameters(PARAMETERS_STRING));
+    }
+
+    private static <T extends Number> Map<String, T> createShotStringParameters(Map<T, String> mapSourcesParemeters) {
+        Map<String, T> mapParemeters = new HashMap<>();
+        for(T key : mapSourcesParemeters.keySet()) {
+            String shotValue = mapSourcesParemeters.get(key).substring(0,4).toLowerCase();
+            mapParemeters.put(shotValue, key);
+        }
+        return mapParemeters;
     }
 
     private static <T extends Number> void initIdentifiearByParameterClass(
@@ -76,6 +89,31 @@ public final class MorfologyParametersHelper {
 
     public static Collection<Long> getIdentifiers() {
         return IDENTIFIER_PARAMETERS_BY_CLASS.values();
+    }
+
+//    @Test
+    public static void main(String[] args) {
+        List<String> arr = new ArrayList<>(Arrays.asList("noun", "adjf", "adjs", "comp", "verb", "infn", "prtf", "prts",
+                "grnd", "numr", "advb", "npro", "pred", "prep", "conj", "prcl", "intj", "anim", "inan", "masc", "femn",
+                "neut", "ms-f", "sing", "plur", "sgtm", "pltm", "fixd", "case", "nomn", "gent", "datv", "accs", "ablt",
+                "loct", "voct", "gen1", "gen2", "acc2", "loc1", "loc2", "abbr", "name", "surn", "patr", "geox", "orgn",
+                "trad", "subx", "supr", "qual", "apro", "anum", "poss", "v-ey", "v-oy", "cmp2", "v-ej", "perf", "impf",
+                "tran", "intr", "impe", "impx", "mult", "refl", "1per", "2per", "3per", "pres", "past", "futr", "indc",
+                "impr", "incl", "excl", "actv", "pssv", "infr", "slng", "arch", "litr", "erro", "dist", "ques", "dmns",
+                "prnt", "v-be", "v-en", "v-ie", "v-bi", "fimp", "prdx", "coun", "coll", "v-sh", "af-p", "inmx", "vpre",
+                "anph", "init", "adjx", "ms-f"));
+        for(String str : TYPE_OF_SPEECH_STRING_SHOT.keySet()) {
+            if(!arr.remove(str)) {
+                System.out.println(str);
+            }
+        }
+
+        for(String str : PARAMETERS_STRING_SHOT.keySet()) {
+            if(!arr.remove(str)) {
+                System.out.println(str);
+            }
+        }
+
     }
 
 }
