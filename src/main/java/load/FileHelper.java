@@ -73,7 +73,6 @@ public class FileHelper {
     }
 
     public static BufferedReader openBufferedReaderStream(String pathFile, String encoding) {
-
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(pathFile), encoding));
@@ -90,7 +89,6 @@ public class FileHelper {
     }
 
     public static FileOutputStream openFileOutputStream(String pathFile) {
-
         FileOutputStream fileOutputStream = null;
         try {
             fileOutputStream = new FileOutputStream(pathFile);
@@ -113,8 +111,36 @@ public class FileHelper {
         return fileInputStream;
     }
 
-    public static BufferedWriter openBufferedWriterStream(String pathFile, String encoding) {
+    public static BufferedInputStream openBufferedInputStream(String pathFile) {
+        BufferedInputStream bufferedInput = null;
+        try {
+            bufferedInput = new BufferedInputStream(new FileInputStream(pathFile));
+        } catch (FileNotFoundException ex) {
+            String messages = String.format("Ошибка при чтении файла.\r\nПроверте наличие %s\r\n", pathFile);
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
+        }
+        return bufferedInput;
+    }
 
+    public static int available(BufferedInputStream bufferedInput) {
+        try {
+            return bufferedInput.available();
+        } catch (IOException ex) {
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public static int read(BufferedInputStream bufferedInput, byte[] buf) {
+        try {
+            return bufferedInput.read(buf);
+        } catch (IOException ex) {
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, "Ошибка при чтении файла.\r\n", ex);
+        }
+        return 0;
+    }
+
+    public static BufferedWriter openBufferedWriterStream(String pathFile, String encoding) {
         BufferedWriter bufferedWriter = null;
         try {
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile), encoding));
@@ -126,7 +152,6 @@ public class FileHelper {
                     pathFile, encoding);
             Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, messages, ex);
         }
-
         return bufferedWriter;
     }
 
@@ -171,6 +196,7 @@ public class FileHelper {
 
     public static void closeFile(OutputStream inputStream) {
         try {
+            inputStream.flush();
             inputStream.close();
         } catch (IOException ex) {
             Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
@@ -191,10 +217,16 @@ public class FileHelper {
 
     public static void closeFile(Writer writer) {
         try {
+            writer.flush();
             writer.close();
         } catch (IOException ex) {
             Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static void deleteFile(String pathFile) {
+        File file = new File(pathFile);
+        file.delete();
     }
 
 }

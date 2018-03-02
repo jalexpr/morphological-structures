@@ -48,6 +48,8 @@ import java.util.Map;
 import load.BDFormString;
 import load.FileHelper;
 
+import static load.BDFormString.compressionBd;
+
 public class ConversionDictionary {
 
     private static final byte[] CONTROL_VALUE = getPrimitiveBytes(PropertyForConversion.CONTROL_VALUE);
@@ -63,32 +65,17 @@ public class ConversionDictionary {
         closeFiles();
     }
 
-    //TODO:PATH_KEY_HASH_AND_MORF_CHARACTERISTICS in ZIP
     private static void initFiles(String sourceDictionaryPath, String encoding) {
         readerSourceDictionary = FileHelper.openBufferedReaderStream(sourceDictionaryPath, encoding);
         streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileOutputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
     }
 
     private static void conversionDictionary() {
-
         conversionLemmas(readerSourceDictionary);
-
-        /**
-         * проводит в единный формат для конвертации
-         * Написать метод, который распознает значение характеристики и переводит в шкалу.
-         * Для начальных формы записать в БД, записать в файл в формате ключ от БД, хэш-код, часть речи характеристика
-         * Для производный форм, проверить в мапе существует ли похожый хэш,
-         * если сущесвтует, то прерить одинаковый ли стринг,
-         *  если нет, то вывести в лог,
-         *  если да, то записать файл в формате ключ в БД (берем из мапы) хэшкод, характиристика
-         * если не сущевтует, то добавить в БД, добавить в мап где ключ это хэшкод а значение ключ в БД
-         *  и записать в файл
-         * проверить слово на йо, если да, то повторить операцию выше, но ключ берется тот же для слова, а не создается новый.
-         *
-         * повторят пока не пройдем все лемы
-         *
-         * закрыть все соединения
-        **/
+        bds.closeBDs();
+        compressionBd();
+//        TODO:compressionFile();
+//        TODO:проверить слово на йо, если да, то повторить операцию выше, но ключ берется тот же для слова, а не создается новый.
     }
 
     private static void conversionLemmas(BufferedReader readerSourceDictionary) {
@@ -208,7 +195,6 @@ public class ConversionDictionary {
     public static void closeFiles() {
         FileHelper.closeFile(readerSourceDictionary);
         FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
-        bds.closeBDs();
     }
 
     public static void main(String[] args) {
