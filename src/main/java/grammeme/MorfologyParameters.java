@@ -65,21 +65,25 @@ public interface MorfologyParameters {
         /**
          * общий род (м/ж)
          */
-        public static final long COMMON = 0x4L << 2;
+        public static final long COMMON = 0x0L << 2;
+        /**
+         * Гендер не выражен
+         */
+        public static final long UNCLEARGENDER  = 0x0L << 2;
         /**
          * мужской род
          */
-        public static final long MANS = 0x5L << 2;
+        public static final long MANS = 0x1L << 2;
         /**
          * женский род
          */
-        public static final long FEMININ = 0x6L << 2;
+        public static final long FEMININ = 0x2L << 2;
         /**
          * средний род
          */
-        public static final long NEUTER = 0x7L << 2;
+        public static final long NEUTER = 0x3L << 2;
 
-        public static final long IDENTIFIER = 0x7L << 2;
+        public static final long IDENTIFIER = 0x3L << 2;
     }
 
     /**
@@ -90,13 +94,13 @@ public interface MorfologyParameters {
         /**
          * единственное число
          */
-        public static final long SINGULAR = 0x2L << 5;
+        public static final long SINGULAR = 0x2L << 4;
         /**
          * множественное число
          */
-        public static final long PLURAL = 0x3L << 5;
+        public static final long PLURAL = 0x3L << 4;
 
-        public static final long IDENTIFIER = 0x3L << 5;
+        public static final long IDENTIFIER = 0x3L << 4;
     }
 
     /**
@@ -106,52 +110,52 @@ public interface MorfologyParameters {
         /**
          * именительный падеж
          */
-        public static final long NOMINATIVE = 0x1L << 7;
+        public static final long NOMINATIVE = 0x1L << 6;
         /**
          * родительный падеж, для обобщения - 1*10
          */
-        public static final long GENITIVE = 0x2L << 7;
+        public static final long GENITIVE = 0x2L << 6;
         /**
          * первый родительный падеж
          */
-        public static final long GENITIVE1 = 0xAL << 7;
+        public static final long GENITIVE1 = 0xAL << 6;
         /**
          * второй родительный (частичный) падеж
          */
-        public static final long GENITIVE2 = 0xEL << 7;
+        public static final long GENITIVE2 = 0xEL << 6;
         /**
          * дательный падеж
          */
-        public static final long DATIVE = 0x3L << 7;
+        public static final long DATIVE = 0x3L << 6;
         /**
          * винительный падеж, для обощения 1*00
          */
-        public static final long ACCUSATIVE = 0x8L << 7;
+        public static final long ACCUSATIVE = 0x8L << 6;
         /**
          * второй винительный падеж
          */
-        public static final long ACCUSATIVE2 = 0xCL << 7;
+        public static final long ACCUSATIVE2 = 0xCL << 6;
         /**
          * творительный падеж
          */
-        public static final long ABLTIVE = 0x5L << 7;
+        public static final long ABLTIVE = 0x5L << 6;
         /**
          * предложный падеж, для обобщения - 1*11
          */
-        public static final long PREPOSITIONA = 0x7L << 7;
+        public static final long PREPOSITIONA = 0x7L << 6;
         /**
          * первый предложный падеж
          */
-        public static final long PREPOSITIONA1 = 0xBL << 7;
+        public static final long PREPOSITIONA1 = 0xBL << 6;
         /**
          * второй предложный (местный) падеж
          */
-        public static final long PREPOSITIONA2 = 0xFL << 7;
+        public static final long PREPOSITIONA2 = 0xFL << 6;
         /**
          * звательный падеж
          */
-        public static final long VOATIVE = 0x9L << 7;
-        public static final long IDENTIFIER = 0xFL << 7;
+        public static final long VOATIVE = 0x9L << 6;
+        public static final long IDENTIFIER = 0xFL << 6;
     }
 
     /**
@@ -162,13 +166,13 @@ public interface MorfologyParameters {
         /**
          * совершенный вид
          */
-        public static final long PERFECT = 0x2L << 11;
+        public static final long PERFECT = 0x2L << 10;
         /**
          * несовершенный вид
          */
-        public static final long IMPERFECT = 0x3L << 11;
+        public static final long IMPERFECT = 0x3L << 10;
 
-        public static final long IDENTIFIER = 0x3L << 11;
+        public static final long IDENTIFIER = 0x3L << 10;
     }
 
     /**
@@ -179,13 +183,13 @@ public interface MorfologyParameters {
         /**
          * переходный
          */
-        public static final long TRAN = 0x2L << 13;
+        public static final long TRAN = 0x2L << 12;
         /**
          * непереходный
          */
-        public static final long INTR = 0x3L << 13;
+        public static final long INTR = 0x3L << 12;
 
-        public static final long IDENTIFIER = 0x3L << 13;
+        public static final long IDENTIFIER = 0x3L << 12;
     }
 
     /**
@@ -196,17 +200,17 @@ public interface MorfologyParameters {
         /**
          * 1 лицо
          */
-        public static final long PER1 = 0x1L << 15;
+        public static final long PER1 = 0x1L << 14;
         /**
          * 2 лицо
          */
-        public static final long PER2 = 0x2L << 15;
+        public static final long PER2 = 0x2L << 14;
         /**
          * 3 лицо
          */
-        public static final long PER3 = 0x3L << 15;
+        public static final long PER3 = 0x3L << 14;
 
-        public static final long IDENTIFIER = 0x3L << 15;
+        public static final long IDENTIFIER = 0x3L << 14;
     }
 
     /**
@@ -217,17 +221,17 @@ public interface MorfologyParameters {
         /**
          * настоящее время
          */
-        public static final long PRESENT = 0x1L << 17;
+        public static final long PRESENT = 0x1L << 16;
         /**
          * прошедшее время
          */
-        public static final long PAST = 0x2L << 17;
+        public static final long PAST = 0x2L << 16;
         /**
          * будущее время
          */
-        public static final long FUTURE = 0x3L << 17;
+        public static final long FUTURE = 0x3L << 16;
 
-        public static final long IDENTIFIER = 0x3L << 17;
+        public static final long IDENTIFIER = 0x3L << 16;
     }
 
     /**
@@ -238,13 +242,13 @@ public interface MorfologyParameters {
         /**
          * изъявительное наклонение
          */
-        public static final long INDICATIVE = 0x2L << 19;
+        public static final long INDICATIVE = 0x2L << 18;
         /**
          * повелительное наклонение
          */
-        public static final long IMPERATIVE = 0x3L << 19;
+        public static final long IMPERATIVE = 0x3L << 18;
 
-        public static final long IDENTIFIER = 0x3L << 19;
+        public static final long IDENTIFIER = 0x3L << 18;
     }
 
     /**
@@ -255,13 +259,13 @@ public interface MorfologyParameters {
         /**
          * говорящий включён (идем, идемте)
          */
-        public static final long INCLUSIVE = 0x2L << 21;
+        public static final long INCLUSIVE = 0x2L << 20;
         /**
          * говорящий не включён в действие (иди, идите)
          */
-        public static final long EXCLUSIVE = 0x3L << 21;
+        public static final long EXCLUSIVE = 0x3L << 20;
 
-        public static final long IDENTIFIER = 0x3L << 21;
+        public static final long IDENTIFIER = 0x3L << 20;
     }
 
     /**
@@ -272,13 +276,13 @@ public interface MorfologyParameters {
         /**
          * действительный залог
          */
-        public static final long ACTIVE = 0x2L << 23;
+        public static final long ACTIVE = 0x2L << 22;
         /**
          * страдательный залог
          */
-        public static final long PASSIVE = 0x3L << 23;
+        public static final long PASSIVE = 0x3L << 22;
 
-        public static final long IDENTIFIER = 0x3L << 23;
+        public static final long IDENTIFIER = 0x3L << 22;
     }
 
     /**
@@ -289,25 +293,25 @@ public interface MorfologyParameters {
         /**
          * аббревиатура
          */
-        public static final long ABBREVIATION = 0x1L << 25;
+        public static final long ABBREVIATION = 0x1L << 24;
         /**
          * имя
          */
-        public static final long NAME = 0x4L << 25;
+        public static final long NAME = 0x4L << 24;
         /**
          * фамилия
          */
-        public static final long SURN = 0x5L << 25;
+        public static final long SURN = 0x5L << 24;
         /**
          * отчество
          */
-        public static final long PARN = 0x6L << 25;
+        public static final long PART = 0x6L << 24;
         /**
          * Инициал
          */
-        public static final long INIT = 0x7L << 25;
+        public static final long INIT = 0x7L << 24;
 
-        public static final long IDENTIFIER = 0x7L << 25;
+        public static final long IDENTIFIER = 0x7L << 24;
     }
 
     /**
@@ -318,17 +322,17 @@ public interface MorfologyParameters {
         /**
          * местоименное
          */
-        public static final long APRO = 0x1L << 28;
+        public static final long APRO = 0x1L << 27;
         /**
          * порядковое
          */
-        public static final long ANUM = 0x2L << 28;
+        public static final long ANUM = 0x2L << 27;
         /**
          * притяжательное
          */
-        public static final long POSS = 0x3L << 28;
+        public static final long POSS = 0x3L << 27;
 
-        public static final long IDENTIFIER = 0x3L << 28;
+        public static final long IDENTIFIER = 0x3L << 27;
     }
 
     /**
@@ -339,17 +343,17 @@ public interface MorfologyParameters {
         /**
          * форма на _ье
          */
-        public static final long V_BE = 0x1L << 30;
+        public static final long V_BE = 0x1L << 29;
         /**
          * форма на _ие; отчество через _ие_
          */
-        public static final long V_IE = 0x2L << 30;
+        public static final long V_IE = 0x2L << 29;
         /**
          * форма на _ьи
          */
-        public static final long V_BI = 0x3L << 30;
+        public static final long V_BI = 0x3L << 29;
 
-        public static final long IDENTIFIER = 0x3L << 30;
+        public static final long IDENTIFIER = 0x3L << 29;
     }
 
     public interface Alone {

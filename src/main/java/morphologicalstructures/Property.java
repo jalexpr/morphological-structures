@@ -47,14 +47,15 @@ import org.xml.sax.SAXException;
 
 public final class Property {
 
-    public final static String MYREPOSITORY                         = "https://github.com/jalexpr/MorphologicalStructures";
-    public final static String PATH_ZIP_DICTIONARY                  = "dictionary/dictionary.zip";
+    public final static String MY_REPOSITORY                        = "https://github.com/jalexpr/MorphologicalStructures";
+    public final static String PATH_ZIP_DICTIONARY                  = "dictionary/dictionary.format.morfCharacteristic.zip";
     public final static String PATH_BD_WORD_FORM                    = "dictionary/dictionary.wordFormString.bd";
     public final static String PATH_BD_INITIAL_FORM                 = "dictionary/dictionary.initialFormString.bd";
     public final static String PATH_HASH_AND_MORF_CHARACTERISTICS   = "dictionary.format.morfCharacteristic";
     public final static int CONTROL_VALUE                           = -1;
 
-    public final static int START_ID_INITIAL_SAVE = 536870912;
+    public final static int START_ID_INITIAL_FORM = 1;
+    public final static int START_ID_WORD_FORM = 536870912;
 
     static {
         loadProperty();
@@ -103,4 +104,5 @@ public final class Property {
 //            }
 //        }
     }
+
 }

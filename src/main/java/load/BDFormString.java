@@ -1,29 +1,44 @@
 package load;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import morphologicalstructures.Property;
 
+import static load.FileHelper.deleteFile;
+import static load.Lzma2FileHelper.ARCHIVE_EXPANSION;
+import static load.Lzma2FileHelper.compressionFile;
+import static load.Lzma2FileHelper.deCompressionFile;
+
 public class BDFormString {
 
-    private final static BDSqlite BD_INITIAL_FORM_STRING = new BDSqlite(Property.PATH_BD_INITIAL_FORM);
-    private final static BDSqlite BD_WORD_FORM_STRING = new BDSqlite(Property.PATH_BD_WORD_FORM);
-    private final static int START_ID_INITIAL_SAVE = Property.START_ID_INITIAL_SAVE;
+    public final static String PATH_BD_INITIAL_FORM = Property.PATH_BD_INITIAL_FORM;
+    public final static String PATH_BD_WORD_FORM = Property.PATH_BD_WORD_FORM;
+    public final static BDSqlite BD_INITIAL_FORM_STRING;
+    public final static BDSqlite BD_WORD_FORM_STRING;
+    public final static int START_ID_INITIAL_FORM = Property.START_ID_INITIAL_FORM;
+    public final static int START_ID_WORD_FORM = Property.START_ID_WORD_FORM;
+
+    static {
+        deCompressDd();
+        BD_INITIAL_FORM_STRING = new BDSqlite(PATH_BD_INITIAL_FORM);
+        BD_WORD_FORM_STRING = new BDSqlite(PATH_BD_WORD_FORM);
+    }
 
     public static String getStringById(int idKey) {
-        if(idKey < START_ID_INITIAL_SAVE) {
-            return getStringById(idKey, false);
-        } else {
+        if(idKey < START_ID_WORD_FORM) {
             return getStringById(idKey, true);
+        } else {
+            return getStringById(idKey, false);
         }
     }
 
     public static String getStringById(int idKey, boolean isInitialForm) {
         try {
             ResultSet resultSet;
-            String executeString = String.format("SELECT * FROM  'Form' where id = %d", idKey);
+            String executeString = String.format("SELECT * FROM 'Form' where id = %d", idKey);
             if (isInitialForm) {
                 resultSet = BD_INITIAL_FORM_STRING.executeQuery(executeString);
             } else {
@@ -45,7 +60,7 @@ public class BDFormString {
         }
         return null;
     }
-    
+
     public static void printSumme(boolean isInitialForm) {
 
         try {
@@ -69,4 +84,35 @@ public class BDFormString {
             }
         }
     }
+
+    public static void compressionBd() {
+        compressionBd(BD_INITIAL_FORM_STRING, PATH_BD_INITIAL_FORM);
+        compressionBd(BD_WORD_FORM_STRING, PATH_BD_WORD_FORM);
+    }
+
+    public static void compressionBd(BDSqlite bds, String pathFile) {
+        bds.closeDB();
+        compressionFile(pathFile);
+        deleteFile(pathFile);
+    }
+
+    public static void deCompressDd() {
+        deCompressDd(PATH_BD_INITIAL_FORM);
+        deCompressDd(PATH_BD_WORD_FORM);
+    }
+
+    public static void deCompressDd(String pathBd) {
+        File file = new File(pathBd);
+        if(!file.exists()) {
+            file = new File(pathBd + ARCHIVE_EXPANSION);
+            if(file.exists()) {
+                deCompressionFile(pathBd + ARCHIVE_EXPANSION, pathBd);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+
+    }
+
 }

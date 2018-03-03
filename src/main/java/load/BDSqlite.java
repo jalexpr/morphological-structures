@@ -1,7 +1,5 @@
 package load;
 
-
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -13,7 +11,7 @@ import java.util.logging.Logger;
 public class BDSqlite {
 
     private Statement statmt;
-    
+
     public BDSqlite(String nameBD) {
         Connection conn;
         try {
@@ -24,7 +22,7 @@ public class BDSqlite {
             Logger.getLogger(BDSqlite.class.getName()).log(Level.SEVERE, "База не подключена!", ex);
         }
     }
-    
+
     public void execute(String query) {
         try {
             statmt.execute(query);
