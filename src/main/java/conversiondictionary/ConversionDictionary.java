@@ -49,6 +49,7 @@ import load.BDFormString;
 import load.FileHelper;
 
 import static load.BDFormString.compressionBd;
+import static load.FileHelper.zipCompressFile;
 
 public class ConversionDictionary {
 
@@ -56,6 +57,7 @@ public class ConversionDictionary {
     private static BufferedReader readerSourceDictionary;
     private static FileOutputStream streamKeyAndHashAndMorfCharacteristics;
     private static BDSqliteForConversion bds = new BDSqliteForConversion();
+    private static String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS;
 
     private ConversionDictionary() {}
 
@@ -67,14 +69,14 @@ public class ConversionDictionary {
 
     private static void initFiles(String sourceDictionaryPath, String encoding) {
         readerSourceDictionary = FileHelper.openBufferedReaderStream(sourceDictionaryPath, encoding);
-        streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileOutputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
+        streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileOutputStream(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
     }
 
     private static void conversionDictionary() {
         conversionLemmas(readerSourceDictionary);
-        bds.closeBDs();
+        closeFiles();
         compressionBd();
-//        TODO:compressionFile();
+        compressionFile();
 //        TODO:проверить слово на йо, если да, то повторить операцию выше, но ключ берется тот же для слова, а не создается новый.
     }
 
@@ -84,6 +86,10 @@ public class ConversionDictionary {
             lemma = conversionLemma(readerSourceDictionary);
             saveLemma(lemma);
         }
+    }
+
+    private static void compressionFile() {
+        zipCompressFile(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[0]);
     }
 
     private static List<Form> conversionLemma(BufferedReader readerSourceDictionary) {
@@ -195,11 +201,12 @@ public class ConversionDictionary {
     public static void closeFiles() {
         FileHelper.closeFile(readerSourceDictionary);
         FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
+        bds.closeBDs();
     }
 
     public static void main(String[] args) {
 //        String old = " <lemma id=\"1\" rev=\"1\"><l t=\"ёж\"><g v=\"NOUN\"/><g v=\"anim\"/><g v=\"masc\"/></l><f t=\"ёж\"><g v=\"sing\"/><g v=\"nomn\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"gent\"/></f><f t=\"ежу\"><g v=\"sing\"/><g v=\"datv\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"accs\"/></f><f t=\"ежом\"><g v=\"sing\"/><g v=\"ablt\"/></f><f t=\"еже\"><g v=\"sing\"/><g v=\"loct\"/></f><f t=\"ежи\"><g v=\"plur\"/><g v=\"nomn\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"gent\"/></f><f t=\"ежам\"><g v=\"plur\"/><g v=\"datv\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"accs\"/></f><f t=\"ежами\"><g v=\"plur\"/><g v=\"ablt\"/></f><f t=\"ежах\"><g v=\"plur\"/><g v=\"loct\"/></f></lemma>";
-        ConversionDictionary.conversionDictionary("C:/TFWWT/MorphologicalStructures/dict.opcorpora.txt", "UTF-8");
+        ConversionDictionary.conversionDictionary("dict.opcorpora.txt", "UTF-8");
     }
 
     protected static class Form {

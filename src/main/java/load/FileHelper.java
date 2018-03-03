@@ -43,6 +43,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
 import morphologicalstructures.Property;
 
 public class FileHelper {
@@ -59,13 +61,30 @@ public class FileHelper {
     }
 
     public static ZipInputStream openZipFile(String zipPath, String nameLibrary) throws IOException {
-        ZipInputStream zin = new ZipInputStream(new FileInputStream(new File(zipPath)));
-        for (ZipEntry e; (e = zin.getNextEntry()) != null;) {
+        ZipInputStream zip = new ZipInputStream(new FileInputStream(new File(zipPath)));
+        for (ZipEntry e; (e = zip.getNextEntry()) != null;) {
             if (e.getName().equals(nameLibrary)) {
-                return zin;
+                return zip;
             }
         }
         throw new EOFException("Cannot find " + nameLibrary);
+    }
+
+    public static void zipCompressFile(String pathFile, String nameFile) {
+        try(ZipOutputStream zip = new ZipOutputStream((new FileOutputStream((new File(pathFile + ".zip")))))) {
+            BufferedInputStream bufferedInput = openBufferedInputStream(pathFile);
+            int inputSize = available(bufferedInput);
+            byte[] buf = new byte[inputSize];
+            FileHelper.read(bufferedInput, buf);
+
+            zip.putNextEntry(new ZipEntry(nameFile));
+            zip.write(buf, 0, inputSize);
+
+            zip.flush();
+            zip.close();
+        } catch (IOException ex) {
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, "Ошибка при чтении файла.\r\n", ex);
+        }
     }
 
     public static BufferedReader openBufferedReaderStream(String pathFile) {
@@ -181,6 +200,14 @@ public class FileHelper {
     public static void write(FileOutputStream fileOutputStream, byte[] bytes) {
         try {
             fileOutputStream.write(bytes);
+        } catch (IOException ex) {
+            Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void write(FileOutputStream fileOutputStream, byte[] bytes, int sizeNewFile) {
+        try {
+            fileOutputStream.write(bytes, 0, sizeNewFile);
         } catch (IOException ex) {
             Logger.getLogger(FileHelper.class.getName()).log(Level.SEVERE, null, ex);
         }

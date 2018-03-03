@@ -21,7 +21,7 @@ public class BDFormString {
     public final static int START_ID_WORD_FORM = Property.START_ID_WORD_FORM;
 
     static {
-        get();
+        deCompressDd();
         BD_INITIAL_FORM_STRING = new BDSqlite(PATH_BD_INITIAL_FORM);
         BD_WORD_FORM_STRING = new BDSqlite(PATH_BD_WORD_FORM);
     }
@@ -95,10 +95,19 @@ public class BDFormString {
         deleteFile(pathFile);
     }
 
-    public static void get() {
-        File file = new File(PATH_BD_INITIAL_FORM);
-        file.exists();
-        deCompressionFile(PATH_BD_INITIAL_FORM + ARCHIVE_EXPANSION, Integer.MAX_VALUE / 2, PATH_BD_INITIAL_FORM);
+    public static void deCompressDd() {
+        deCompressDd(PATH_BD_INITIAL_FORM);
+        deCompressDd(PATH_BD_WORD_FORM);
+    }
+
+    public static void deCompressDd(String pathBd) {
+        File file = new File(pathBd);
+        if(!file.exists()) {
+            file = new File(pathBd + ARCHIVE_EXPANSION);
+            if(file.exists()) {
+                deCompressionFile(pathBd + ARCHIVE_EXPANSION, pathBd);
+            }
+        }
     }
 
     public static void main(String[] args) {
