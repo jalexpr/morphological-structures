@@ -18,6 +18,7 @@ public class BDFormString {
     public final static String PATH_BD_WORD_FORM = Property.PATH_BD_WORD_FORM;
     public final static BDSqlite BD_INITIAL_FORM_STRING;
     public final static BDSqlite BD_WORD_FORM_STRING;
+    public final static int START_ID_INITIAL_FORM = Property.START_ID_INITIAL_FORM;
     public final static int START_ID_WORD_FORM = Property.START_ID_WORD_FORM;
 
     static {
@@ -37,7 +38,7 @@ public class BDFormString {
     public static String getStringById(int idKey, boolean isInitialForm) {
         try {
             ResultSet resultSet;
-            String executeString = String.format("SELECT * FROM  'Form' where id = %d", idKey);
+            String executeString = String.format("SELECT * FROM 'Form' where id = %d", idKey);
             if (isInitialForm) {
                 resultSet = BD_INITIAL_FORM_STRING.executeQuery(executeString);
             } else {

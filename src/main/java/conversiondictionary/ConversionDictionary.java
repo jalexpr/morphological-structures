@@ -40,14 +40,16 @@ package conversiondictionary;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import grammeme.MorfologyParameters;
+import grammeme.MorfologyParametersHelper;
 import load.BDFormString;
 import load.FileHelper;
 
+import static grammeme.MorfologyParametersHelper.*;
 import static load.BDFormString.compressionBd;
 import static load.FileHelper.zipCompressFile;
 
@@ -63,7 +65,10 @@ public class ConversionDictionary {
 
     public static void conversionDictionary(String sourceDictionaryPath, String encoding) {
         initFiles(sourceDictionaryPath, encoding);
-        conversionDictionary();
+        conversionAndSaveDictionary();
+        closeFiles();
+        compressionBd();
+        compressionFile();
         closeFiles();
     }
 
@@ -72,24 +77,17 @@ public class ConversionDictionary {
         streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileOutputStream(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
     }
 
-    private static void conversionDictionary() {
-        conversionLemmas(readerSourceDictionary);
-        closeFiles();
-        compressionBd();
-        compressionFile();
+    private static void conversionAndSaveDictionary() {
+        conversionAndSaveLemmas(readerSourceDictionary);
 //        TODO:проверить слово на йо, если да, то повторить операцию выше, но ключ берется тот же для слова, а не создается новый.
     }
 
-    private static void conversionLemmas(BufferedReader readerSourceDictionary) {
+    private static void conversionAndSaveLemmas(BufferedReader readerSourceDictionary) {
         List<Form> lemma;
         while(FileHelper.ready(readerSourceDictionary)) {
             lemma = conversionLemma(readerSourceDictionary);
             saveLemma(lemma);
         }
-    }
-
-    private static void compressionFile() {
-        zipCompressFile(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[0]);
     }
 
     private static List<Form> conversionLemma(BufferedReader readerSourceDictionary) {
@@ -110,29 +108,42 @@ public class ConversionDictionary {
     }
 
     private static Form createForm(String line, boolean isInitialForm) {
-        String[] parameters = line.split("\t");
+        String[] parameters = line.toLowerCase().split("\t");
         Form form = new Form(parameters[0], isInitialForm);
         if(parameters.length > 1) {
-            form.setCharacteristics(parameters[1].split(","));
+            form.setCharacteristics(parameters[1].split("[, ]"));
         }
         return form;
     }
 
     private static void saveLemma(List<Form> lemma) {
-        lemma.forEach((form -> {
-            saveForm(form);
-        }));
+        saveLemmaInBd(lemma);
+        saveLemmaInFile(lemma);
     }
 
-    public static void saveForm(Form form) {
-        if(!form.isExistInBd()) {
-            bds.saveInBD(form);
-        }
-        saveInFile(form);
+    private static void saveLemmaInBd(List<Form> lemma) {
+        lemma.forEach((form) -> {
+            if(!form.isExistInBd()) {
+                bds.saveInBD(form);
+            }
+        });
     }
 
-    public static void saveInFile(Form form) {
-        FileHelper.write(streamKeyAndHashAndMorfCharacteristics, plusByte(form.getByteFileFormat(), CONTROL_VALUE));
+    private static void saveLemmaInFile(List<Form> lemma) {
+        lemma.forEach((form) -> {
+            if(!form.isExistInBd()) {
+                saveInFile(form);
+            }
+        });
+        saveInFile(CONTROL_VALUE);
+    }
+
+    private static void saveInFile(Form form) {
+        saveInFile(form.getByteFileFormat());
+    }
+
+    private static void saveInFile(byte[] bytse) {
+        FileHelper.write(streamKeyAndHashAndMorfCharacteristics, bytse);
     }
 
     public static byte[] plusByte(byte[] arrA, byte elmB) {
@@ -184,24 +195,14 @@ public class ConversionDictionary {
         return bytes;
     }
 
-    public static byte getPartOfSpeech(String[] stringPartOfSpeech) {
-        if(stringPartOfSpeech.length > 0) {
-            return 0;
-        }
-        return 0;
-    }
-
-    public static long getMorfCharacteristics(String[] stringCharacteristics) {
-        for(int i = 2; i < stringCharacteristics.length; i++) {
-
-        }
-        return 0;
-    }
-
-    public static void closeFiles() {
+    private static void closeFiles() {
         FileHelper.closeFile(readerSourceDictionary);
         FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
         bds.closeBDs();
+    }
+
+    private static void compressionFile() {
+        zipCompressFile(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[0]);
     }
 
     public static void main(String[] args) {
@@ -213,6 +214,7 @@ public class ConversionDictionary {
 
         public static final Map<String, Integer> STRING_INTEGER_WORD_FORM_MAP = new HashMap<>();
         public static final Map<String, Integer> STRING_INTEGER_INITIAL_FORM_MAP = new HashMap<>();
+        private static final int START_ID_INITIAL_FORM = BDFormString.START_ID_INITIAL_FORM;
         private static final int START_ID_WORD_FORM = BDFormString.START_ID_WORD_FORM;
 
         private String stringName;
@@ -231,8 +233,9 @@ public class ConversionDictionary {
         }
 
         public void setCharacteristics(String[] characteristics) {
-            setPartOfSpeech(conversionPartOfSpeech(characteristics[0]));
-            setMorfCharacteristics(getBytes(conversionMorfCharacteristics(characteristics)));
+            List<String> parameters = new ArrayList<>(Arrays.asList(characteristics));
+            setPartOfSpeech(conversionPartOfSpeech(parameters));
+            setMorfCharacteristics(getBytes(conversionMorfCharacteristics(parameters)));
         }
 
         private void setPartOfSpeech(byte partOfSpeech) {
@@ -243,12 +246,62 @@ public class ConversionDictionary {
             return partOfSpeech;
         }
 
-        private static byte conversionPartOfSpeech(String partOfSpeech) {
-            return 0;
+        private static byte conversionPartOfSpeech(List<String> parameters) {
+            byte partOfSpeech;
+            int indexEnd = parameters.size() - 1;
+            try {
+                partOfSpeech = getTypeOfSpeech(parameters.get(indexEnd));
+                parameters.remove(indexEnd);
+                if(indexEnd != 0) {
+                    parameters.remove(0);
+                }
+                return partOfSpeech;
+            } catch (Exception ex) {
+                try {
+                    partOfSpeech = getTypeOfSpeech(parameters.get(0));
+                    parameters.remove(0);
+                    if(partOfSpeech == MorfologyParameters.TypeOfSpeech.NUMERAL && parameters.size() > 0 && parameters.get(0).equals("coll")) {
+                        partOfSpeech = getTypeOfSpeech(parameters.get(0));
+                        parameters.remove(0);
+                    }
+                    if(partOfSpeech == MorfologyParameters.TypeOfSpeech.ADJECTIVEFULL || partOfSpeech == MorfologyParameters.TypeOfSpeech.NOUNPRONOUN) {
+                        if(parameters.size() > 3 && parameters.get(3).equals("anph")) {
+                            partOfSpeech = getTypeOfSpeech(parameters.get(3));
+                            parameters.remove(3);
+                        }
+                        if(parameters.size() > 2 && parameters.get(2).equals("anph")) {
+                            partOfSpeech = getTypeOfSpeech(parameters.get(2));
+                            parameters.remove(2);
+                        }
+                        if(parameters.size() > 1 && parameters.get(1).equals("anph")) {
+                            partOfSpeech = getTypeOfSpeech(parameters.get(1));
+                            parameters.remove(1);
+                        }
+                        if(parameters.size() > 0 && parameters.get(0).equals("anph")) {
+                            partOfSpeech = getTypeOfSpeech(parameters.get(0));
+                            parameters.remove(0);
+                        }
+                    }
+                    return partOfSpeech;
+                } catch (Exception exc) {
+                    String messages = String.format("Часть речи не найдена: %s и $s", parameters.get(0), parameters.get(parameters.size() - 1));
+                    Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, messages, exc);
+                    return 0;
+                }
+            }
         }
 
-        private static long conversionMorfCharacteristics(String[] morfCharacteristics) {
-            return 0;
+        private static long conversionMorfCharacteristics(List<String> parameters) {
+            long numberParameters = 0;
+            for(String parameter : parameters) {
+                try {
+                    numberParameters |= getParameter(parameter);
+                } catch (Exception ex){
+                    String messages = "Характеристика не найдена: " + parameter;
+                    Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, messages, ex);
+                }
+            }
+            return numberParameters;
         }
 
         private void setMorfCharacteristics(byte[] morfCharacteristics) {
@@ -273,7 +326,7 @@ public class ConversionDictionary {
 
         private int createKey(boolean isInitialForm) {
             if(isInitialForm) {
-                return createKey(STRING_INTEGER_INITIAL_FORM_MAP, 1);
+                return createKey(STRING_INTEGER_INITIAL_FORM_MAP, START_ID_INITIAL_FORM);
             } else {
                 return createKey(STRING_INTEGER_WORD_FORM_MAP, START_ID_WORD_FORM);
             }
