@@ -131,9 +131,7 @@ public class ConversionDictionary {
 
     private static void saveLemmaInFile(List<Form> lemma) {
         lemma.forEach((form) -> {
-            if(!form.isExistInBd()) {
-                saveInFile(form);
-            }
+            saveInFile(form);
         });
         saveInFile(CONTROL_VALUE);
     }
