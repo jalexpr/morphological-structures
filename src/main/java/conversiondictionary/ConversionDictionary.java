@@ -45,7 +45,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import grammeme.MorfologyParameters;
-import grammeme.MorfologyParametersHelper;
 import load.BDFormString;
 import load.FileHelper;
 
@@ -58,7 +57,7 @@ public class ConversionDictionary {
     private static final byte[] CONTROL_VALUE = getPrimitiveBytes(PropertyForConversion.CONTROL_VALUE);
     private static BufferedReader readerSourceDictionary;
     private static FileOutputStream streamKeyAndHashAndMorfCharacteristics;
-    private static BDSqliteForConversion bds = new BDSqliteForConversion();
+    private static BDSqliteForConversion bds;
     private static String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS;
 
     private ConversionDictionary() {}
@@ -75,6 +74,7 @@ public class ConversionDictionary {
     private static void initFiles(String sourceDictionaryPath, String encoding) {
         readerSourceDictionary = FileHelper.openBufferedReaderStream(sourceDictionaryPath, encoding);
         streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileOutputStream(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
+        bds = new BDSqliteForConversion();
     }
 
     private static void conversionAndSaveDictionary() {
@@ -210,8 +210,8 @@ public class ConversionDictionary {
 
     protected static class Form {
 
-        public static final Map<String, Integer> STRING_INTEGER_WORD_FORM_MAP = new HashMap<>();
-        public static final Map<String, Integer> STRING_INTEGER_INITIAL_FORM_MAP = new HashMap<>();
+        private static final Map<String, Integer> STRING_INTEGER_WORD_FORM_MAP = new HashMap<>();
+        private static final Map<String, Integer> STRING_INTEGER_INITIAL_FORM_MAP = new HashMap<>();
         private static final int START_ID_INITIAL_FORM = BDFormString.START_ID_INITIAL_FORM;
         private static final int START_ID_WORD_FORM = BDFormString.START_ID_WORD_FORM;
 

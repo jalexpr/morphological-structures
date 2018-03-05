@@ -9,16 +9,15 @@ import grammeme.MorfologyParameters.*;
 public final class MorfologyParametersHelper {
 
     public final static Map<Long, String> PARAMETERS_STRING = new HashMap<>();
-    public final static Map<String, Long> PARAMETERS_STRING_LONG = new HashMap<>();
     public final static Map<Byte, String> TYPE_OF_SPEECH_STRING = new HashMap<>();
-    public final static Map<String, Byte> TYPE_OF_SPEECH_STRING_BYTE = new HashMap<>();
-    private final static Map<String, Long> IDENTIFIER_PARAMETERS_BY_CLASS = new HashMap<>();
-    private final static Map<String, String> STRING_STRING_MAP = createMap();
+    public final static Map<String, Long> IDENTIFIER_PARAMETERS_BY_CLASS = new HashMap<>();
+    private static Map<String, Long> PARAMETERS_STRING_LONG;
+    private static Map<String, Byte> TYPE_OF_SPEECH_STRING_BYTE;
+    private static Map<String, String> STRING_STRING_MAP;
 
     static {
         initIdentifierParametersMap();
         initStringParameters();
-        iniStringParameters();
     }
 
     private MorfologyParametersHelper() {}
@@ -48,18 +47,11 @@ public final class MorfologyParametersHelper {
         }
     }
 
-    private static void iniStringParameters() {
-        TYPE_OF_SPEECH_STRING_BYTE.putAll(createStringParameters(TYPE_OF_SPEECH_STRING));
-        PARAMETERS_STRING_LONG.putAll(createStringParameters(PARAMETERS_STRING));
-        //т.к. значения совпадают, необходимо добить вручную
-        PARAMETERS_STRING_LONG.put("ms-f", 0L);
-    }
-
     private static <T extends Number> Map<String, T> createStringParameters(Map<T, String> mapSourcesParemeters) {
         Map<String, T> mapParemeters = new HashMap<>();
         for(T key : mapSourcesParemeters.keySet()) {
             String nameParameterInFile = mapSourcesParemeters.get(key);
-            mapParemeters.put(STRING_STRING_MAP.get(nameParameterInFile), key);
+            mapParemeters.put(getStringStringMap().get(nameParameterInFile), key);
         }
         return mapParemeters;
     }
@@ -80,18 +72,43 @@ public final class MorfologyParametersHelper {
 
     public static long getParameter(String parameter) throws Exception {
         try {
-            return PARAMETERS_STRING_LONG.get(parameter);
+            return getParametersStringLong().get(parameter);
         } catch (NullPointerException ex) {
             throw new Exception(ex);
         }
     }
 
+    private static Map<String, Long> getParametersStringLong() {
+        if(PARAMETERS_STRING_LONG == null || PARAMETERS_STRING_LONG.isEmpty()) {
+            PARAMETERS_STRING_LONG = new HashMap<>();
+            PARAMETERS_STRING_LONG.putAll(createStringParameters(PARAMETERS_STRING));
+            //т.к. некоторые значения совпадают, необходимо добить вручную
+            PARAMETERS_STRING_LONG.put("ms-f", 0L);
+        }
+        return PARAMETERS_STRING_LONG;
+    }
+
     public static byte getTypeOfSpeech(String parameter) throws Exception{
         try {
-            return TYPE_OF_SPEECH_STRING_BYTE.get(parameter);
+            return getTypeOfSpeechStringByte().get(parameter);
         } catch (NullPointerException ex){
             throw new Exception(ex);
         }
+    }
+
+    private static Map<String, Byte> getTypeOfSpeechStringByte() {
+        if(TYPE_OF_SPEECH_STRING_BYTE == null || TYPE_OF_SPEECH_STRING_BYTE.isEmpty()) {
+            TYPE_OF_SPEECH_STRING_BYTE = new HashMap<>();
+            TYPE_OF_SPEECH_STRING_BYTE.putAll(createStringParameters(TYPE_OF_SPEECH_STRING));
+        }
+        return TYPE_OF_SPEECH_STRING_BYTE;
+    }
+
+    private static Map<String, String> getStringStringMap() {
+        if(STRING_STRING_MAP == null) {
+            STRING_STRING_MAP = createMap();
+        }
+        return STRING_STRING_MAP;
     }
 
     private static Map<String, String> createMap() {
