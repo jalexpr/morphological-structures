@@ -33,7 +33,7 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphologicalstructures;
+package morphological.structures.internal;
 
 import java.io.IOException;
 import java.util.logging.Level;

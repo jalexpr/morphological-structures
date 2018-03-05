@@ -35,8 +35,7 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-
-package grammeme;
+package morphological.structures.grammeme;
 
 public interface MorfologyParameters {
 

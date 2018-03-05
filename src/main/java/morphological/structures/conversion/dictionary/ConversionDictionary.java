@@ -35,21 +35,24 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-
-package conversiondictionary;
+package morphological.structures.conversion.dictionary;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import grammeme.MorfologyParameters;
-import load.BDFormString;
+import morphological.structures.grammeme.MorfologyParameters;
+import morphological.structures.load.BDFormString;
 import template.wrapper.classes.FileHelper;
 
-import static grammeme.MorfologyParametersHelper.*;
-import static load.BDFormString.compressionBd;
+import static morphological.structures.conversion.dictionary.PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS;
+import static morphological.structures.conversion.dictionary.PropertyForConversion.DIR_DICTIONARY;
+import static morphological.structures.grammeme.MorfologyParametersHelper.getParameter;
+import static morphological.structures.grammeme.MorfologyParametersHelper.getTypeOfSpeech;
+import static morphological.structures.load.BDFormString.compressionBd;
 import static template.wrapper.classes.FileHelper.zipCompressFile;
 
 public class ConversionDictionary {
@@ -58,7 +61,6 @@ public class ConversionDictionary {
     private static BufferedReader readerSourceDictionary;
     private static FileOutputStream streamKeyAndHashAndMorfCharacteristics;
     private static BDSqliteForConversion bds;
-    private static String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS;
 
     private ConversionDictionary() {}
 
@@ -83,17 +85,17 @@ public class ConversionDictionary {
     }
 
     private static void conversionAndSaveLemmas(BufferedReader readerSourceDictionary) {
-        List<Form> lemma;
+        List<FormForConversion> lemma;
         while(FileHelper.ready(readerSourceDictionary)) {
             lemma = conversionLemma(readerSourceDictionary);
             saveLemma(lemma);
         }
     }
 
-    private static List<Form> conversionLemma(BufferedReader readerSourceDictionary) {
-        List<Form> forms = new LinkedList<>();
+    private static List<FormForConversion> conversionLemma(BufferedReader readerSourceDictionary) {
+        List<FormForConversion> forms = new LinkedList<>();
         FileHelper.readLine(readerSourceDictionary);
-        Form initialForm = createForm(FileHelper.readLine(readerSourceDictionary), true);
+        FormForConversion initialForm = createForm(FileHelper.readLine(readerSourceDictionary), true);
         forms.add(initialForm);
 
         while(FileHelper.ready(readerSourceDictionary)) {
@@ -107,21 +109,21 @@ public class ConversionDictionary {
         return forms;
     }
 
-    private static Form createForm(String line, boolean isInitialForm) {
+    private static FormForConversion createForm(String line, boolean isInitialForm) {
         String[] parameters = line.toLowerCase().split("\t");
-        Form form = new Form(parameters[0], isInitialForm);
+        FormForConversion form = new FormForConversion(parameters[0], isInitialForm);
         if(parameters.length > 1) {
             form.setCharacteristics(parameters[1].split("[, ]"));
         }
         return form;
     }
 
-    private static void saveLemma(List<Form> lemma) {
+    private static void saveLemma(List<FormForConversion> lemma) {
         saveLemmaInBd(lemma);
-        saveLemmaInFile(lemma);
+        saveLemmaInFile(streamKeyAndHashAndMorfCharacteristics, lemma);
     }
 
-    private static void saveLemmaInBd(List<Form> lemma) {
+    private static void saveLemmaInBd(List<FormForConversion> lemma) {
         lemma.forEach((form) -> {
             if(!form.isExistInBd()) {
                 bds.saveInBD(form);
@@ -129,19 +131,27 @@ public class ConversionDictionary {
         });
     }
 
-    private static void saveLemmaInFile(List<Form> lemma) {
+    private static void saveLemmaInFile(OutputStream fileOutput, List<FormForConversion> lemma) {
         lemma.forEach((form) -> {
-            saveInFile(form);
+            saveInFile(fileOutput, form);
         });
-        saveInFile(CONTROL_VALUE);
+        saveInFile(fileOutput, CONTROL_VALUE);
     }
 
-    private static void saveInFile(Form form) {
-        saveInFile(form.getByteFileFormat());
+    private static void saveInFile(OutputStream fileOutput, FormForConversion form) {
+        saveInFile(fileOutput, form.getByteFileFormat());
     }
 
-    private static void saveInFile(byte[] bytse) {
-        FileHelper.write(streamKeyAndHashAndMorfCharacteristics, bytse);
+    private static void saveInFile(OutputStream fileOutput, byte[] bytse) {
+        FileHelper.write(fileOutput, bytse);
+    }
+
+    public static void saveLemmasInFile(String pathFile, List<List<FormForConversion>> lemmas) {
+        OutputStream fileOutput = FileHelper.openFileOutputStream(DIR_DICTIONARY + pathFile);
+        lemmas.forEach((lemma) -> {
+            saveLemmaInFile(fileOutput, lemma);
+        });
+        FileHelper.closeFile(fileOutput);
     }
 
     public static byte[] plusByte(byte[] arrA, byte elmB) {
@@ -208,7 +218,7 @@ public class ConversionDictionary {
         ConversionDictionary.conversionDictionary("dict.opcorpora.txt", "UTF-8");
     }
 
-    protected static class Form {
+    public static class FormForConversion {
 
         private static final Map<String, Integer> STRING_INTEGER_WORD_FORM_MAP = new HashMap<>();
         private static final Map<String, Integer> STRING_INTEGER_INITIAL_FORM_MAP = new HashMap<>();
@@ -221,16 +231,24 @@ public class ConversionDictionary {
         private byte[] morfCharacteristics;
         private boolean isExistInBd;
 
-        public Form(String stringName, boolean isInitialForm) {
+        protected FormForConversion(String stringName, boolean isInitialForm) {
             this.stringName = stringName.toLowerCase();
             key = createKey(isInitialForm);
         }
 
-        public String getStringName() {
+        public FormForConversion(String stringName, int keyBd, byte partOfSpeech, long morfCharacteristics) {
+            this.stringName = stringName;
+            this.key = keyBd;
+            this.partOfSpeech = partOfSpeech;
+            this.morfCharacteristics = getBytes(morfCharacteristics);
+            isExistInBd = true;
+        }
+
+        protected String getStringName() {
             return stringName;
         }
 
-        public void setCharacteristics(String[] characteristics) {
+        protected void setCharacteristics(String[] characteristics) {
             List<String> parameters = new ArrayList<>(Arrays.asList(characteristics));
             setPartOfSpeech(conversionPartOfSpeech(parameters));
             setMorfCharacteristics(getBytes(conversionMorfCharacteristics(parameters)));
@@ -310,15 +328,11 @@ public class ConversionDictionary {
             return morfCharacteristics;
         }
 
-        private void setKey(int key) {
-            this.key = key;
-        }
-
         public int getKey() {
             return key;
         }
 
-        public boolean isExistInBd() {
+        protected boolean isExistInBd() {
             return isExistInBd;
         }
 
@@ -342,11 +356,11 @@ public class ConversionDictionary {
             }
         }
 
-        public boolean isInitialForm() {
+        protected boolean isInitialForm() {
             return getKey() < START_ID_WORD_FORM;
         }
 
-        public byte[] getByteFileFormat() {
+        protected byte[] getByteFileFormat() {
             byte[] hashCode = getBytes(getStringName().hashCode());
             byte[] bytesFormat = plusByte(hashCode, getBytes(getKey()));
             if(isInitialForm()) {
