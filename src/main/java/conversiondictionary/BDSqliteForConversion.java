@@ -1,8 +1,8 @@
 package conversiondictionary;
 
 import load.BDFormString;
-import load.BDSqlite;
 import conversiondictionary.ConversionDictionary.Form;
+import template.wrapper.classes.BDSqlite;
 
 public class BDSqliteForConversion {
 

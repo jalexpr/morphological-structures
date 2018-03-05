@@ -46,11 +46,11 @@ import java.util.logging.Logger;
 
 import grammeme.MorfologyParameters;
 import load.BDFormString;
-import load.FileHelper;
+import template.wrapper.classes.FileHelper;
 
 import static grammeme.MorfologyParametersHelper.*;
 import static load.BDFormString.compressionBd;
-import static load.FileHelper.zipCompressFile;
+import static template.wrapper.classes.FileHelper.zipCompressFile;
 
 public class ConversionDictionary {
 

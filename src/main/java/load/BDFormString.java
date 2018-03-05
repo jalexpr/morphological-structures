@@ -6,11 +6,12 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import morphologicalstructures.Property;
+import template.wrapper.classes.BDSqlite;
 
-import static load.FileHelper.deleteFile;
-import static load.Lzma2FileHelper.ARCHIVE_EXPANSION;
-import static load.Lzma2FileHelper.compressionFile;
-import static load.Lzma2FileHelper.deCompressionFile;
+import static template.wrapper.classes.FileHelper.deleteFile;
+import static template.wrapper.classes.Lzma2FileHelper.ARCHIVE_EXPANSION;
+import static template.wrapper.classes.Lzma2FileHelper.compressionFile;
+import static template.wrapper.classes.Lzma2FileHelper.deCompressionFile;
 
 public class BDFormString {
 
