@@ -37,11 +37,10 @@ package morphological.structures.conversion.dictionary;
 
 import morphological.structures.internal.Property;
 
-public class PropertyForConversion {
+public interface PropertyForConversion {
 
     public static final int CONTROL_VALUE = Property.CONTROL_VALUE;
     public static final String DIR_DICTIONARY = "dictionary/";
     public static final String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = DIR_DICTIONARY + Property.PATH_HASH_AND_MORF_CHARACTERISTICS;
-    public final static byte CONTROL_OFFSET = Property.CONTROL_OFFSET;
 
 }

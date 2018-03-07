@@ -7,9 +7,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static morphological.structures.conversion.dictionary.PropertyForConversion.CONTROL_OFFSET;
 import static morphological.structures.grammeme.MorfologyParametersHelper.getParameter;
 import static morphological.structures.grammeme.MorfologyParametersHelper.getTypeOfSpeech;
+import static morphological.structures.load.LoadHelper.createKeyWithControlCode;
 import static template.wrapper.conversion.Bytes.getBytes;
 import static template.wrapper.conversion.Bytes.plusByte;
 import static template.wrapper.hash.CityHash.cityHash64;
@@ -97,7 +97,7 @@ public class FormForConversion {
                 return partOfSpeech;
             } catch (Exception exc) {
                 String messages = String.format("Часть речи не найдена: %s и $s", parameters.get(0), parameters.get(parameters.size() - 1));
-                Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, messages, exc);
+                Logger.getLogger(FormForConversion.class.getName()).log(Level.SEVERE, messages, exc);
                 return 0;
             }
         }
@@ -110,7 +110,7 @@ public class FormForConversion {
                 numberParameters |= getParameter(parameter);
             } catch (Exception ex){
                 String messages = "Характеристика не найдена: " + parameter;
-                Logger.getLogger(ConversionDictionary.class.getName()).log(Level.SEVERE, messages, ex);
+                Logger.getLogger(FormForConversion.class.getName()).log(Level.SEVERE, messages, ex);
             }
         }
         return numberParameters;
@@ -146,15 +146,14 @@ public class FormForConversion {
             return stringFormMap.get(getStringName());
         } else {
             isExistInBd = false;
-            int key = createControlHash() | (startKey + stringFormMap.size());
+            try {
+                int key = createKeyWithControlCode(startKey + stringFormMap.size(), getStringName());
+            } catch (Exception ex) {
+                Logger.getLogger(FormForConversion.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
             stringFormMap.put(getStringName(), key);
             return key;
         }
-    }
-
-    private int createControlHash() {
-        byte controlValue = (byte)(getStringName().hashCode() >> CONTROL_OFFSET);
-        return ((int) controlValue) << 24;
     }
 
     protected boolean isInitialForm() {
