@@ -47,6 +47,7 @@ import java.util.List;
 
 import static morphological.structures.conversion.dictionary.PropertyForConversion.DIR_DICTIONARY;
 import static morphological.structures.conversion.dictionary.PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS;
+import static morphological.structures.load.BDFormString.compressionBd;
 import static template.wrapper.classes.FileHelper.zipCompressFile;
 import static template.wrapper.conversion.Bytes.getPrimitiveBytes;
 
@@ -63,8 +64,8 @@ public class ConversionDictionary {
         initFiles(sourceDictionaryPath, encoding);
         conversionAndSaveDictionary();
         closeFiles();
-//        compressionBd();
-//        compressionFile();
+        compressionBd();
+        compressionFile();
     }
 
     private static void initFiles(String sourceDictionaryPath, String encoding) {

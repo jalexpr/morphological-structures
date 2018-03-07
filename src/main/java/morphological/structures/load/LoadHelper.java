@@ -24,15 +24,15 @@ public class LoadHelper {
     private static int createKeyWithControlCode(int oldKey, int controlHash) throws Exception {
 //        Проверка, что последнии значения ноль
         if(((byte)oldKey) == 0) {
-            return controlHash + oldKey;
+            return controlHash | oldKey;
         } else {
             throw new Exception(String.format("Ключ: %d имеет не пустые 8 последнии битов", oldKey));
         }
 //        return oldKey;
     }
 
-    public static byte getControlValue(int key) {
-        return (byte)(key & 255);
+    public static int getControlValue(int key) {
+        return key & 255;
     }
 
 }

@@ -32,14 +32,6 @@ public class FormForConversion {
         key = createKey(isInitialForm);
     }
 
-    public FormForConversion(String stringName, int keyBd, byte partOfSpeech, long morfCharacteristics) {
-        this.stringName = stringName;
-        this.key = keyBd;
-        this.partOfSpeech = partOfSpeech;
-        this.morfCharacteristics = getBytes(morfCharacteristics);
-        isExistInBd = true;
-    }
-
     protected String getStringName() {
         return stringName;
     }
