@@ -35,7 +35,6 @@
  */
 package morphological.structures.conversion.dictionary;
 
-import morphological.structures.conversion.dictionary.ConversionDictionary.FormForConversion;
 import morphological.structures.load.BDFormString;
 import template.wrapper.classes.BDSqlite;
 
