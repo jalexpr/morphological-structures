@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static morphological.structures.conversion.dictionary.PropertyForConversion.CONTROL_OFFSET;
 import static morphological.structures.grammeme.MorfologyParametersHelper.getParameter;
 import static morphological.structures.grammeme.MorfologyParametersHelper.getTypeOfSpeech;
 import static template.wrapper.Conversion.Bytes.getBytes;
@@ -144,10 +145,15 @@ public class FormForConversion {
             return stringFormMap.get(getStringName());
         } else {
             isExistInBd = false;
-            int key = startKey + stringFormMap.size();
+            int key = createControlHash() | (startKey + stringFormMap.size());
             stringFormMap.put(getStringName(), key);
             return key;
         }
+    }
+
+    private int createControlHash() {
+        byte controlValue = (byte)(getStringName().hashCode() >> CONTROL_OFFSET);
+        return ((int) controlValue) << 24;
     }
 
     protected boolean isInitialForm() {
