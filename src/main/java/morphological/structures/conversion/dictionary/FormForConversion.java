@@ -10,9 +10,9 @@ import java.util.logging.Logger;
 import static morphological.structures.grammeme.MorfologyParametersHelper.getParameter;
 import static morphological.structures.grammeme.MorfologyParametersHelper.getTypeOfSpeech;
 import static morphological.structures.load.LoadHelper.createKeyWithControlCode;
+import static morphological.structures.load.LoadHelper.getHashCode;
 import static template.wrapper.conversion.Bytes.getBytes;
 import static template.wrapper.conversion.Bytes.plusByte;
-import static template.wrapper.hash.CityHash.cityHash64;
 
 public class FormForConversion {
 
@@ -145,14 +145,15 @@ public class FormForConversion {
             isExistInBd = true;
             return stringFormMap.get(getStringName());
         } else {
-            isExistInBd = false;
+            int newKey = 0;
             try {
-                int key = createKeyWithControlCode(startKey + stringFormMap.size(), getStringName());
+                isExistInBd = false;
+                newKey = createKeyWithControlCode(startKey + stringFormMap.size(), getStringName());
+                stringFormMap.put(getStringName(), newKey);
             } catch (Exception ex) {
                 Logger.getLogger(FormForConversion.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
-            stringFormMap.put(getStringName(), key);
-            return key;
+            return newKey;
         }
     }
 
@@ -161,7 +162,7 @@ public class FormForConversion {
     }
 
     protected byte[] getByteFileFormat() {
-        byte[] hashCode = getBytes(this.hashCode());
+        byte[] hashCode = getBytes(getHashCode(getStringName()));
         byte[] bytesFormat = plusByte(hashCode, getBytes(getKey()));
         if(isInitialForm()) {
             bytesFormat = plusByte(bytesFormat, getPartOfSpeech());
@@ -172,7 +173,7 @@ public class FormForConversion {
 
     @Override
     public int hashCode() {
-        return (int)cityHash64(getStringName());
+        return getHashCode(getStringName());
     }
 
     @Override

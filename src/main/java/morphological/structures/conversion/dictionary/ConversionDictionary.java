@@ -66,7 +66,6 @@ public class ConversionDictionary {
         closeFiles();
         compressionBd();
         compressionFile();
-        closeFiles();
     }
 
     private static void initFiles(String sourceDictionaryPath, String encoding) {
@@ -157,7 +156,7 @@ public class ConversionDictionary {
     }
 
     private static void compressionFile() {
-        zipCompressFile(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[0]);
+        zipCompressFile(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[1]);
     }
 
     public static void main(String[] args) {
