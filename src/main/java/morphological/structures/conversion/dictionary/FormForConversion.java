@@ -10,8 +10,9 @@ import java.util.logging.Logger;
 import static morphological.structures.conversion.dictionary.PropertyForConversion.CONTROL_OFFSET;
 import static morphological.structures.grammeme.MorfologyParametersHelper.getParameter;
 import static morphological.structures.grammeme.MorfologyParametersHelper.getTypeOfSpeech;
-import static template.wrapper.Conversion.Bytes.getBytes;
-import static template.wrapper.Conversion.Bytes.plusByte;
+import static template.wrapper.conversion.Bytes.getBytes;
+import static template.wrapper.conversion.Bytes.plusByte;
+import static template.wrapper.hash.CityHash.cityHash64;
 
 public class FormForConversion {
 
@@ -161,13 +162,23 @@ public class FormForConversion {
     }
 
     protected byte[] getByteFileFormat() {
-        byte[] hashCode = getBytes(getStringName().hashCode());
+        byte[] hashCode = getBytes(this.hashCode());
         byte[] bytesFormat = plusByte(hashCode, getBytes(getKey()));
         if(isInitialForm()) {
             bytesFormat = plusByte(bytesFormat, getPartOfSpeech());
         }
         bytesFormat = plusByte(bytesFormat, getMorfCharacteristics());
         return bytesFormat;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int)cityHash64(getStringName());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return getStringName().equals(((FormForConversion)obj).getStringName());
     }
 
 }
