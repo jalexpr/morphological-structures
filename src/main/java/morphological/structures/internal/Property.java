@@ -56,8 +56,8 @@ public final class Property {
     public final static int CONTROL_VALUE                           = -1;
     public final static byte CONTROL_OFFSET                          = 23;
 
-    public final static int START_ID_INITIAL_FORM = 1;
-    public final static int START_ID_WORD_FORM = 524287;
+    public final static int START_ID_INITIAL_FORM = 1 << 8;
+    public final static int START_ID_WORD_FORM = 524287 << 8;
 
     static {
         loadProperty();
