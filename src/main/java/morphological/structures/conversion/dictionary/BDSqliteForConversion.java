@@ -35,8 +35,8 @@
  */
 package morphological.structures.conversion.dictionary;
 
-import morphological.structures.load.BDFormString;
 import morphological.structures.conversion.dictionary.ConversionDictionary.FormForConversion;
+import morphological.structures.load.BDFormString;
 import template.wrapper.classes.BDSqlite;
 
 public class BDSqliteForConversion {
@@ -56,9 +56,9 @@ public class BDSqliteForConversion {
 
     private void createTables(BDSqlite bds) {
         bds.execute("DROP TABLE Form;");
-        bds.execute("CREATE TABLE if not exists 'Form' ('id' INTEGER NOT NULL, 'StringForm' TEXT NOT NULL, PRIMARY KEY('id'));");
+        bds.execute("CREATE TABLE if not exists 'Form' ('id' INTEGER NOT NULL, 'StringForm' TEXT NOT NULL UNIQUE, PRIMARY KEY('id'));");
         bds.execute("DROP TABLE Property;");
-        bds.execute("CREATE TABLE if not exists 'Property' ('id' INTEGER NOT NULL, 'Attribute' TEXT NOT NULL, 'Value' TEXT NOT NULL, PRIMARY KEY('id'));");
+        bds.execute("CREATE TABLE if not exists 'Property' ('id' INTEGER NOT NULL, 'Attribute' TEXT NOT NULL UNIQUE, 'Value' TEXT NOT NULL, PRIMARY KEY('id'));");
     }
 
     public void saveInBD(FormForConversion form) {
