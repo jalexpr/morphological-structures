@@ -3,6 +3,8 @@ package morphological.structures.load;
 import morphological.structures.internal.Property;
 import template.wrapper.hash.CityHash;
 
+import static morphological.structures.internal.Property.KEY_OFFSET;
+
 public class LoadHelper {
 
     public final static byte CONTROL_OFFSET = Property.CONTROL_OFFSET;
@@ -19,8 +21,8 @@ public class LoadHelper {
         return (byte)(str.hashCode() >> CONTROL_OFFSET);
     }
 
-    public static int createKeyWithControlCode(int oldKey, String str) throws Exception {
-        return createKeyWithControlCode(oldKey, getControlHashCode(str));
+    public static int createKeyWithControlCode(int start, int oldKey, String str) throws Exception {
+        return createKeyWithControlCode(start + (oldKey << KEY_OFFSET), getControlHashCode(str));
     }
 
     private static int createKeyWithControlCode(int oldKey, byte controlHash) throws Exception {

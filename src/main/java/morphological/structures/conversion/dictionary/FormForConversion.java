@@ -148,7 +148,7 @@ public class FormForConversion {
             int newKey = 0;
             try {
                 isExistInBd = false;
-                newKey = createKeyWithControlCode(startKey + stringFormMap.size(), getStringName());
+                newKey = createKeyWithControlCode(startKey, stringFormMap.size(), getStringName());
                 stringFormMap.put(getStringName(), newKey);
             } catch (Exception ex) {
                 Logger.getLogger(FormForConversion.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);

@@ -54,10 +54,10 @@ public final class Property {
     public final static String PATH_BD_INITIAL_FORM                 = "dictionary/dictionary.initialFormString.bd";
     public final static String PATH_HASH_AND_MORF_CHARACTERISTICS   = "dictionary.format.morfCharacteristic";
     public final static int CONTROL_VALUE                           = -1;
-    public final static byte CONTROL_OFFSET                          = 23;
-
-    public final static int START_ID_INITIAL_FORM = 1 << 8;
-    public final static int START_ID_WORD_FORM = 524287 << 8;
+    public final static int KEY_OFFSET                              = 8;
+    public final static int START_ID_INITIAL_FORM                   = 1      << KEY_OFFSET;
+    public final static int START_ID_WORD_FORM                      = 524287 << KEY_OFFSET;
+    public final static byte CONTROL_OFFSET                         = 23;
 
     static {
         loadProperty();
