@@ -37,7 +37,7 @@ package morphological.structures.conversion.dictionary;
 
 import morphological.structures.internal.Property;
 
-public class PropertyForConversion {
+public interface PropertyForConversion {
 
     public static final int CONTROL_VALUE = Property.CONTROL_VALUE;
     public static final String DIR_DICTIONARY = "dictionary/";
