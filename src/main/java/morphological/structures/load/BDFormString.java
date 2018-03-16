@@ -35,19 +35,17 @@
  */
 package morphological.structures.load;
 
+import morphological.structures.internal.Property;
+import template.wrapper.classes.BDSqlite;
+
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import morphological.structures.internal.Property;
-import template.wrapper.classes.BDSqlite;
-
 import static template.wrapper.classes.FileHelper.deleteFile;
-import static template.wrapper.classes.Lzma2FileHelper.ARCHIVE_EXPANSION;
-import static template.wrapper.classes.Lzma2FileHelper.compressionFile;
-import static template.wrapper.classes.Lzma2FileHelper.deCompressionFile;
+import static template.wrapper.classes.Lzma2FileHelper.*;
 
 public class BDFormString {
 
@@ -146,10 +144,6 @@ public class BDFormString {
                 deCompressionFile(pathBd + ARCHIVE_EXPANSION, pathBd);
             }
         }
-    }
-
-    public static void main(String[] args) {
-
     }
 
 }

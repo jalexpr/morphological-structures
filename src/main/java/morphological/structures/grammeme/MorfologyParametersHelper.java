@@ -35,12 +35,14 @@
  */
 package morphological.structures.grammeme;
 
+import morphological.structures.grammeme.MorfologyParameters.TypeOfSpeech;
+
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import morphological.structures.grammeme.MorfologyParameters.*;
 
 public final class MorfologyParametersHelper {
 
@@ -174,12 +176,6 @@ public final class MorfologyParametersHelper {
 
     public static Collection<Long> getIdentifiers() {
         return IDENTIFIER_PARAMETERS_BY_CLASS.values();
-    }
-
-//    @Test
-    public static void main(String[] args) {
-
-        System.err.print("");
     }
 
 }
