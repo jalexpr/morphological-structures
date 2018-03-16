@@ -35,8 +35,9 @@
  */
 package morphological.structures.internal;
 
-import java.util.LinkedList;
 import morphological.structures.load.BDFormString;
+
+import java.util.LinkedList;
 
 import static morphological.structures.grammeme.MorfologyParametersHelper.identifierParametersByClass;
 
@@ -149,4 +150,10 @@ public class OmoForm implements MorfCharacteristicsAccessInterface {
     public int getInitialFormKey() {
         return initialFormKey;
     }
+
+    @Override
+    public boolean isInitialForm() {
+        return initialFormKey == myFormKey;
+    }
+
 }
