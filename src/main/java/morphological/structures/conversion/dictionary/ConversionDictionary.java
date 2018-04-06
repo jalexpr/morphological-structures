@@ -37,11 +37,13 @@
  */
 package morphological.structures.conversion.dictionary;
 
+import morphological.structures.storage.OmoFormList;
 import template.wrapper.classes.FileHelper;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -141,14 +143,6 @@ public class ConversionDictionary {
         FileHelper.write(fileOutput, bytse);
     }
 
-    public static void saveLemmasInFile(String pathFile, List<List<FormForConversion>> lemmas) {
-        OutputStream fileOutput = FileHelper.openFileOutputStream(DIR_DICTIONARY + pathFile);
-        lemmas.forEach((lemma) -> {
-            saveLemmaInFile(fileOutput, lemma);
-        });
-        FileHelper.closeFile(fileOutput);
-    }
-
     private static void closeFiles() {
         FileHelper.closeFile(readerSourceDictionary);
         FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
@@ -159,9 +153,32 @@ public class ConversionDictionary {
         zipCompressFile(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[1]);
     }
 
-    public static void main(String[] args) {
-//        String old = " <lemma id=\"1\" rev=\"1\"><l t=\"ёж\"><g v=\"NOUN\"/><g v=\"anim\"/><g v=\"masc\"/></l><f t=\"ёж\"><g v=\"sing\"/><g v=\"nomn\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"gent\"/></f><f t=\"ежу\"><g v=\"sing\"/><g v=\"datv\"/></f><f t=\"ежа\"><g v=\"sing\"/><g v=\"accs\"/></f><f t=\"ежом\"><g v=\"sing\"/><g v=\"ablt\"/></f><f t=\"еже\"><g v=\"sing\"/><g v=\"loct\"/></f><f t=\"ежи\"><g v=\"plur\"/><g v=\"nomn\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"gent\"/></f><f t=\"ежам\"><g v=\"plur\"/><g v=\"datv\"/></f><f t=\"ежей\"><g v=\"plur\"/><g v=\"accs\"/></f><f t=\"ежами\"><g v=\"plur\"/><g v=\"ablt\"/></f><f t=\"ежах\"><g v=\"plur\"/><g v=\"loct\"/></f></lemma>";
-        ConversionDictionary.conversionDictionary("dict.opcorpora.txt", "UTF-8");
+    public static void createSmallDictionary(String nameDictionary, String text) {
+
+    }
+
+    public static void saveSmallDictionary(String nameDictionary, OmoFormList initialFormList) {
+        List<List<FormForConversion>> lemmas = getLemmas(initialFormList);
+    }
+
+    private static List<List<FormForConversion>> getLemmas(OmoFormList initialFormList) {
+        List<List<FormForConversion>> lemmas = new ArrayList<>();
+        initialFormList.forEach(initialForm -> {
+//            lemmas.add(getLemma(initialForm));
+        });
+        return lemmas;
+    }
+
+//    private static List<FormForConversion> getLemma( initialForm) {
+//
+//    }
+
+    private static void saveLemmasInFile(String pathFile, List<List<FormForConversion>> lemmas) {
+        OutputStream fileOutput = FileHelper.openFileOutputStream(DIR_DICTIONARY + pathFile);
+        lemmas.forEach((lemma) -> {
+            saveLemmaInFile(fileOutput, lemma);
+        });
+        FileHelper.closeFile(fileOutput);
     }
 
 }

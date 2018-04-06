@@ -51,5 +51,6 @@ public interface MorfCharacteristicsAccessInterface {
     public String getInitialFormString();
     public String getMyFormString();
     public void addDependentForm(OmoForm mainForm);
+    public boolean isInitialForm();
 
 }
