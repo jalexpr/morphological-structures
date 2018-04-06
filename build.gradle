@@ -7,14 +7,9 @@ repositories {
     jcenter()
 }
 
-configurations {
-    templateWrapperClasses
-    compile.extendsFrom templateWrapperClasses
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    templateWrapperClasses project(':TemplateWrapperClasses')
+    compile project(':TemplateWrapperClasses')
 }
 
 jar {
