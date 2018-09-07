@@ -58,6 +58,7 @@ public final class Property {
     public final static int START_ID_INITIAL_FORM                   = 1      << KEY_OFFSET;
     public final static int START_ID_WORD_FORM                      = 524287 << KEY_OFFSET;
     public final static byte CONTROL_OFFSET                         = 23;
+    public static final String MOVE_TO_NEW_LINE = System.lineSeparator();
 
     static {
         loadProperty();
