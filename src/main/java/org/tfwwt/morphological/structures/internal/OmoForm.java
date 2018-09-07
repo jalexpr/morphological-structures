@@ -33,13 +33,12 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphological.structures.internal;
+package org.tfwwt.morphological.structures.internal;
 
-import morphological.structures.load.BDFormString;
+import org.tfwwt.morphological.structures.grammeme.MorfologyParametersHelper;
+import org.tfwwt.morphological.structures.load.BDFormString;
 
 import java.util.LinkedList;
-
-import static morphological.structures.grammeme.MorfologyParametersHelper.identifierParametersByClass;
 
 public class OmoForm implements MorfCharacteristicsAccessInterface {
 
@@ -102,7 +101,7 @@ public class OmoForm implements MorfCharacteristicsAccessInterface {
     public long getTheMorfCharacteristics(Class...clazzes) {
         long mask = 0;
         for(Class clazz : clazzes) {
-            mask |= identifierParametersByClass(clazz);
+            mask |= MorfologyParametersHelper.identifierParametersByClass(clazz);
         }
         return getAllMorfCharacteristicsByMask(mask);
     }

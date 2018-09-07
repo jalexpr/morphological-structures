@@ -33,7 +33,7 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphological.structures.storage;
+package org.tfwwt.morphological.structures.storage;
 
 import java.util.LinkedList;
 

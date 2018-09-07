@@ -33,24 +33,14 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphological.structures.internal;
+package org.tfwwt.morphological.structures.storage;
 
-public interface MorfCharacteristicsAccessInterface {
+import java.util.LinkedList;
 
-    public boolean haveMainForm();
-    public boolean haveDependentForm();
-    public boolean haveCommunication();
-    public byte getTypeOfSpeech();
-    public int getMyFormKey();
-    public int getInitialFormKey();
-    public long getAllMorfCharacteristics();
-    public long getTheMorfCharacteristics(Long...IDENTIFIERS);
-    public long getTheMorfCharacteristics(Class...clazzes);
-    @Override
-    public String toString();
-    public String getInitialFormString();
-    public String getMyFormString();
-    public void addDependentForm(OmoForm mainForm);
-    public boolean isInitialForm();
-
+public class WordList extends LinkedList<OmoFormList> {
+    
+    public boolean isSingleValuedForm() {
+        return size() == 1;
+    }
+    
 }

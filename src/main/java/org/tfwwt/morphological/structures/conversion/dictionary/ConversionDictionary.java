@@ -35,9 +35,9 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphological.structures.conversion.dictionary;
+package org.tfwwt.morphological.structures.conversion.dictionary;
 
-import morphological.structures.storage.OmoFormList;
+import org.tfwwt.morphological.structures.storage.OmoFormList;
 import template.wrapper.classes.FileHelper;
 
 import java.io.BufferedReader;
@@ -47,9 +47,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static morphological.structures.conversion.dictionary.PropertyForConversion.DIR_DICTIONARY;
-import static morphological.structures.conversion.dictionary.PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS;
-import static morphological.structures.load.BDFormString.compressionBd;
+import static org.tfwwt.morphological.structures.load.BDFormString.compressionBd;
 import static template.wrapper.classes.FileHelper.zipCompressFile;
 import static template.wrapper.conversion.Bytes.getPrimitiveBytes;
 
@@ -72,7 +70,7 @@ public class ConversionDictionary {
 
     private static void initFiles(String sourceDictionaryPath, String encoding) {
         readerSourceDictionary = FileHelper.openBufferedReaderStream(sourceDictionaryPath, encoding);
-        streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileOutputStream(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
+        streamKeyAndHashAndMorfCharacteristics = FileHelper.openFileOutputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
         bds = new BDSqliteForConversion();
     }
 
@@ -150,7 +148,7 @@ public class ConversionDictionary {
     }
 
     private static void compressionFile() {
-        zipCompressFile(PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[1]);
+        zipCompressFile(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[1]);
     }
 
     public static void createSmallDictionary(String nameDictionary, String text) {
@@ -174,7 +172,7 @@ public class ConversionDictionary {
 //    }
 
     private static void saveLemmasInFile(String pathFile, List<List<FormForConversion>> lemmas) {
-        OutputStream fileOutput = FileHelper.openFileOutputStream(DIR_DICTIONARY + pathFile);
+        OutputStream fileOutput = FileHelper.openFileOutputStream(PropertyForConversion.DIR_DICTIONARY + pathFile);
         lemmas.forEach((lemma) -> {
             saveLemmaInFile(fileOutput, lemma);
         });

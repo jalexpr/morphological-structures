@@ -33,10 +33,14 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphological.structures.storage;
+package org.tfwwt.morphological.structures.conversion.dictionary;
 
-import java.util.LinkedList;
+import org.tfwwt.morphological.structures.internal.Property;
 
-public class BearingPhraseList extends LinkedList<WordList> {
-    
+public interface PropertyForConversion {
+
+    public static final int CONTROL_VALUE = Property.CONTROL_VALUE;
+    public static final String DIR_DICTIONARY = "dictionary/";
+    public static final String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = DIR_DICTIONARY + Property.PATH_HASH_AND_MORF_CHARACTERISTICS;
+
 }

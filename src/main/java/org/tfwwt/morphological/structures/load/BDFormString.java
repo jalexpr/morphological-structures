@@ -33,9 +33,9 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphological.structures.load;
+package org.tfwwt.morphological.structures.load;
 
-import morphological.structures.internal.Property;
+import org.tfwwt.morphological.structures.internal.Property;
 import template.wrapper.classes.BDSqlite;
 
 import java.io.File;

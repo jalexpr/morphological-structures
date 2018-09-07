@@ -33,9 +33,9 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphological.structures.grammeme;
+package org.tfwwt.morphological.structures.grammeme;
 
-import morphological.structures.grammeme.MorfologyParameters.TypeOfSpeech;
+import org.tfwwt.morphological.structures.grammeme.MorfologyParameters.TypeOfSpeech;
 
 import java.lang.reflect.Field;
 import java.util.Collection;

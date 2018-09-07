@@ -33,14 +33,21 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package morphological.structures.storage;
+package org.tfwwt.morphological.structures.internal;
 
-import java.util.LinkedList;
+import org.tfwwt.morphological.structures.grammeme.MorfologyParameters;
 
-public class WordList extends LinkedList<OmoFormList> {
+public class NumberOmoForm extends OmoForm {
+
+    private final String strNumber;
     
-    public boolean isSingleValuedForm() {
-        return size() == 1;
+    public NumberOmoForm(String strNumber) {
+        super(-1, -1, MorfologyParameters.TypeOfSpeech.NUMERAL, 0);
+        this.strNumber = strNumber;
     }
     
+    @Override
+    public String getInitialFormString() {
+        return strNumber;
+    }
 }
