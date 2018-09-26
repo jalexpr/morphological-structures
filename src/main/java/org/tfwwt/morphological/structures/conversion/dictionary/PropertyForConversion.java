@@ -41,6 +41,6 @@ public interface PropertyForConversion {
 
     public static final int CONTROL_VALUE = Property.CONTROL_VALUE;
     public static final String DIR_DICTIONARY = "dictionary/";
-    public static final String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = DIR_DICTIONARY + Property.PATH_HASH_AND_MORF_CHARACTERISTICS;
+    public static final String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = DIR_DICTIONARY + Property.NAME_HASH_AND_MORF_CHARACTERISTICS;
 
 }
