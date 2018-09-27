@@ -33,12 +33,10 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package org.tfwwt.morphological.structures.storage;
-
-import org.tfwwt.morphological.structures.internal.OmoForm;
+package ru.textanalysis.tfwwt.morphological.structures.storage;
 
 import java.util.LinkedList;
 
-public class OmoFormList extends LinkedList<OmoForm> {
-
+public class SentenceList extends LinkedList<BearingPhraseList>{
+    
 }

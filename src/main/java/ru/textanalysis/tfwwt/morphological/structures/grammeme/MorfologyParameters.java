@@ -35,7 +35,7 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package org.tfwwt.morphological.structures.grammeme;
+package ru.textanalysis.tfwwt.morphological.structures.grammeme;
 
 public interface MorfologyParameters {
 

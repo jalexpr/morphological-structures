@@ -33,10 +33,10 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package org.tfwwt.morphological.structures.storage;
+package ru.textanalysis.tfwwt.morphological.structures.storage;
 
 import java.util.LinkedList;
 
-public class ParagraphList extends LinkedList<SentenceList> {
-
+public class BearingPhraseList extends LinkedList<WordList> {
+    
 }

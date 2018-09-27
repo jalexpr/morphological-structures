@@ -33,9 +33,9 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package org.tfwwt.morphological.structures.conversion.dictionary;
+package ru.textanalysis.tfwwt.morphological.structures.conversion.dictionary;
 
-import org.tfwwt.morphological.structures.internal.Property;
+import ru.textanalysis.tfwwt.morphological.structures.internal.Property;
 
 public interface PropertyForConversion {
 

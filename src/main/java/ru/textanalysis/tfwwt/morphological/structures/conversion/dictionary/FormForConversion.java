@@ -1,15 +1,15 @@
-package org.tfwwt.morphological.structures.conversion.dictionary;
+package ru.textanalysis.tfwwt.morphological.structures.conversion.dictionary;
 
-import org.tfwwt.morphological.structures.grammeme.MorfologyParameters;
-import org.tfwwt.morphological.structures.grammeme.MorfologyParametersHelper;
-import org.tfwwt.morphological.structures.load.BDFormString;
+import ru.textanalysis.tfwwt.morphological.structures.grammeme.MorfologyParameters;
+import ru.textanalysis.tfwwt.morphological.structures.grammeme.MorfologyParametersHelper;
+import ru.textanalysis.tfwwt.morphological.structures.load.BDFormString;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.tfwwt.morphological.structures.load.LoadHelper.createKeyWithControlCode;
-import static org.tfwwt.morphological.structures.load.LoadHelper.getHashCode;
+import static ru.textanalysis.tfwwt.morphological.structures.load.LoadHelper.createKeyWithControlCode;
+import static ru.textanalysis.tfwwt.morphological.structures.load.LoadHelper.getHashCode;
 import static template.wrapper.conversion.Bytes.getBytes;
 import static template.wrapper.conversion.Bytes.plusByte;
 

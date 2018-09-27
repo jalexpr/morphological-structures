@@ -33,10 +33,10 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package org.tfwwt.morphological.structures.internal;
+package ru.textanalysis.tfwwt.morphological.structures.internal;
 
-import org.tfwwt.morphological.structures.grammeme.MorfologyParametersHelper;
-import org.tfwwt.morphological.structures.load.BDFormString;
+import ru.textanalysis.tfwwt.morphological.structures.grammeme.MorfologyParametersHelper;
+import ru.textanalysis.tfwwt.morphological.structures.load.BDFormString;
 
 import java.util.LinkedList;
 

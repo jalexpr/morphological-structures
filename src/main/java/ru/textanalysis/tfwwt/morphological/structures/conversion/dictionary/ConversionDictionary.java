@@ -35,9 +35,9 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package org.tfwwt.morphological.structures.conversion.dictionary;
+package ru.textanalysis.tfwwt.morphological.structures.conversion.dictionary;
 
-import org.tfwwt.morphological.structures.storage.OmoFormList;
+import ru.textanalysis.tfwwt.morphological.structures.storage.OmoFormList;
 import template.wrapper.classes.FileHelper;
 
 import java.io.BufferedReader;
@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.tfwwt.morphological.structures.load.BDFormString.compressionBd;
+import static ru.textanalysis.tfwwt.morphological.structures.load.BDFormString.compressionBd;
 import static template.wrapper.classes.FileHelper.zipCompressFile;
 import static template.wrapper.conversion.Bytes.getPrimitiveBytes;
 

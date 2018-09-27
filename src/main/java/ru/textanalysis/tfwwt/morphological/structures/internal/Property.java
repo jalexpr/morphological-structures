@@ -33,7 +33,7 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package org.tfwwt.morphological.structures.internal;
+package ru.textanalysis.tfwwt.morphological.structures.internal;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

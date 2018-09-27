@@ -1,6 +1,6 @@
-package org.tfwwt.morphological.structures.load;
+package ru.textanalysis.tfwwt.morphological.structures.load;
 
-import org.tfwwt.morphological.structures.internal.Property;
+import ru.textanalysis.tfwwt.morphological.structures.internal.Property;
 import template.wrapper.hash.CityHash;
 
 public class LoadHelper {
