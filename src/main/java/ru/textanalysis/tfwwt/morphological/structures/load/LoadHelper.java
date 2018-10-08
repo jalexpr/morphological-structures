@@ -4,7 +4,6 @@ import ru.textanalysis.tfwwt.morphological.structures.internal.Property;
 import template.wrapper.hash.CityHash;
 
 public class LoadHelper {
-
     public final static byte CONTROL_OFFSET = Property.CONTROL_OFFSET;
 
     public static int getHashCode(String str) {
@@ -15,22 +14,19 @@ public class LoadHelper {
         return (str.hashCode() >> CONTROL_OFFSET) & 255;
     }
 
-    public static int createKeyWithControlCode(int start, int oldKey, String str) throws Exception {
-        return createKeyWithControlCode(start + (oldKey << Property.KEY_OFFSET), getControlHashCode(str));
+    public static int createKeyWithControlCode(int start, int oldIndex, String str) throws Exception {
+        return createKeyWithControlCode(start + (oldIndex << Property.KEY_OFFSET), getControlHashCode(str));
     }
 
-    private static int createKeyWithControlCode(int oldKey, int controlHash) throws Exception {
-//        Проверка, что последнии значения ноль
-        if(((byte)oldKey) == 0) {
-            return controlHash | oldKey;
+    private static int createKeyWithControlCode(int index, int controlHash) throws Exception {
+        if(((byte)index) == 0) {
+            return controlHash | index;
         } else {
-            throw new Exception(String.format("Ключ: %d имеет не пустые 8 последнии битов", oldKey));
+            throw new Exception(String.format("Ключ: %d имеет не пустые 8 последнии битов", index));
         }
-//        return oldKey;
     }
 
     public static int getControlValue(int key) {
         return key & 255;
     }
-
 }
