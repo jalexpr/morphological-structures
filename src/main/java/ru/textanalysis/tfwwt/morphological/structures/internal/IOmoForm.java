@@ -35,8 +35,7 @@
  */
 package ru.textanalysis.tfwwt.morphological.structures.internal;
 
-public interface MorfCharacteristicsAccessInterface {
-
+public interface IOmoForm {
     public boolean haveMainForm();
     public boolean haveDependentForm();
     public boolean haveCommunication();
@@ -44,7 +43,7 @@ public interface MorfCharacteristicsAccessInterface {
     public int getMyFormKey();
     public int getInitialFormKey();
     public long getAllMorfCharacteristics();
-    public long getTheMorfCharacteristics(Long...IDENTIFIERS);
+    public long getTheMorfCharacteristics(Long...identifiers);
     public long getTheMorfCharacteristics(Class...clazzes);
     @Override
     public String toString();
@@ -52,5 +51,6 @@ public interface MorfCharacteristicsAccessInterface {
     public String getMyFormString();
     public void addDependentForm(OmoForm mainForm);
     public boolean isInitialForm();
-
+    public boolean isContainsTypeOfSpeech(byte typeOfSpeech);
+    public boolean isContainsMorphCharacteristic(Class clazz, long morphCharacteristic);
 }

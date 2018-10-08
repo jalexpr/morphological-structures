@@ -40,8 +40,7 @@ import ru.textanalysis.tfwwt.morphological.structures.load.BDFormString;
 
 import java.util.LinkedList;
 
-public class OmoForm implements MorfCharacteristicsAccessInterface {
-
+public class OmoForm implements IOmoForm {
     private final int initialFormKey;
     private final int myFormKey;
     private final byte typeOfSpeech;
@@ -155,4 +154,13 @@ public class OmoForm implements MorfCharacteristicsAccessInterface {
         return initialFormKey == myFormKey;
     }
 
+    @Override
+    public boolean isContainsTypeOfSpeech(byte typeOfSpeech) {
+        return getTypeOfSpeech() == typeOfSpeech;
+    }
+
+    @Override
+    public boolean isContainsMorphCharacteristic(Class clazz, long morphCharacteristic) {
+        return getTheMorfCharacteristics(clazz) == morphCharacteristic;
+    }
 }

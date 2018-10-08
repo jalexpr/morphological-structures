@@ -35,10 +35,10 @@
  */
 package ru.textanalysis.tfwwt.morphological.structures.storage;
 
-import ru.textanalysis.tfwwt.morphological.structures.internal.OmoForm;
+import ru.textanalysis.tfwwt.morphological.structures.internal.IOmoForm;
 
 import java.util.LinkedList;
 
-public class OmoFormList extends LinkedList<OmoForm> {
+public class OmoFormList extends LinkedList<IOmoForm> {
 
 }
