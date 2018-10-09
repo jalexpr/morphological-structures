@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="dictionary.initialFormString.bd" uuid="f68ad6f0-8660-448e-b162-8b26872ce22a">
+    <data-source source="LOCAL" name="dictionary.initialFormString.bd" uuid="6cb45626-d9e2-4e4a-8858-6c656c6f92af">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/dictionary/dictionary.initialFormString.bd</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="Sqlite (Xerial) - dictionary.wordFormString.bd" uuid="8e3812fd-ed61-4fc9-969f-7a5d6aa28fd5">
-      <driver-ref>sqlite.xerial</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/dictionary/dictionary.wordFormString.bd</jdbc-url>
     </data-source>
   </component>
 </project>
