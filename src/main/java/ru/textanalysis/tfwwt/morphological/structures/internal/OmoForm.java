@@ -57,7 +57,7 @@ public class OmoForm implements IOmoForm {
 
     /**
      * Получить String в начальной форме
-     * @return
+     * @return возращает String в начальной форме
      */
     @Override
     public String getInitialFormString() {
@@ -71,7 +71,7 @@ public class OmoForm implements IOmoForm {
 
     /**
      * Получить часть речи
-     * @return
+     * @return возращает часть речи закодированную в byte
      */
     @Override
     public byte getTypeOfSpeech() {
@@ -80,7 +80,7 @@ public class OmoForm implements IOmoForm {
 
     /**
      * Получить все морф. характеристики, кроме части речи
-     * @return
+     * @return возвращает все морф. характеристики слова, кроме части речи закадированные в long
      */
     @Override
     public long getAllMorfCharacteristics() {

@@ -23,5 +23,34 @@ jar {
 task conversionDic (type: Jar) {
     dependsOn build
     dependsOn run
-    println 'hello, world'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/resources']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/resources']
+        }
+    }
+}
+
+processResources {
+    from ('dictionary') {
+        include '*.*'
+    }
 }
