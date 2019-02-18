@@ -15,7 +15,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.jalexpr:TemplateWrapperClasses:master-SNAPSHOT'
+    implementation 'com.github.jalexpr:TemplateWrapperClasses:f512576d49'
 }
 
 jar {
