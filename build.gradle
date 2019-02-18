@@ -15,7 +15,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.jalexpr:TemplateWrapperClasses:to_MVN_repository'
+    implementation 'com.github.jalexpr:TemplateWrapperClasses:master-SNAPSHOT'
 }
 
 jar {
