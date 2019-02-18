@@ -2,4 +2,4 @@
 rootProject.name = 'MorphologicalStructures'
 
 include 'TemplateWrapperClasses'
-project(':TemplateWrapperClasses').projectDir = new File('C:/TFWWT/TemplateWrapperClasses')
+project(':TemplateWrapperClasses').projectDir = new File('../TemplateWrapperClasses')
