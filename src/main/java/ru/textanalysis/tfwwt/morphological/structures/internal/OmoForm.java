@@ -36,6 +36,7 @@
 package ru.textanalysis.tfwwt.morphological.structures.internal;
 
 import ru.textanalysis.tfwwt.morphological.structures.grammeme.MorfologyParametersHelper;
+import ru.textanalysis.tfwwt.morphological.structures.internal.form.Form;
 import ru.textanalysis.tfwwt.morphological.structures.load.BDFormString;
 
 import java.util.LinkedList;
@@ -47,6 +48,13 @@ public class OmoForm implements IOmoForm {
     private final long morfCharacteristics;
     private final LinkedList myDependent = new LinkedList<>();
     private final LinkedList myMain = new LinkedList<>();
+
+    public OmoForm(Form form) {
+        this.initialFormKey = form.getInitialFormKey();
+        this.typeOfSpeech = form.getTypeOfSpeech();
+        this.morfCharacteristics = form.getMorphCharacteristics();
+        this.myFormKey = form.getMyFormKey();
+    }
 
     public OmoForm(int initialFormKey, int myFormKey, byte typeOfSpeech, long morfCharacteristics) {
         this.initialFormKey = initialFormKey;
