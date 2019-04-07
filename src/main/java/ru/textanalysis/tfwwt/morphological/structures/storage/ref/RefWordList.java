@@ -39,6 +39,7 @@ import ru.textanalysis.tfwwt.morphological.structures.internal.ref.RefOmoFormLis
 
 import java.util.LinkedList;
 
+//список ссылок на слова
 public class RefWordList extends LinkedList<RefOmoFormList> {
     public boolean isSingleValuedForm() {
         return size() == 1;

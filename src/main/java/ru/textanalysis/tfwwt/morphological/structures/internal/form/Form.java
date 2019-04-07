@@ -61,7 +61,6 @@ public abstract class Form implements GetCharacteristics {
         return formKeyInBD;
     }
 
-
     public String getMyString() {
         return BDFormString.getStringById(getMyFormKey(), false);
     }

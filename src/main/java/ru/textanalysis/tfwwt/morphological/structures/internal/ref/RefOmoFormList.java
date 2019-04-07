@@ -6,6 +6,7 @@ import ru.textanalysis.tfwwt.morphological.structures.internal.OmoForm;
 import ru.textanalysis.tfwwt.morphological.structures.internal.form.Form;
 import ru.textanalysis.tfwwt.morphological.structures.storage.OmoFormList;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -33,8 +34,12 @@ public class RefOmoFormList {
 //        });
 //    }
 
-    public RefOmoFormList(RefOmoFormList refOmoFormList) {
-        refOmoForms = new LinkedList<>(refOmoFormList.refOmoForms);
+    private RefOmoFormList(RefOmoFormList refOmoFormList) {
+        refOmoForms = new ArrayList<>(refOmoFormList.refOmoForms);
+    }
+
+    public RefOmoFormList createRefOmoFormList(RefOmoFormList refOmoFormList) {
+        return new RefOmoFormList(refOmoFormList);
     }
 
     public void applyFilter(Predicate<? super RefOmoForm> predicate) {
@@ -43,6 +48,10 @@ public class RefOmoFormList {
 
     public List<RefOmoForm> getByFilter(Predicate<? super RefOmoForm> predicate) {
         return refOmoForms.stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    public List<RefOmoForm> copy() {
+        return new ArrayList<>(refOmoForms);
     }
 
     public int size() {

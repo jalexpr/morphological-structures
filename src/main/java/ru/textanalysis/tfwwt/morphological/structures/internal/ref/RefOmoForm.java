@@ -1,13 +1,11 @@
 package ru.textanalysis.tfwwt.morphological.structures.internal.ref;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.textanalysis.tfwwt.morphological.structures.internal.form.Form;
 import ru.textanalysis.tfwwt.morphological.structures.internal.form.GetCharacteristics;
 
-public class RefOmoForm implements GetCharacteristics {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+import java.util.Objects;
 
+public class RefOmoForm implements GetCharacteristics {
     private final Form form;
 
     public RefOmoForm(Form form) {
@@ -39,12 +37,25 @@ public class RefOmoForm implements GetCharacteristics {
         if (form.getInitialForm() instanceof Form) {
             return new RefOmoForm((Form) form.getInitialForm());
         } else {
-            log.warn("Wrong conversion!");
+//            log.warn("Wrong conversion!");todo
             return form.getInitialForm();
         }
     }
 
     protected Form getForm() {
         return form;
+    }
+
+    @Override
+    public int hashCode() {
+        return form.getMyFormKey();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RefOmoForm that = (RefOmoForm) o;
+        return Objects.equals(form.getMyFormKey(), that.form.getMyFormKey());
     }
 }
