@@ -7,7 +7,7 @@ import java.util.List;
 
 public class OmoFormSP {
     private final RefOmoForm currencyOmoForm;
-    private List<CursorToFormInWord> mainCursors = new LinkedList<>();
+    private CursorToFormInWord mainCursors;
     private List<CursorToFormInWord> dependentCursors = new LinkedList<>();
 
     public OmoFormSP(RefOmoForm currencyOmoForm) {
@@ -18,8 +18,8 @@ public class OmoFormSP {
         return currencyOmoForm;
     }
 
-    public void addMainCursors(CursorToFormInWord mainCursor) {
-        this.mainCursors.add(mainCursor);
+    public void setMainCursors(CursorToFormInWord mainCursor) {
+        this.mainCursors = mainCursor;
     }
 
     public void addDependentCursors(CursorToFormInWord dependentCursor) {
@@ -28,6 +28,18 @@ public class OmoFormSP {
 
     public byte getToS() {
         return currencyOmoForm.getTypeOfSpeech();
+    }
+
+    public boolean haveMain() {
+        return mainCursors != null;
+    }
+
+    public boolean haveDep() {
+        return !dependentCursors.isEmpty();
+    }
+
+    public boolean haveRelation() {
+        return haveMain() || haveDep();
     }
 
     @Override
@@ -41,5 +53,18 @@ public class OmoFormSP {
     @Override
     public int hashCode() {
         return currencyOmoForm.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "OmoFormSP{" +
+                "currencyOmoForm=" + currencyOmoForm +
+                ", mainCursors=" + mainCursors +
+                ", dependentCursors=" + dependentCursors +
+                '}';
+    }
+
+    public String toStringCurrencyOmoForm() {
+        return currencyOmoForm.toString();
     }
 }

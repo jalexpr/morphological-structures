@@ -58,4 +58,11 @@ public class RefOmoForm implements GetCharacteristics {
         RefOmoForm that = (RefOmoForm) o;
         return Objects.equals(form.getMyFormKey(), that.form.getMyFormKey());
     }
+
+    @Override
+    public String toString() {
+        return "RefOmoForm{" +
+                form +
+                "}";
+    }
 }

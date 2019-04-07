@@ -44,8 +44,8 @@ import static ru.textanalysis.tfwwt.morphological.structures.load.LoadHelper.get
 
 public abstract class Form implements GetCharacteristics {
     public static int formCount = 0;
-    private final long morphCharacteristics;
-    private final int formKeyInBD;
+    protected final long morphCharacteristics;
+    protected final int formKeyInBD;
 
     protected Form(long morphCharacteristics, int formKey) {
         this.morphCharacteristics = morphCharacteristics;
@@ -72,4 +72,7 @@ public abstract class Form implements GetCharacteristics {
     private int getMyControlValue() {
         return getControlValue(getMyFormKey());
     }
+
+    @Override
+    public abstract String toString();
 }
