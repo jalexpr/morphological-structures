@@ -1,6 +1,8 @@
 package ru.textanalysis.tfwwt.morphological.structures.internal.sp;
 
 public class CursorToFormInWord {
+    public static final int NOT_HAVE_EXACT_RELATION = -1;
+
     private final WordSP wordSP;
     private final int hashCode;
 
@@ -15,5 +17,12 @@ public class CursorToFormInWord {
 
     public int getHashCode() {
         return hashCode;
+    }
+
+    @Override
+    public String toString() {
+        return "CursorToFormInWord{" +
+                "omoForm=" + wordSP.getOmoFormStringByKey(hashCode) +
+                '}';
     }
 }
