@@ -1,5 +1,0 @@
-
-rootProject.name = 'MorphologicalStructures'
-
-include 'TemplateWrapperClasses'
-project(':TemplateWrapperClasses').projectDir = new File('../TemplateWrapperClasses')
