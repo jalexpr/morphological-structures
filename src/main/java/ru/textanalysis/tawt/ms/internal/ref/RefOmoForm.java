@@ -61,8 +61,6 @@ public class RefOmoForm implements GetCharacteristics {
 
     @Override
     public String toString() {
-        return "RefOmoForm{" +
-                form +
-                "}";
+        return form.toString();
     }
 }

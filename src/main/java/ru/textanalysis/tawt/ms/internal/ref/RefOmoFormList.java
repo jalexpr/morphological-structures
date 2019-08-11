@@ -65,4 +65,12 @@ public class RefOmoFormList {
         );
         return list;
     }
+
+    @Override
+    public String toString() {
+        return refOmoForms.isEmpty() ?
+                "\n\t\tRefOmoFormList: null" :
+                "\n\t\tRefOmoFormList - " + refOmoForms.get(0).getForm().getInitialFormString() + " :\n" +
+                refOmoForms.toString();
+    }
 }

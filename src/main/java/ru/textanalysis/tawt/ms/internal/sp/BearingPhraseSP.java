@@ -37,8 +37,8 @@ public class BearingPhraseSP implements IApplyFunction<List<WordSP>>, IApplyCons
     @Override
     public String toString() {
         return "BearingPhraseSP{" +
-                "words=" + words +
-                ", mainOmoForm=" + mainOmoForms +
-                '}';
+                "\n\twords=" + words +
+                ",\n\tmainOmoForm=" + mainOmoForms +
+                "\n}";
     }
 }

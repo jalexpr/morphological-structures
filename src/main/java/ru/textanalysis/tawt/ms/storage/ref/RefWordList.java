@@ -44,4 +44,10 @@ public class RefWordList extends LinkedList<RefOmoFormList> {
     public boolean isSingleValuedForm() {
         return size() == 1;
     }
+
+    @Override
+    public String toString() {
+        return "\tRefWordList:\n" +
+                super.toString();
+    }
 }

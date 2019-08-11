@@ -21,8 +21,6 @@ public class CursorToFormInWord {
 
     @Override
     public String toString() {
-        return "CursorToFormInWord{" +
-                "omoForm=" + wordSP.getOmoFormStringByKey(hashCode) +
-                '}';
+        return wordSP.getOmoFormStringByKey(hashCode);
     }
 }

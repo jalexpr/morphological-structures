@@ -74,5 +74,19 @@ public abstract class Form implements GetCharacteristics {
     }
 
     @Override
-    public abstract String toString();
+    public String toString() {
+        return new StringBuilder()
+                .append("\n{isInit=")
+                .append(isInitialForm())
+                .append("hash=")
+                .append(hashCode())
+                .append(",")
+                .append(getMyString())
+                .append(",ToS=")
+                .append(getTypeOfSpeech())
+                .append(",morf=")
+                .append(morphCharacteristics)
+                .append("}")
+                .toString();
+    }
 }

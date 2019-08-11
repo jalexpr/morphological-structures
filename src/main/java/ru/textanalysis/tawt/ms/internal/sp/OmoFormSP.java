@@ -42,6 +42,10 @@ public class OmoFormSP {
         return haveMain() || haveDep();
     }
 
+    public boolean haveNotRelation() {
+        return !haveRelation();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,14 +61,17 @@ public class OmoFormSP {
 
     @Override
     public String toString() {
-        return "OmoFormSP{" +
-                "currencyOmoForm=" + currencyOmoForm +
-                ", mainCursors=" + mainCursors +
-                ", dependentCursors=" + dependentCursors +
-                '}';
+        return "currencyForm=" + currencyOmoForm +
+                ", main=" + mainCursors +
+                ", dependents=" + dependentCursors;
     }
 
     public String toStringCurrencyOmoForm() {
         return currencyOmoForm.toString();
+    }
+
+    public boolean haveRelation(WordSP wordSP) {
+        return mainCursors != null && mainCursors.getHashCode() == wordSP.hashCode()
+                || dependentCursors.stream().anyMatch(cursorToFormInWord -> cursorToFormInWord.getHashCode() == wordSP.hashCode());
     }
 }

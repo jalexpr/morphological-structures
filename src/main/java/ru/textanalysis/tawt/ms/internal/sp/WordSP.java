@@ -5,7 +5,6 @@ import ru.textanalysis.tawt.ms.internal.IApplyConsumer;
 import ru.textanalysis.tawt.ms.internal.ref.RefOmoFormList;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -42,23 +41,25 @@ public class WordSP implements IApplyConsumer<OmoFormSP> {
     }
 
     public void cleanNotRelation() {
-        Iterator<OmoFormSP> iterator = omoForms.values().iterator();
-        while (iterator.hasNext()) {
-            OmoFormSP omoForm = iterator.next();
-            if (!omoForm.haveRelation()) {
-                omoForms.remove(omoForm.hashCode());
-            }
-        }
+        omoForms.values()
+                .stream()
+                .filter(OmoFormSP::haveNotRelation)
+                .map(OmoFormSP::hashCode)
+                .collect(Collectors.toList())
+                .forEach(omoForms::remove);
     }
 
     @Override
     public String toString() {
-        return "WordSP{" +
-                "omoForms=" + omoForms +
-                '}';
+        return "\n\t\tWordSP=" + omoForms.values();
     }
 
     public String getOmoFormStringByKey(int hashCode) {
         return omoForms.get(hashCode).toStringCurrencyOmoForm();
+    }
+
+    public boolean haveAlreadyRelations(WordSP wordSP) {
+        return this.omoForms.values().stream()
+                .anyMatch(omoFormSP -> omoFormSP.haveRelation(wordSP));
     }
 }
