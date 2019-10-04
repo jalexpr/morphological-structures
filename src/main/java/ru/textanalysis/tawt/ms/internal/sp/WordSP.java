@@ -1,6 +1,7 @@
 package ru.textanalysis.tawt.ms.internal.sp;
 
 import ru.textanalysis.tawt.ms.grammeme.BearingForm;
+import ru.textanalysis.tawt.ms.grammeme.MorfologyParameters;
 import ru.textanalysis.tawt.ms.internal.IApplyConsumer;
 import ru.textanalysis.tawt.ms.internal.ref.RefOmoFormList;
 
@@ -31,7 +32,7 @@ public class WordSP implements IApplyConsumer<OmoFormSP> {
         omoForms.values().forEach(consumer);
     }
 
-    public boolean isOnceToS() {
+    public boolean isOneTos() {
         byte tos = omoForms.values().iterator().next().getToS();
         return omoForms.values().stream().allMatch(omoForm -> omoForm.getToS() == tos);
     }
@@ -61,5 +62,9 @@ public class WordSP implements IApplyConsumer<OmoFormSP> {
     public boolean haveAlreadyRelations(WordSP wordSP) {
         return this.omoForms.values().stream()
                 .anyMatch(omoFormSP -> omoFormSP.haveRelation(wordSP));
+    }
+
+    public boolean havePretext() {
+        return omoForms.values().stream().anyMatch(omoForm -> omoForm.getToS() == MorfologyParameters.TypeOfSpeech.PRETEXT);
     }
 }

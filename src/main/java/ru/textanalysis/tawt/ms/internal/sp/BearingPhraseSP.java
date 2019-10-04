@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ *
+ */
 public class BearingPhraseSP implements IApplyFunction<List<WordSP>>, IApplyConsumer<List<WordSP>> {
     private final List<OmoFormSP> mainOmoForms;
     private final List<WordSP> words;
