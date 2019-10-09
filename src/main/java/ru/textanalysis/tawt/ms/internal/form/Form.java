@@ -76,9 +76,9 @@ public abstract class Form implements GetCharacteristics {
     @Override
     public String toString() {
         return new StringBuilder()
-                .append("\n{isInit=")
+                .append("{isInit=")
                 .append(isInitialForm())
-                .append("hash=")
+                .append(",hash=")
                 .append(hashCode())
                 .append(",")
                 .append(getMyString())

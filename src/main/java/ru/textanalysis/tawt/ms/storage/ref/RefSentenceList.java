@@ -38,5 +38,9 @@ package ru.textanalysis.tawt.ms.storage.ref;
 import java.util.LinkedList;
 
 public class RefSentenceList extends LinkedList<RefBearingPhraseList>{
-    
+    @Override
+    public String toString() {
+        return "\nRefSentenceList:\n" +
+                super.toString();
+    }
 }
