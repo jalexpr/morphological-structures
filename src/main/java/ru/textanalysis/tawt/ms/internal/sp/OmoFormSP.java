@@ -1,5 +1,6 @@
 package ru.textanalysis.tawt.ms.internal.sp;
 
+import ru.textanalysis.tawt.ms.grammeme.BearingForm;
 import ru.textanalysis.tawt.ms.internal.ref.RefOmoForm;
 
 import java.util.LinkedList;
@@ -73,5 +74,13 @@ public class OmoFormSP {
     public boolean haveRelation(WordSP wordSP) {
         return mainCursors != null && mainCursors.getHashCode() == wordSP.hashCode()
                 || dependentCursors.stream().anyMatch(cursorToFormInWord -> cursorToFormInWord.getHashCode() == wordSP.hashCode());
+    }
+
+    public long getMorf(long mask) {
+        return getCurrencyOmoForm().getMorfCharacteristic(mask);
+    }
+
+    public boolean haveBearingForm() {
+        return BearingForm.contains(this.getToS());
     }
 }

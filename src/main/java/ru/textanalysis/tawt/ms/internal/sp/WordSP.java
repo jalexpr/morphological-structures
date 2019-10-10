@@ -1,6 +1,5 @@
 package ru.textanalysis.tawt.ms.internal.sp;
 
-import ru.textanalysis.tawt.ms.grammeme.BearingForm;
 import ru.textanalysis.tawt.ms.grammeme.MorfologyParameters;
 import ru.textanalysis.tawt.ms.internal.IApplyConsumer;
 import ru.textanalysis.tawt.ms.internal.ref.RefOmoFormList;
@@ -23,13 +22,17 @@ public class WordSP implements IApplyConsumer<OmoFormSP> {
         return omoForms.values().stream().filter(predicate).collect(Collectors.toList());
     }
 
-    public boolean isContainsBearingForm() {
-        return omoForms.values().stream().anyMatch(omoForm -> BearingForm.contains(omoForm.getToS()));
+    public boolean haveContainsBearingForm() {
+        return omoForms.values().stream().anyMatch(OmoFormSP::haveBearingForm);
     }
 
     @Override
     public void applyConsumer(Consumer<OmoFormSP> consumer) {
         omoForms.values().forEach(consumer);
+    }
+
+    public boolean applyPredicate(Predicate<OmoFormSP> predicate) {
+        return omoForms.values().stream().allMatch(predicate);
     }
 
     public boolean isOneTos() {
@@ -59,12 +62,17 @@ public class WordSP implements IApplyConsumer<OmoFormSP> {
         return omoForms.get(hashCode).toStringCurrencyOmoForm();
     }
 
-    public boolean haveAlreadyRelations(WordSP wordSP) {
+    public boolean haveAlreadyRelationWith(WordSP wordSP) {
         return this.omoForms.values().stream()
                 .anyMatch(omoFormSP -> omoFormSP.haveRelation(wordSP));
     }
 
     public boolean havePretext() {
-        return omoForms.values().stream().anyMatch(omoForm -> omoForm.getToS() == MorfologyParameters.TypeOfSpeech.PRETEXT);
+        return omoForms.values().stream().anyMatch(omoForm -> omoForm.getToS() == MorfologyParameters.TypeOfSpeech.PRETEXT
+        || omoForm.getToS() == MorfologyParameters.TypeOfSpeech.PARTICLE);
+    }
+
+    public boolean haveMain() {
+        return omoForms.values().stream().anyMatch(OmoFormSP::haveMain);
     }
 }

@@ -48,7 +48,7 @@ public class RefOmoForm implements GetCharacteristics {
 
     @Override
     public int hashCode() {
-        return form.getMyFormKey();
+        return form.getOrder();
     }
 
     @Override
@@ -62,5 +62,9 @@ public class RefOmoForm implements GetCharacteristics {
     @Override
     public String toString() {
         return form.toString();
+    }
+
+    public long getMorfCharacteristic(long morfologyParameter) {
+        return form.getMorphCharacteristics() & morfologyParameter;
     }
 }

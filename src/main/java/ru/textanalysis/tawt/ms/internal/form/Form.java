@@ -46,11 +46,13 @@ public abstract class Form implements GetCharacteristics {
     public static int formCount = 0;
     protected final long morphCharacteristics;
     protected final int formKeyInBD;
+    protected final int order;
 
     protected Form(long morphCharacteristics, int formKey) {
         this.morphCharacteristics = morphCharacteristics;
         this.formKeyInBD = formKey;
         formCount++;
+        order = formCount;
     }
 
     public long getMorphCharacteristics() {
@@ -88,5 +90,9 @@ public abstract class Form implements GetCharacteristics {
                 .append(morphCharacteristics)
                 .append("}")
                 .toString();
+    }
+
+    public int getOrder() {
+        return order;
     }
 }

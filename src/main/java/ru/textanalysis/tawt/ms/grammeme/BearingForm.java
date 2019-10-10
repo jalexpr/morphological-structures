@@ -1,7 +1,8 @@
 package ru.textanalysis.tawt.ms.grammeme;
 
 public enum BearingForm {
-    NOUN(MorfologyParameters.TypeOfSpeech.NOUN);
+    NOUN(MorfologyParameters.TypeOfSpeech.NOUN),
+    VERB(MorfologyParameters.TypeOfSpeech.VERB);
 
     private final byte value;
 

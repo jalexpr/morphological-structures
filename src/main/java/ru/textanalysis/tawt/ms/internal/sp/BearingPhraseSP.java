@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -18,8 +19,7 @@ public class BearingPhraseSP implements IApplyFunction<List<WordSP>>, IApplyCons
     private final List<WordSP> words;
 
     public BearingPhraseSP(RefWordList refWordList) {
-        this.words = new LinkedList<>();
-        refWordList.forEach(refOmoFormList -> words.add(new WordSP(refOmoFormList)));
+        this.words = refWordList.stream().map(WordSP::new).collect(Collectors.toList());
         this.mainOmoForms = new LinkedList<>();
     }
 

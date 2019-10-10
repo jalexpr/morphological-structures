@@ -499,16 +499,16 @@ public interface MorfologyParameters {
      */
     public interface TypeOfSpeech {
 
-        public static final byte NOUN = 0x11;
+        public static final byte NOUN = 0x11; //17
 
         public static final byte ADJECTIVEFULL = 0x12;
-        public static final byte ADJECTIVESHORT = 0x13;
+        public static final byte ADJECTIVESHORT = 0x13; //13
 
-        public static final byte VERB = 0x14;
+        public static final byte VERB = 0x14;   //14
         public static final byte INFINITIVE = 0x15;
 
         public static final byte PARTICIPLEFULL = 0x16;
-        public static final byte PARTICIPLE = 0x17;
+        public static final byte PARTICIPLE = 0x17; //23
 
         public static final byte GERUND = 0x19;
         public static final byte GERUNDIMPERFECT = 0x1A;
@@ -517,7 +517,7 @@ public interface MorfologyParameters {
         public static final byte NUMERAL = 0x1C;
         public static final byte COLLECTIVENUMERAL = 0x1D;
 
-        public static final byte NOUNPRONOUN = 0x1E;
+        public static final byte NOUNPRONOUN = 0x1E; //30
         public static final byte ANAPHORICPRONOUN = 0x1F;
 
         public static final byte ADVERB = 0x9;
