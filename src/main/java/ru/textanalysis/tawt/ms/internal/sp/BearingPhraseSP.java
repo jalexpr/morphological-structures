@@ -27,6 +27,7 @@ public class BearingPhraseSP implements IApplyFunction<List<WordSP>>, IApplyCons
 
     public void searchMainOmoForm() {
         words.forEach(word -> mainOmoForms.addAll(word.getByFilter(omoForm -> !omoForm.haveMain() && BearingForm.contains(omoForm.getToS()))));
+        mainOmoForms.addAll(words.stream().filter(word -> !word.haveMain()).map(word -> word.getByFilter(omoForm -> !omoForm.haveMain()).get(0)).collect(Collectors.toList()));
     }
 
     @Override
