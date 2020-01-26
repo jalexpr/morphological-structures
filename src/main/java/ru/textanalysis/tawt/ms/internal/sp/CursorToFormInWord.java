@@ -1,5 +1,7 @@
 package ru.textanalysis.tawt.ms.internal.sp;
 
+import ru.textanalysis.tawt.ms.external.sp.OmoFormExt;
+
 public class CursorToFormInWord {
     public static final int NOT_HAVE_EXACT_RELATION = -1;
 
@@ -22,5 +24,9 @@ public class CursorToFormInWord {
     @Override
     public String toString() {
         return wordSP.getOmoFormStringByKey(hashCode);
+    }
+
+    public OmoFormExt toExt(OmoFormExt main) {
+        return wordSP.toExtByKey(hashCode, main);
     }
 }

@@ -1,5 +1,6 @@
 package ru.textanalysis.tawt.ms.internal.sp;
 
+import ru.textanalysis.tawt.ms.external.sp.OmoFormExt;
 import ru.textanalysis.tawt.ms.grammeme.MorfologyParameters;
 import ru.textanalysis.tawt.ms.internal.IApplyConsumer;
 import ru.textanalysis.tawt.ms.internal.ref.RefOmoFormList;
@@ -74,5 +75,9 @@ public class WordSP implements IApplyConsumer<OmoFormSP> {
 
     public boolean haveMain() {
         return omoForms.values().stream().anyMatch(OmoFormSP::haveMain);
+    }
+
+    public OmoFormExt toExtByKey(int hashCode, OmoFormExt main) {
+        return omoForms.get(hashCode).toExt(main);
     }
 }

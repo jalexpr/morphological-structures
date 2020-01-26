@@ -67,4 +67,8 @@ public class RefOmoForm implements GetCharacteristics {
     public long getMorfCharacteristic(long morfologyParameter) {
         return form.getMorphCharacteristics() & morfologyParameter;
     }
+
+    public RefOmoForm copy() {
+        return new RefOmoForm(form);
+    }
 }

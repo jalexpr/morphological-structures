@@ -1,10 +1,13 @@
 package ru.textanalysis.tawt.ms.internal.sp;
 
+import ru.textanalysis.tawt.ms.external.sp.OmoFormExt;
 import ru.textanalysis.tawt.ms.grammeme.BearingForm;
 import ru.textanalysis.tawt.ms.internal.ref.RefOmoForm;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OmoFormSP {
     private final RefOmoForm currencyOmoForm;
@@ -82,5 +85,15 @@ public class OmoFormSP {
 
     public boolean haveBearingForm() {
         return BearingForm.contains(this.getToS());
+    }
+
+    public OmoFormExt toExt(OmoFormExt main) {
+        List<OmoFormExt> dependents = new ArrayList<>();
+        OmoFormExt omoFormExt = new OmoFormExt(
+                currencyOmoForm.copy(),
+                main,
+                dependents);
+        dependents.addAll(dependentCursors.stream().map(cursorToFormInWord -> cursorToFormInWord.toExt(omoFormExt)).collect(Collectors.toList()));
+        return omoFormExt;
     }
 }

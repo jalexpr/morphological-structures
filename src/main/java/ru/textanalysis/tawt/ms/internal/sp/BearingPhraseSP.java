@@ -1,5 +1,7 @@
 package ru.textanalysis.tawt.ms.internal.sp;
 
+import ru.textanalysis.tawt.ms.external.sp.BearingPhraseExt;
+import ru.textanalysis.tawt.ms.external.sp.OmoFormExt;
 import ru.textanalysis.tawt.ms.grammeme.BearingForm;
 import ru.textanalysis.tawt.ms.internal.IApplyConsumer;
 import ru.textanalysis.tawt.ms.internal.IApplyFunction;
@@ -43,5 +45,10 @@ public class BearingPhraseSP implements IApplyFunction<List<WordSP>>, IApplyCons
                 "\n\twords=" + words +
                 ",\n\tmainOmoForm=" + mainOmoForms +
                 "\n}";
+    }
+
+    public BearingPhraseExt toExt() {
+        List<OmoFormExt> mainOmoFormsSP = this.mainOmoForms.stream().map(omoFormSP -> omoFormSP.toExt(null)).collect(Collectors.toList());
+        return new BearingPhraseExt(mainOmoFormsSP);
     }
 }
