@@ -73,4 +73,8 @@ public class RefOmoFormList {
                 "\n\t\tRefOmoFormList - " + refOmoForms.get(0).getForm().getInitialFormString() + " :\n" +
                 refOmoForms.toString();
     }
+
+    public boolean isDetected() {
+        return !refOmoForms.isEmpty();
+    }
 }

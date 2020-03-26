@@ -5,6 +5,7 @@ import ru.textanalysis.tawt.ms.external.sp.OmoFormExt;
 import ru.textanalysis.tawt.ms.grammeme.BearingForm;
 import ru.textanalysis.tawt.ms.internal.IApplyConsumer;
 import ru.textanalysis.tawt.ms.internal.IApplyFunction;
+import ru.textanalysis.tawt.ms.internal.ref.RefOmoFormList;
 import ru.textanalysis.tawt.ms.storage.ref.RefWordList;
 
 import java.util.LinkedList;
@@ -21,7 +22,7 @@ public class BearingPhraseSP implements IApplyFunction<List<WordSP>>, IApplyCons
     private final List<WordSP> words;
 
     public BearingPhraseSP(RefWordList refWordList) {
-        this.words = refWordList.stream().map(WordSP::new).collect(Collectors.toList());
+        this.words = refWordList.stream().filter(RefOmoFormList::isDetected).map(WordSP::new).collect(Collectors.toList());
         this.mainOmoForms = new LinkedList<>();
     }
 
