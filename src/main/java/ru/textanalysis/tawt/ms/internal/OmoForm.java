@@ -42,12 +42,12 @@ import ru.textanalysis.tawt.ms.loader.BDFormString;
 import java.util.LinkedList;
 
 public class OmoForm implements IOmoForm {
-    protected final int initialFormKey;
-    protected final int myFormKey;
-    protected final byte typeOfSpeech;
-    protected final long morfCharacteristics;
-    protected final LinkedList<OmoForm> myDependent = new LinkedList<>();
-    protected final LinkedList<OmoForm> myMain = new LinkedList<>();
+    protected int initialFormKey;
+    protected int myFormKey;
+    protected byte typeOfSpeech;
+    protected long morfCharacteristics;
+    protected LinkedList<OmoForm> myDependent = new LinkedList<>();
+    protected LinkedList<OmoForm> myMain = new LinkedList<>();
 
     public OmoForm() {
         this.initialFormKey = -1;
