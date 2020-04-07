@@ -50,4 +50,9 @@ public class NumberOmoForm extends OmoForm {
     public String getInitialFormString() {
         return strNumber;
     }
+
+    @Override
+    public boolean isNumber() {
+        return true;
+    }
 }

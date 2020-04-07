@@ -46,8 +46,8 @@ public class OmoForm implements IOmoForm {
     private final int myFormKey;
     private final byte typeOfSpeech;
     private final long morfCharacteristics;
-    private final LinkedList myDependent = new LinkedList<>();
-    private final LinkedList myMain = new LinkedList<>();
+    private final LinkedList<OmoForm> myDependent = new LinkedList<>();
+    private final LinkedList<OmoForm> myMain = new LinkedList<>();
 
     public OmoForm(Form form) {
         this.initialFormKey = form.getInitialFormKey();
@@ -170,5 +170,10 @@ public class OmoForm implements IOmoForm {
     @Override
     public boolean isContainsMorphCharacteristic(Class clazz, long morphCharacteristic) {
         return getTheMorfCharacteristics(clazz) == morphCharacteristic;
+    }
+
+    @Override
+    public boolean isNumber() {
+        return false;
     }
 }

@@ -53,4 +53,5 @@ public interface IOmoForm {
     public boolean isInitialForm();
     public boolean isContainsTypeOfSpeech(byte typeOfSpeech);
     public boolean isContainsMorphCharacteristic(Class clazz, long morphCharacteristic);
+    public boolean isNumber();
 }
