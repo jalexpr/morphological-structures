@@ -52,6 +52,11 @@ public class UnfamiliarOmoForm extends OmoForm {
     }
 
     @Override
+    public String getMyFormString() {
+        return str;
+    }
+
+    @Override
     public String getInitialFormString() {
         return str;
     }

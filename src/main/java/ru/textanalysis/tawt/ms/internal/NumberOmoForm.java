@@ -50,7 +50,12 @@ public class NumberOmoForm extends OmoForm {
                 morfCharacteristics);
         this.str = str;
     }
-    
+
+    @Override
+    public String getMyFormString() {
+        return str;
+    }
+
     @Override
     public String getInitialFormString() {
         return str;
