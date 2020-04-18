@@ -44,8 +44,8 @@ public class RefOmoForm implements GetCharacteristics {
     }
 
     @Override
-    public TypeForms isTypeForm() {
-        return form.isTypeForm();
+    public TypeForms getTypeForm() {
+        return form.getTypeForm();
     }
 
     protected Form getForm() {

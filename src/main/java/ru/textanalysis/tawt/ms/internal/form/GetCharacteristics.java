@@ -13,5 +13,5 @@ public interface GetCharacteristics {
 
     GetCharacteristics getInitialForm();
 
-     TypeForms isTypeForm();
+     TypeForms getTypeForm();
 }
