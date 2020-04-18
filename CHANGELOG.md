@@ -1,3 +1,11 @@
+1.2.11
+--
+- Добавлено TawtException и TawtRuntimeException
+- Добавлена часть речи UNFAMILIAR = 0x1
+- Добавлен класс TypeForms
+- Добавлен класс UnfamiliarOmoForm
+- Добавлен в GetCharacteristics метод isTypeForm
+
 1.2.10
 --
 - Добавлен метод, позволяющий определить omoForm является формой слова или числом

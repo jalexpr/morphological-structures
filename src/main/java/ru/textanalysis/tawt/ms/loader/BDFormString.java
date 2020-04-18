@@ -80,7 +80,7 @@ public class BDFormString {
             } else {
                 resultSet = BD_WORD_FORM_STRING.executeQuery(executeString);
             }
-            return (String) resultSet.getObject("StringForm");
+            return resultSet.getString("StringForm");
         } catch (NullPointerException ex) {
             if (isInitialForm) {
                 Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("БД \"%s\" не найдена", Property.NAME_BD_INITIAL_FORM), ex);

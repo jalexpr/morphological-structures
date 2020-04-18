@@ -1,5 +1,6 @@
 package ru.textanalysis.tawt.ms.internal.ref;
 
+import ru.textanalysis.tawt.ms.internal.TypeForms;
 import ru.textanalysis.tawt.ms.internal.form.Form;
 import ru.textanalysis.tawt.ms.internal.form.GetCharacteristics;
 
@@ -40,6 +41,11 @@ public class RefOmoForm implements GetCharacteristics {
 //            log.warn("Wrong conversion!");todo
             return form.getInitialForm();
         }
+    }
+
+    @Override
+    public TypeForms isTypeForm() {
+        return form.isTypeForm();
     }
 
     protected Form getForm() {

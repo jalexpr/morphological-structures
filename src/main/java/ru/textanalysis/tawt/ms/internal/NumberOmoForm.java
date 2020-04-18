@@ -38,25 +38,26 @@ package ru.textanalysis.tawt.ms.internal;
 import ru.textanalysis.tawt.ms.grammeme.MorfologyParameters;
 
 public class NumberOmoForm extends OmoForm {
-    protected String strNumber;
+    protected String str;
 
     public NumberOmoForm() {
     }
 
-    public NumberOmoForm(String strNumber) {
-        super(-1, -1, MorfologyParameters.TypeOfSpeech.NUMERAL, 0);
-        this.strNumber = strNumber;
+    public NumberOmoForm(String str, int initialFormKey, int myFormKey, long morfCharacteristics) {
+        super(initialFormKey,
+                myFormKey,
+                MorfologyParameters.TypeOfSpeech.NUMERAL,
+                morfCharacteristics);
+        this.str = str;
     }
     
     @Override
     public String getInitialFormString() {
-        return strNumber;
+        return str;
     }
 
     @Override
-    public boolean isNumber() {
-        return true;
+    public TypeForms isTypeForm() {
+        return TypeForms.NUMBER;
     }
-
-
 }

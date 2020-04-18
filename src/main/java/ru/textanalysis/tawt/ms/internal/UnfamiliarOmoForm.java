@@ -35,23 +35,29 @@
  */
 package ru.textanalysis.tawt.ms.internal;
 
-public interface IOmoForm {
-    public boolean haveMainForm();
-    public boolean haveDependentForm();
-    public boolean haveCommunication();
-    public byte getTypeOfSpeech();
-    public int getMyFormKey();
-    public int getInitialFormKey();
-    public long getAllMorfCharacteristics();
-    public long getTheMorfCharacteristics(Long...identifiers);
-    public long getTheMorfCharacteristics(Class...clazzes);
+import ru.textanalysis.tawt.ms.grammeme.MorfologyParameters;
+
+public class UnfamiliarOmoForm extends OmoForm {
+    protected String str;
+
+    public UnfamiliarOmoForm() {
+    }
+
+    public UnfamiliarOmoForm(String str, int initialFormKey, int myFormKey, long morfCharacteristics) {
+        super(initialFormKey,
+                myFormKey,
+                MorfologyParameters.TypeOfSpeech.UNFAMILIAR,
+                morfCharacteristics);
+        this.str = str;
+    }
+
     @Override
-    public String toString();
-    public String getInitialFormString();
-    public String getMyFormString();
-    public void addDependentForm(OmoForm mainForm);
-    public boolean isInitialForm();
-    public boolean isContainsTypeOfSpeech(byte typeOfSpeech);
-    public boolean isContainsMorphCharacteristic(Class clazz, long morphCharacteristic);
-    public TypeForms isTypeForm();
+    public String getInitialFormString() {
+        return str;
+    }
+
+    @Override
+    public TypeForms isTypeForm() {
+        return TypeForms.UNFAMILIAR;
+    }
 }

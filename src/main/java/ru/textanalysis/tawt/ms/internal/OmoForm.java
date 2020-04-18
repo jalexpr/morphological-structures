@@ -81,7 +81,7 @@ public class OmoForm implements IOmoForm {
 
     @Override
     public String getMyFormString() {
-        return BDFormString.getStringById(myFormKey, false);
+        return BDFormString.getStringById(myFormKey, isInitialForm());
     }
 
     /**
@@ -180,7 +180,11 @@ public class OmoForm implements IOmoForm {
     }
 
     @Override
-    public boolean isNumber() {
-        return false;
+    public TypeForms isTypeForm() {
+        if (isInitialForm()) {
+            return TypeForms.INITIAL;
+        } else {
+            return TypeForms.WORD;
+        }
     }
 }

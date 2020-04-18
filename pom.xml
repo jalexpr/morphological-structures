@@ -21,6 +21,10 @@
             <groupId>com.github.jalexpr</groupId>
             <artifactId>TemplateWrapperClasses</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.jalexpr</groupId>
+            <artifactId>ru-textanalysis-common</artifactId>
+        </dependency>
 
 <!--            Logger-->
         <dependency>

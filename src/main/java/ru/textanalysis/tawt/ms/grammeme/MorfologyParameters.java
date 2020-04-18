@@ -528,6 +528,8 @@ public interface MorfologyParameters {
         public static final byte PARTICLE = 0xE;
         public static final byte INTERJECTION = 0xF;
 
+        public static final byte UNFAMILIAR = 0x1;
+
         public static final byte IDENTIFIER = 0x1F;
     }
 
