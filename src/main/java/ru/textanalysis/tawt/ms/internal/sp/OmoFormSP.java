@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OmoFormSP {
-    private final RefOmoForm currencyOmoForm;
-    private CursorToFormInWord mainCursors;
-    private List<CursorToFormInWord> dependentCursors = new LinkedList<>();
+    protected final RefOmoForm currencyOmoForm;
+    protected CursorToFormInWord mainCursors;
+    protected List<CursorToFormInWord> dependentCursors = new LinkedList<>();
 
     public OmoFormSP(RefOmoForm currencyOmoForm) {
         this.currencyOmoForm = currencyOmoForm;

@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class WordSP implements IApplyConsumer<OmoFormSP> {
-    private final Map<Integer, OmoFormSP> omoForms = new HashMap<>();
+    protected final Map<Integer, OmoFormSP> omoForms = new HashMap<>();
 
     public WordSP(RefOmoFormList forms) {
         forms.copy().forEach(omoForm -> omoForms.put(omoForm.hashCode(), new OmoFormSP(omoForm)));

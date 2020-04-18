@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class RefOmoFormList {
     private Logger log = LoggerFactory.getLogger(getClass());
-    private List<RefOmoForm> refOmoForms;
+    protected List<RefOmoForm> refOmoForms;
 
     public RefOmoFormList(List<Form> forms) {
         refOmoForms = new LinkedList<>();

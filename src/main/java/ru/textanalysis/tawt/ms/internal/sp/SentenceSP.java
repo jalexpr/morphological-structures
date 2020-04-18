@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SentenceSP implements IApplyFunction<BearingPhraseSP>, IApplyConsumer<BearingPhraseSP> {
-    private final List<BearingPhraseSP> bearingPhrases;
+    protected final List<BearingPhraseSP> bearingPhrases;
 
     public SentenceSP(RefBearingPhraseList refBearingPhraseList) {
         this.bearingPhrases = new LinkedList<>();

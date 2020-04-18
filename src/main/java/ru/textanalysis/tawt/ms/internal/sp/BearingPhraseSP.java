@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
  *
  */
 public class BearingPhraseSP implements IApplyFunction<List<WordSP>>, IApplyConsumer<List<WordSP>> {
-    private final List<OmoFormSP> mainOmoForms;
-    private final List<WordSP> words;
+    protected final List<OmoFormSP> mainOmoForms;
+    protected final List<WordSP> words;
 
     public BearingPhraseSP(RefWordList refWordList) {
         this.words = refWordList.stream().filter(RefOmoFormList::isDetected).map(WordSP::new).collect(Collectors.toList());

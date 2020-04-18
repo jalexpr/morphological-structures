@@ -7,7 +7,7 @@ import ru.textanalysis.tawt.ms.internal.form.GetCharacteristics;
 import java.util.Objects;
 
 public class RefOmoForm implements GetCharacteristics {
-    private final Form form;
+    protected final Form form;
 
     public RefOmoForm(Form form) {
         this.form = form;
