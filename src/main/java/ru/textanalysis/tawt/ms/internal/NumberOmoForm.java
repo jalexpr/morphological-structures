@@ -62,7 +62,7 @@ public class NumberOmoForm extends OmoForm {
     }
 
     @Override
-    public TypeForms isTypeForm() {
+    public TypeForms getTypeForm() {
         return TypeForms.NUMBER;
     }
 }

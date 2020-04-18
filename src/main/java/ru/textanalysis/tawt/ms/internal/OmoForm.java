@@ -180,7 +180,7 @@ public class OmoForm implements IOmoForm {
     }
 
     @Override
-    public TypeForms isTypeForm() {
+    public TypeForms getTypeForm() {
         if (isInitialForm()) {
             return TypeForms.INITIAL;
         } else {

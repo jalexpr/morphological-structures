@@ -62,7 +62,7 @@ public class UnfamiliarOmoForm extends OmoForm {
     }
 
     @Override
-    public TypeForms isTypeForm() {
+    public TypeForms getTypeForm() {
         return TypeForms.UNFAMILIAR;
     }
 }

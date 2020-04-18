@@ -4,7 +4,7 @@
 - Добавлена часть речи UNFAMILIAR = 0x1
 - Добавлен класс TypeForms
 - Добавлен класс UnfamiliarOmoForm
-- Добавлен в GetCharacteristics метод isTypeForm
+- Добавлен в GetCharacteristics метод getTypeForm
 
 1.2.10
 --
