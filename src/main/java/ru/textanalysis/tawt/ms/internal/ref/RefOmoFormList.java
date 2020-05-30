@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RefOmoFormList {
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -52,6 +53,10 @@ public class RefOmoFormList {
 
     public List<RefOmoForm> copy() {
         return new ArrayList<>(refOmoForms);
+    }
+
+    public Stream<RefOmoForm> stream() {
+        return refOmoForms.stream();
     }
 
     public int size() {

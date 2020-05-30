@@ -1,3 +1,7 @@
+1.2.13
+--
+- Добавлен stream для RefOmoFormList
+
 1.2.11
 --
 - Добавлено TawtException и TawtRuntimeException
