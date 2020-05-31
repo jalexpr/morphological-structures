@@ -39,8 +39,6 @@ import ru.textanalysis.tawt.ms.internal.Property;
 import template.wrapper.classes.BDSqlite;
 
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,7 +48,7 @@ import static template.wrapper.classes.Lzma2FileHelper.*;
 public class BDFormString {
 
     public final static String FOLDER = Property.FOLDER;
-    public final static String NAME_BD_INITIAL_FORM = FOLDER +Property.NAME_BD_INITIAL_FORM;
+    public final static String NAME_BD_INITIAL_FORM = FOLDER + Property.NAME_BD_INITIAL_FORM;
     public final static String NAME_BD_WORD_FORM = FOLDER + Property.NAME_BD_WORD_FORM;
     public final static BDSqlite BD_INITIAL_FORM_STRING;
     public final static BDSqlite BD_WORD_FORM_STRING;
@@ -64,7 +62,7 @@ public class BDFormString {
     }
 
     public static String getStringById(int idKey) {
-        if(idKey < START_ID_WORD_FORM) {
+        if (idKey < START_ID_WORD_FORM) {
             return getStringById(idKey, true);
         } else {
             return getStringById(idKey, false);
@@ -73,50 +71,43 @@ public class BDFormString {
 
     public static String getStringById(int idKey, boolean isInitialForm) {
         try {
-            ResultSet resultSet;
+            String str;
             String executeString = String.format("SELECT * FROM 'Form' where id = %d", idKey);
             if (isInitialForm) {
-                resultSet = BD_INITIAL_FORM_STRING.executeQuery(executeString);
+                str = BD_INITIAL_FORM_STRING.executeQuery(executeString, "StringForm");
             } else {
-                resultSet = BD_WORD_FORM_STRING.executeQuery(executeString);
+                str = BD_WORD_FORM_STRING.executeQuery(executeString, "StringForm");
             }
-            return resultSet.getString("StringForm");
+            if (str == null || str.trim().isEmpty()) {
+                if (isInitialForm) {
+                    Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("Ошибкуа запроса, проверте актуальность версии БД \"%s\"", Property.NAME_BD_INITIAL_FORM));
+                } else {
+                    Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("Ошибкуа запроса, проверте актуальность версии БД \"%s\"", Property.NAME_BD_WORD_FORM));
+                }
+            }
         } catch (NullPointerException ex) {
             if (isInitialForm) {
                 Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("БД \"%s\" не найдена", Property.NAME_BD_INITIAL_FORM), ex);
             } else {
                 Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("БД \"%s\" не найдена", Property.NAME_BD_WORD_FORM), ex);
-            }
-        } catch (SQLException ex) {
-            if (isInitialForm) {
-                Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("Ошибкуа запроса, проверте актуальность версии БД \"%s\"", Property.NAME_BD_INITIAL_FORM), ex);
-            } else {
-                Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("Ошибкуа запроса, проверте актуальность версии БД \"%s\"", Property.NAME_BD_WORD_FORM), ex);
             }
         }
         return null;
     }
 
     public static void printSumme(boolean isInitialForm) {
-
         try {
             String executeString = String.format("SELECT Count(*) FROM  'Form'");
             if (isInitialForm) {
-                System.out.println(BD_INITIAL_FORM_STRING.executeQuery(executeString).getObject(1));
+                System.out.println(BD_INITIAL_FORM_STRING.executeQuery(executeString, 1));
             } else {
-                System.out.println(BD_WORD_FORM_STRING.executeQuery(executeString));
+                System.out.println(BD_WORD_FORM_STRING.executeQuery(executeString, 1));
             }
         } catch (NullPointerException ex) {
             if (isInitialForm) {
                 Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("БД \"%s\" не найдена", Property.NAME_BD_INITIAL_FORM), ex);
             } else {
                 Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("БД \"%s\" не найдена", Property.NAME_BD_WORD_FORM), ex);
-            }
-        } catch (SQLException ex) {
-            if (isInitialForm) {
-                Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("Ошибкуа запроса, проверте актуальность версии БД \"%s\"", Property.NAME_BD_INITIAL_FORM), ex);
-            } else {
-                Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("Ошибкуа запроса, проверте актуальность версии БД \"%s\"", Property.NAME_BD_WORD_FORM), ex);
             }
         }
     }
@@ -138,12 +129,12 @@ public class BDFormString {
 
     public static void deCompressDd(String pathBd) {
         File file = new File(System.getProperty("java.io.tmpdir"), pathBd);
-        if(!file.exists()) {
+        if (!file.exists()) {
             File file1 = new File(System.getProperty("java.io.tmpdir"), FOLDER);
             file1.mkdirs();
 //            file = new File(pathBd + ARCHIVE_EXPANSION);
 //            if(file.exists()) {
-                deCompressionFile(pathBd + ARCHIVE_EXPANSION, new File(System.getProperty("java.io.tmpdir"), pathBd));
+            deCompressionFile(pathBd + ARCHIVE_EXPANSION, new File(System.getProperty("java.io.tmpdir"), pathBd));
 //            }
         }
     }
