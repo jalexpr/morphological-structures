@@ -1,3 +1,7 @@
+1.2.14
+--
+- Поднята версия TemplateWrapperClasses
+
 1.2.13
 --
 - Добавлен stream для RefOmoFormList

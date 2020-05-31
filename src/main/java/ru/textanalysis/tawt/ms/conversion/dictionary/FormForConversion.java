@@ -87,7 +87,7 @@ public class FormForConversion {
                 }
                 return partOfSpeech;
             } catch (Exception exc) {
-                String messages = String.format("Часть речи не найдена: %s и $s", parameters.get(0), parameters.get(parameters.size() - 1));
+                String messages = String.format("Часть речи не найдена: %s и %s", parameters.get(0), parameters.get(parameters.size() - 1));
                 Logger.getLogger(FormForConversion.class.getName()).log(Level.SEVERE, messages, exc);
                 return 0;
             }

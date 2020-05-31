@@ -79,7 +79,6 @@ public class BDSqliteForConversion {
 
     private void closeBD(BDSqlite bDSqlite) {
         bDSqlite.execute("END TRANSACTION");
-        bDSqlite.closeDB();
     }
 
 }

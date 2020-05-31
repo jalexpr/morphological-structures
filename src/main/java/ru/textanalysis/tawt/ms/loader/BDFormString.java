@@ -127,7 +127,6 @@ public class BDFormString {
     }
 
     public static void compressionBd(BDSqlite bds, String pathFile) {
-        bds.closeDB();
         compressionFile(pathFile);
         deleteFile(pathFile);
     }
