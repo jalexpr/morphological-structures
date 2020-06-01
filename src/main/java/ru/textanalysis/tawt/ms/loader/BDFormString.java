@@ -70,8 +70,8 @@ public class BDFormString {
     }
 
     public static String getStringById(int idKey, boolean isInitialForm) {
+        String str = null;
         try {
-            String str;
             String executeString = String.format("SELECT * FROM 'Form' where id = %d", idKey);
             if (isInitialForm) {
                 str = BD_INITIAL_FORM_STRING.executeQuery(executeString, "StringForm");
@@ -92,7 +92,7 @@ public class BDFormString {
                 Logger.getLogger(BDFormString.class.getName()).log(Level.SEVERE, String.format("БД \"%s\" не найдена", Property.NAME_BD_WORD_FORM), ex);
             }
         }
-        return null;
+        return str;
     }
 
     public static void printSumme(boolean isInitialForm) {
