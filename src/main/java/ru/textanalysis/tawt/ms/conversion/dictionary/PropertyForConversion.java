@@ -35,11 +35,11 @@
  */
 package ru.textanalysis.tawt.ms.conversion.dictionary;
 
-import ru.textanalysis.tawt.ms.internal.Property;
+import ru.textanalysis.tawt.ms.model.Property;
 
 public interface PropertyForConversion {
-    public static final int CONTROL_VALUE = Property.CONTROL_VALUE;
-    public static final String DIR_DICTIONARY = "dictionary/";
-    public static final String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = DIR_DICTIONARY + Property.NAME_HASH_AND_MORF_CHARACTERISTICS;
 
+	public static final int CONTROL_VALUE = Property.CONTROL_VALUE;
+	public static final String DIR_DICTIONARY = "dictionary/";
+	public static final String PATH_KEY_HASH_AND_MORF_CHARACTERISTICS = DIR_DICTIONARY + Property.NAME_HASH_AND_MORF_CHARACTERISTICS;
 }

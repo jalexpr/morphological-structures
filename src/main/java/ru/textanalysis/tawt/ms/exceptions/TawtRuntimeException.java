@@ -3,18 +3,19 @@ package ru.textanalysis.tawt.ms.exceptions;
 import ru.textanalysis.common.exception.RuTextanalysisRuntimeException;
 
 public class TawtRuntimeException extends RuTextanalysisRuntimeException {
-    public TawtRuntimeException() {
-    }
 
-    public TawtRuntimeException(String s) {
-        super(s);
-    }
+	public TawtRuntimeException() {
+	}
 
-    public TawtRuntimeException(String s, Throwable throwable) {
-        super(s, throwable);
-    }
+	public TawtRuntimeException(String s) {
+		super(s);
+	}
 
-    public TawtRuntimeException(Throwable throwable) {
-        super(throwable);
-    }
+	public TawtRuntimeException(String s, Throwable throwable) {
+		super(s, throwable);
+	}
+
+	public TawtRuntimeException(Throwable throwable) {
+		super(throwable);
+	}
 }

@@ -33,51 +33,64 @@
  *
  * Благодарим Сергея и Екатерину Полицыных за оказание помощи в разработке библиотеки.
  */
-package ru.textanalysis.tawt.ms.conversion.dictionary;
+package ru.textanalysis.tawt.ms.model.gama;
 
-import ru.textanalysis.tawt.ms.loader.BDFormString;
-import template.wrapper.classes.BDSqlite;
+import ru.textanalysis.tawt.ms.model.jmorfsdk.Form;
 
-public class BDSqliteForConversion {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-	private final BDSqlite BD_INITIAL_FORM_STRING = BDFormString.BD_INITIAL_FORM_STRING;
-	private final BDSqlite BD_WORD_FORM_STRING = BDFormString.BD_WORD_FORM_STRING;
+public class Word {
 
-	public BDSqliteForConversion() {
-		createDd(BD_INITIAL_FORM_STRING);
-		createDd(BD_WORD_FORM_STRING);
+	private List<Form> forms;
+
+	public Word(List<Form> forms) {
+		this.forms = forms;
 	}
 
-	private void createDd(BDSqlite bds) {
-		createTables(bds);
-		bds.execute("BEGIN TRANSACTION");
+	public void applyFilter(Predicate<? super Form> predicate) {
+		forms = forms.stream().filter(predicate).collect(Collectors.toList());
 	}
 
-	private void createTables(BDSqlite bds) {
-		bds.execute("DROP TABLE Form;");
-		bds.execute("CREATE TABLE if not exists 'Form' ('id' INTEGER NOT NULL, 'StringForm' TEXT NOT NULL, PRIMARY KEY('id'));");
-		bds.execute("DROP TABLE Property;");
-		bds.execute("CREATE TABLE if not exists 'Property' ('id' INTEGER NOT NULL, 'Attribute' TEXT NOT NULL, 'Value' TEXT NOT NULL, PRIMARY KEY('id'));");
+	public List<Form> getByFilter(Predicate<? super Form> predicate) {
+		return forms.stream().filter(predicate).collect(Collectors.toList());
 	}
 
-	public void saveInBD(FormForConversion form) {
-		if (form.isInitialForm()) {
-			saveInBD(BD_INITIAL_FORM_STRING, form);
+	public List<Form> copy() {
+		return new ArrayList<>(forms);
+	}
+
+	public Stream<Form> stream() {
+		return forms.stream();
+	}
+
+	public int size() {
+		return forms.size();
+	}
+
+	public boolean isSingleValuedForm() {
+		return size() == 1;
+	}
+
+	public List<Form> getOmoForms() {
+		return forms;
+	}
+
+	@Override
+	public String toString() {
+		String content;
+		if (forms.isEmpty()) {
+			content = "empty";
 		} else {
-			saveInBD(BD_WORD_FORM_STRING, form);
+			content = forms.get(0).getInitialFormString() + ":" +
+				System.lineSeparator() +
+				forms.stream()
+					.map(Form::toString)
+					.collect(Collectors.joining(System.lineSeparator()));
 		}
-	}
-
-	private void saveInBD(BDSqlite outDBWordFormString, FormForConversion form) {
-		outDBWordFormString.execute(String.format("INSERT INTO 'Form' ('id','StringForm') VALUES (%d, '%s');", form.getKey(), form.getStringName()));
-	}
-
-	public void closeBDs() {
-		closeBD(BD_INITIAL_FORM_STRING);
-		closeBD(BD_WORD_FORM_STRING);
-	}
-
-	private void closeBD(BDSqlite bDSqlite) {
-		bDSqlite.execute("END TRANSACTION");
+		return "\tWord:" + System.lineSeparator() + "\t\t - " + content;
 	}
 }
