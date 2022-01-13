@@ -37,117 +37,78 @@
  */
 package ru.textanalysis.tawt.ms.conversion.dictionary;
 
-import template.wrapper.classes.FileHelper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import ru.textanalysis.tawt.ms.loader.DatabaseFactory;
+import ru.textanalysis.tawt.ms.loader.DatabaseLemmas;
+import ru.textanalysis.tawt.ms.loader.DatabaseStrings;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
-import static ru.textanalysis.tawt.ms.loader.BDFormString.compressionBd;
-import static template.wrapper.classes.FileHelper.*;
-
+@Slf4j
 public class ConversionDictionary {
 
-	private final byte[] CONTROL_VALUE = ByteBuffer.allocate(4).putInt(PropertyForConversion.CONTROL_VALUE).array();
-	private BufferedReader readerSourceDictionary;
-	private FileOutputStream streamKeyAndHashAndMorfCharacteristics;
-	private BDSqliteForConversion bds;
+    private final DatabaseStrings databaseStrings = DatabaseFactory.getInstanceDatabaseStrings();
+    private final DatabaseLemmas databaseLemmas = DatabaseFactory.getInstanceDatabaseLemmas();
 
-	private ConversionDictionary() {
-	}
+    public static void main(String[] args) {
+        ConversionDictionary conversionDictionary = new ConversionDictionary();
+        conversionDictionary.conversionDictionary("dict.opcorpora.txt", StandardCharsets.UTF_8);
+    }
 
-	//todo
-	public void conversionDictionary(String sourceDictionaryPath, String encoding) {
-		initFiles(sourceDictionaryPath, encoding);
-		conversionAndSaveDictionary();
-		closeFiles();
-		compressionBd();
-		compressionFile();
-	}
+    //  todo: йо
+    public void conversionDictionary(String sourceDictionaryPath, Charset encoding) {
+        List<List<FormForConversion>> lemmas = convertLemmasFromInitDictionary(sourceDictionaryPath, encoding);
+        databaseLemmas.recreate(lemmas);
+        databaseStrings.recreate(lemmas);
 
-	private void initFiles(String sourceDictionaryPath, String encoding) {
-		readerSourceDictionary = openBufferedReaderStream(sourceDictionaryPath, encoding);
-		streamKeyAndHashAndMorfCharacteristics = openFileOutputStream(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS);
-		bds = new BDSqliteForConversion();
-	}
+        databaseStrings.compression();
+        databaseLemmas.compression();
+    }
 
-	private void conversionAndSaveDictionary() {
-		conversionAndSaveLemmas(readerSourceDictionary);
-//        TODO:проверить слово на йо, если да, то повторить операцию выше, но ключ берется тот же для слова, а не создается новый.
-	}
+    private List<List<FormForConversion>> convertLemmasFromInitDictionary(String sourceDictionaryPath, Charset encoding) {
+        List<List<FormForConversion>> lemmas = new ArrayList<>();
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceDictionaryPath), encoding))) {
+            while (bufferedReader.ready()) {
+                String initForm = bufferedReader.readLine();
+                if (StringUtils.isNotBlank(initForm) && !Pattern.matches("\\d+", initForm)) { //todo
+                    List<FormForConversion> lemma = new LinkedList<>();
+                    FormForConversion initialForm = createForm(initForm, true);
+                    lemma.add(initialForm);
+                    while (bufferedReader.ready()) {
+                        String derivativeForm = bufferedReader.readLine();
+                        if (StringUtils.isBlank(derivativeForm)) {
+                            break;
+                        }
+                        lemma.add(createForm(derivativeForm, false));
+                    }
+                    lemmas.add(lemma);
+                }
+            }
+        } catch (IOException ex) {
+            log.error("Ошибка при чтении файла. Файл: {}", sourceDictionaryPath, ex);
+        }
+        return lemmas;
+    }
 
-	private void conversionAndSaveLemmas(BufferedReader readerSourceDictionary) {
-		List<FormForConversion> lemma;
-		while (ready(readerSourceDictionary)) {
-			lemma = conversionLemma(readerSourceDictionary);
-			saveLemma(lemma);
-		}
-	}
-
-	private List<FormForConversion> conversionLemma(BufferedReader readerSourceDictionary) {
-		List<FormForConversion> forms = new LinkedList<>();
-		FileHelper.readLine(readerSourceDictionary);
-		FormForConversion initialForm = createForm(FileHelper.readLine(readerSourceDictionary), true);
-		forms.add(initialForm);
-
-		while (FileHelper.ready(readerSourceDictionary)) {
-			String line = FileHelper.readLine(readerSourceDictionary);
-			if (line.trim().isEmpty()) {
-				break;
-			}
-			forms.add(createForm(line, false));
-		}
-
-		return forms;
-	}
-
-	private FormForConversion createForm(String line, boolean isInitialForm) {
-		String[] parameters = line.toLowerCase().split("\t");
-		FormForConversion form = new FormForConversion(parameters[0], isInitialForm);
-		if (parameters.length > 1) {
-			form.setCharacteristics(parameters[1].split("[, ]"));
-		}
-		return form;
-	}
-
-	private void saveLemma(List<FormForConversion> lemma) {
-		saveLemmaInBd(lemma);
-		saveLemmaInFile(streamKeyAndHashAndMorfCharacteristics, lemma);
-	}
-
-	private void saveLemmaInBd(List<FormForConversion> lemma) {
-		lemma.forEach((form) -> {
-			if (!form.isExistInBd()) {
-				bds.saveInBD(form);
-			}
-		});
-	}
-
-	private void saveLemmaInFile(OutputStream fileOutput, List<FormForConversion> lemma) {
-		lemma.forEach((form) -> {
-			saveInFile(fileOutput, form);
-		});
-		saveInFile(fileOutput, CONTROL_VALUE);
-	}
-
-	private void saveInFile(OutputStream fileOutput, FormForConversion form) {
-		saveInFile(fileOutput, form.getByteFileFormat());
-	}
-
-	private void saveInFile(OutputStream fileOutput, byte[] bytse) {
-		FileHelper.write(fileOutput, bytse);
-	}
-
-	private void closeFiles() {
-		FileHelper.closeFile(readerSourceDictionary);
-		FileHelper.closeFile(streamKeyAndHashAndMorfCharacteristics);
-		bds.closeBDs();
-	}
-
-	private void compressionFile() {
-		zipCompressFile(PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS, PropertyForConversion.PATH_KEY_HASH_AND_MORF_CHARACTERISTICS.split("/")[1]);
-	}
+    private FormForConversion createForm(String line, boolean isInitialForm) {
+        String[] parameters = line.toLowerCase(Locale.ROOT).split("\t");
+        FormForConversion form = new FormForConversion(parameters[0], isInitialForm);
+        if (parameters.length > 1) {
+            form.setCharacteristics(parameters[1].split("[, ]"));
+        } else {
+            System.out.println("error"); //todo
+        }
+        return form;
+    }
 }

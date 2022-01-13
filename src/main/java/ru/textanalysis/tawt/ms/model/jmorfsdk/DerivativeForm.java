@@ -38,7 +38,7 @@ public final class DerivativeForm extends Form {
 
 	@Override
 	public TypeForms getTypeForm() {
-		return TypeForms.WORD;
+		return TypeForms.DERIVATIVE;
 	}
 
 	void setInitialForm(InitialForm initialForm) {

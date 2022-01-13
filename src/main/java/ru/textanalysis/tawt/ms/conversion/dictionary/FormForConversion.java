@@ -2,7 +2,6 @@ package ru.textanalysis.tawt.ms.conversion.dictionary;
 
 import ru.textanalysis.tawt.ms.grammeme.MorfologyParameters;
 import ru.textanalysis.tawt.ms.grammeme.MorfologyParametersHelper;
-import ru.textanalysis.tawt.ms.loader.BDFormString;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -10,6 +9,8 @@ import java.util.logging.Logger;
 
 import static ru.textanalysis.tawt.ms.loader.LoadHelper.createKeyWithControlCode;
 import static ru.textanalysis.tawt.ms.loader.LoadHelper.getHashCode;
+import static ru.textanalysis.tawt.ms.model.Property.START_ID_DERIVATIVE_FORM;
+import static ru.textanalysis.tawt.ms.model.Property.START_ID_INITIAL_FORM;
 import static template.wrapper.conversion.Bytes.getBytes;
 import static template.wrapper.conversion.Bytes.plusByte;
 
@@ -17,23 +18,21 @@ public class FormForConversion {
 
 	private static final Map<String, Integer> STRING_INTEGER_WORD_FORM_MAP = new HashMap<>();
 	private static final Map<String, Integer> STRING_INTEGER_INITIAL_FORM_MAP = new HashMap<>();
-	private static final int START_ID_INITIAL_FORM = BDFormString.START_ID_INITIAL_FORM;
-	private static final int START_ID_DERIVATIVE_FORM = BDFormString.START_ID_DERIVATIVE_FORM;
 
 	private final String stringName;
 	private final int key;
 	private byte partOfSpeech;
-	private byte[] morfCharacteristics;
-	private boolean isExistInBd;
+    private byte[] morfCharacteristics;
+    private boolean isFirstKey;
 
 	protected FormForConversion(String stringName, boolean isInitialForm) {
-		this.stringName = stringName.toLowerCase();
-		key = createKey(isInitialForm);
+        this.stringName = stringName.toLowerCase(Locale.ROOT);
+        key = createKey(isInitialForm);
 	}
 
-	protected String getStringName() {
-		return stringName;
-	}
+    public String getStringName() {
+        return stringName;
+    }
 
 	protected void setCharacteristics(String[] characteristics) {
 		List<String> parameters = new ArrayList<>(Arrays.asList(characteristics));
@@ -109,58 +108,57 @@ public class FormForConversion {
 
 	private void setMorfCharacteristics(byte[] morfCharacteristics) {
 		this.morfCharacteristics = morfCharacteristics;
-	}
+    }
 
-	private byte[] getMorfCharacteristics() {
-		return morfCharacteristics;
-	}
+    private byte[] getMorfCharacteristics() {
+        return morfCharacteristics;
+    }
 
-	public int getKey() {
-		return key;
-	}
+    public int getKey() {
+        return key;
+    }
 
-	protected boolean isExistInBd() {
-		return isExistInBd;
-	}
+    public boolean isFirstKey() {
+        return isFirstKey;
+    }
 
-	private int createKey(boolean isInitialForm) {
-		if (isInitialForm) {
-			return createKey(STRING_INTEGER_INITIAL_FORM_MAP, START_ID_INITIAL_FORM);
-		} else {
-			return createKey(STRING_INTEGER_WORD_FORM_MAP, START_ID_DERIVATIVE_FORM);
-		}
-	}
+    private int createKey(boolean isInitialForm) {
+        if (isInitialForm) {
+            return createKey(STRING_INTEGER_INITIAL_FORM_MAP, START_ID_INITIAL_FORM);
+        } else {
+            return createKey(STRING_INTEGER_WORD_FORM_MAP, START_ID_DERIVATIVE_FORM);
+        }
+    }
 
 	private int createKey(Map<String, Integer> stringFormMap, int startKey) {
-		if (stringFormMap.containsKey(getStringName())) {
-			isExistInBd = true;
-			return stringFormMap.get(getStringName());
-		} else {
-			int newKey = 0;
-			try {
-				isExistInBd = false;
-				newKey = createKeyWithControlCode(startKey, stringFormMap.size(), getStringName());
-				stringFormMap.put(getStringName(), newKey);
-			} catch (Exception ex) {
-				Logger.getLogger(FormForConversion.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-			}
-			return newKey;
+        isFirstKey = stringFormMap.containsKey(getStringName());
+        if (isFirstKey) {
+            return stringFormMap.get(getStringName());
+        } else {
+            int newKey = 0;
+            try {
+                newKey = createKeyWithControlCode(startKey, stringFormMap.size(), getStringName());
+                stringFormMap.put(getStringName(), newKey);
+            } catch (Exception ex) {
+                Logger.getLogger(FormForConversion.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
+            return newKey;
 		}
 	}
 
-	protected boolean isInitialForm() {
-		return getKey() < START_ID_DERIVATIVE_FORM;
-	}
+    public boolean isInitialForm() {
+        return getKey() < START_ID_DERIVATIVE_FORM;
+    }
 
-	protected byte[] getByteFileFormat() {
-		byte[] hashCode = getBytes(getHashCode(getStringName()));
-		byte[] bytesFormat = plusByte(hashCode, getBytes(getKey()));
-		if (isInitialForm()) {
-			bytesFormat = plusByte(bytesFormat, getPartOfSpeech());
-		}
-		bytesFormat = plusByte(bytesFormat, getMorfCharacteristics());
-		return bytesFormat;
-	}
+    public byte[] getByteFileFormat() {
+        byte[] hashCode = getBytes(getHashCode(getStringName()));
+        byte[] bytesFormat = plusByte(hashCode, getBytes(getKey()));
+        if (isInitialForm()) {
+            bytesFormat = plusByte(bytesFormat, getPartOfSpeech());
+        }
+        bytesFormat = plusByte(bytesFormat, getMorfCharacteristics());
+        return bytesFormat;
+    }
 
 	@Override
 	public int hashCode() {

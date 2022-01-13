@@ -1,7 +1,6 @@
 package ru.textanalysis.tawt.ms.model.jmorfsdk;
 
 import lombok.Builder;
-import ru.textanalysis.tawt.ms.loader.BDFormString;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,11 +39,6 @@ public class InitialForm extends Form {
 	@Override
 	public boolean isInitialForm() {
 		return true;
-	}
-
-	@Override
-	public String getMyString() {
-		return BDFormString.getLiteralById(getMyFormKey());
 	}
 
 	@Override

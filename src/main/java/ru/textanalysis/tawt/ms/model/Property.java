@@ -49,20 +49,20 @@ import java.util.logging.Logger;
 public final class Property {
 
 	public final static String MY_REPOSITORY = "https://github.com/jalexpr/MorphologicalStructures";
-	public final static String PATH_ZIP_DICTIONARY = "dictionary/dictionary.format.morfCharacteristic.zip";
-	public final static String NAME_BD_WORD_FORM = "dictionary.wordFormString.bd";
-	public final static String NAME_BD_INITIAL_FORM = "dictionary.initialFormString.bd";
 	public final static String FOLDER = "dictionary/";
+	public final static String NAME_BD_DERIVATIVE_FORM = "dictionary.derivativeFormString.db";
+	public final static String NAME_BD_INITIAL_FORM = "dictionary.initialFormString.db";
 	public final static String NAME_HASH_AND_MORF_CHARACTERISTICS = "dictionary.format.morfCharacteristic";
 	public final static int CONTROL_VALUE = -1;
 	public final static int KEY_OFFSET = 8;
 	public final static int START_ID_INITIAL_FORM = 1 << KEY_OFFSET;
 	public final static int START_ID_DERIVATIVE_FORM = 524287 << KEY_OFFSET;
 	public final static byte CONTROL_OFFSET = 23;
-	public static final String MOVE_TO_NEW_LINE = System.lineSeparator();
+	public final static String MOVE_TO_NEW_LINE = System.lineSeparator();
+	public final static String VERSION = "2021.12.02";
 
 	static {
-		loadProperty();
+//		loadProperty();
 	}
 
 	public static void loadProperty() {

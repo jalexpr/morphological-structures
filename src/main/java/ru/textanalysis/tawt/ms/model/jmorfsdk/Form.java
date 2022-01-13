@@ -1,7 +1,8 @@
 package ru.textanalysis.tawt.ms.model.jmorfsdk;
 
 import ru.textanalysis.tawt.ms.grammeme.MorfologyParametersHelper;
-import ru.textanalysis.tawt.ms.loader.BDFormString;
+import ru.textanalysis.tawt.ms.loader.DatabaseFactory;
+import ru.textanalysis.tawt.ms.loader.DatabaseStrings;
 
 import static ru.textanalysis.tawt.ms.loader.LoadHelper.getControlHashCode;
 import static ru.textanalysis.tawt.ms.loader.LoadHelper.getControlValue;
@@ -11,7 +12,9 @@ import static ru.textanalysis.tawt.ms.loader.LoadHelper.getControlValue;
  */
 public abstract class Form {
 
-	public static int formCount = 0;
+	protected final static DatabaseStrings DATABASE_FORM_STRINGS = DatabaseFactory.getInstanceDatabaseStrings();
+	protected static int formCount = 0;
+
 	protected final long morphCharacteristics;
 	protected final int formKeyInBD;
 	protected final int order;
@@ -28,7 +31,7 @@ public abstract class Form {
 	}
 
 	public String getMyString() {
-		return BDFormString.getLiteralById(getMyFormKey());
+		return DATABASE_FORM_STRINGS.getLiteralById(getMyFormKey());
 	}
 
 	public boolean isFormSameByControlHash(String string) {
