@@ -88,7 +88,7 @@ public class DatabaseStrings {
                 log.debug("Not create dir '{}' for decompress", dir.getAbsolutePath());
             }
             String nameExp = file.getName() + ARCHIVE_EXPANSION;
-            String path = Paths.get(FOLDER, nameExp).toFile().getAbsolutePath();
+            String path = FOLDER + "/" + nameExp;
             URL pathZip = getClass().getClassLoader().getResource(path);
             if (pathZip != null) {
                 deCompressionFile(path, file);
