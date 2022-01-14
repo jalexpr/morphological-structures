@@ -59,12 +59,12 @@ public class DatabaseLemmas {
                 log.debug("Not create dir '{}' for decompress", dir.getAbsolutePath());
             }
             String nameExp = file.getName() + ARCHIVE_EXPANSION;
-            String nameDir = Paths.get(FOLDER, nameExp).toString();
-            URL pathZip = getClass().getClassLoader().getResource(nameDir);
+            String path = Paths.get(FOLDER, nameExp).toFile().getAbsolutePath();
+            URL pathZip = getClass().getClassLoader().getResource(path);
             if (pathZip != null) {
-                deCompressionFile(nameDir, file);
+                deCompressionFile(path, file);
             } else {
-                log.info("Not create file '{}' for decompress", nameExp);
+                log.info("Not create file '{}' for decompress", path);
             }
         }
     }
