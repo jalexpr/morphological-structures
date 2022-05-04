@@ -12,7 +12,7 @@ public final class UnfamiliarForm extends InitialForm {
 	private final String literal;
 
 	public UnfamiliarForm(String literal) {
-		super(literal.hashCode(), MorfologyParameters.TypeOfSpeech.UNFAMILIAR, 0, List.of());
+		super(literal.hashCode(), MorfologyParameters.TypeOfSpeech.UNFAMILIAR, 0, 0, List.of());
 		this.literal = literal;
 	}
 

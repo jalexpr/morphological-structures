@@ -16,11 +16,13 @@ public abstract class Form {
 	protected static int formCount = 0;
 
 	protected final long morphCharacteristics;
+	protected final long Link;
 	protected final int formKeyInBD;
 	protected final int order;
 
-	protected Form(int formKey, long morphCharacteristics) {
+	protected Form(int formKey, long morphCharacteristics, long Link) {
 		this.morphCharacteristics = morphCharacteristics;
+		this.Link = Link;
 		this.formKeyInBD = formKey;
 		formCount++;
 		order = formCount;
@@ -28,6 +30,10 @@ public abstract class Form {
 
 	public int getMyFormKey() {
 		return formKeyInBD;
+	}
+
+	public long getLink() {
+		return Link;
 	}
 
 	public String getMyString() {

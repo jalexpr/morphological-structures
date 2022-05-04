@@ -53,6 +53,7 @@ public final class Property {
 	public final static String NAME_BD_DERIVATIVE_FORM = "dictionary.derivativeFormString.db";
 	public final static String NAME_BD_INITIAL_FORM = "dictionary.initialFormString.db";
 	public final static String NAME_HASH_AND_MORF_CHARACTERISTICS = "dictionary.format.morfCharacteristic";
+	public final static String OMO_FORM_STAT = "dictionary.format.omoFormStat";
 	public final static int CONTROL_VALUE = -1;
 	public final static int KEY_OFFSET = 8;
 	public final static int START_ID_INITIAL_FORM = 1 << KEY_OFFSET;

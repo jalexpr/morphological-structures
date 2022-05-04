@@ -75,12 +75,8 @@ public class DatabaseStrings {
 
     public void decompressDd(File file) {
         boolean needDecompress;
-        if (file.exists()) {
-            //todo проверка, что версия старая
-            needDecompress = false;
-        } else {
-            needDecompress = true;
-        }
+        //todo проверка, что версия старая
+        needDecompress = !file.exists();
         if (needDecompress) {
             System.out.println("Decompress DB. Please wait a few minutes");
             File dir = file.getParentFile();
@@ -111,6 +107,9 @@ public class DatabaseStrings {
                 .forEach(form -> {
                     int id = form.getKey();
                     String name = form.getStringName();
+                    if (name.contains("'")) {
+                        name = name.replace("'", "");
+                    }
                     String query = String.format(CONTINUED_INSERT, id, name);
                     if (form.isInitialForm()) {
                         insert(multipleInsertInitial, query, dbInitialFormString);
