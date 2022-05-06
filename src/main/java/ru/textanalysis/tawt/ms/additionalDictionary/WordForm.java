@@ -59,11 +59,17 @@ class WordForm {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder(this.word + "\t" + this.tags.get(0));
-        for (int i = 1; i < this.tags.size(); i++) {
-            result.append(",");
-            result.append(this.tags.get(i));
+        try {
+            StringBuilder result = new StringBuilder(this.word + "\t" + this.tags.get(0));
+            for (int i = 1; i < this.tags.size(); i++) {
+                result.append(",");
+                result.append(this.tags.get(i));
+            }
+            return result.toString();
+        } catch (Exception e) {
+            String messages = "Не удалось получить токен.";
+            log.log(Level.SEVERE, messages, e);
+            return "";
         }
-        return result.toString();
     }
 }

@@ -60,7 +60,7 @@ public class ConversionDictionary {
 
     public static void main(String[] args) {
         ConversionDictionary conversionDictionary = new ConversionDictionary();
-        conversionDictionary.conversionDictionary("C:\\Users\\Александр\\Desktop\\Лекции\\xml.xml", StandardCharsets.UTF_8);
+        conversionDictionary.conversionDictionary("dict.opcorpora.xml", StandardCharsets.UTF_8);
     }
 
     //  todo: йо

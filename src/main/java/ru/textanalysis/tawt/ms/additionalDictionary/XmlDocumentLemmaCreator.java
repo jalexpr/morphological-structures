@@ -32,12 +32,31 @@ class XmlDocumentLemmaCreator {
      * @param forms       добавляемые формы
      */
     public void addLemmaForms(List<List<WordForm>> forms) {
-        synchronized (xmlDocument) {
-            for (List<WordForm> form : forms) {
-                addLemma(form);
-                if (form.get(0).contains("INFN")) {
+        for (int i = 0; i < forms.size(); i++) {
+            if (forms.get(i).get(0).contains("VERB")) {
+                continue;
+            }
+            if (forms.get(i).get(0).contains("INFN") && i > 0 && forms.get(i - 1).get(0).contains("VERB")) {
+                synchronized (xmlDocument) {
+                    addLemma(forms.get(i - 1));
+                    addLemma(forms.get(i));
                     org.w3c.dom.Element linkElement = createNewElement(xmlDocument.getLinksElement(),
-                            xmlDocument.getLemmaId(), xmlDocument.getLemmaId() - 1, 3);
+                            xmlDocument.getLemmaId() - 1, xmlDocument.getLemmaId() - 2, 3);
+                }
+            } else {
+                synchronized (xmlDocument) {
+                    addLemma(forms.get(i));
+                }
+            }
+            if (forms.get(i).get(0).contains("ADJS") && i > 0 && forms.get(i - 1).get(0).contains("ADJF")) {
+                synchronized (xmlDocument) {
+                    org.w3c.dom.Element linkElement = createNewElement(xmlDocument.getLinksElement(),
+                            xmlDocument.getLemmaId() - 2, xmlDocument.getLemmaId() - 1, 1);
+                }
+            } else if (forms.get(i).get(0).contains("PRTS") && i > 0 && forms.get(i - 1).get(0).contains("PRTF")) {
+                synchronized (xmlDocument) {
+                    org.w3c.dom.Element linkElement = createNewElement(xmlDocument.getLinksElement(),
+                            xmlDocument.getLemmaId() - 2, xmlDocument.getLemmaId() - 1, 6);
                 }
             }
         }
@@ -116,7 +135,11 @@ class XmlDocumentLemmaCreator {
 
                 xmlDocument.setLemmaId(xmlDocument.getLemmaId() + 1);
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
+            String messages = "Неверный формат токена.";
+            log.log(Level.SEVERE, messages, e);
+        }
+        catch (Exception e) {
             log.log(Level.SEVERE, e.getMessage(), e);
         }
     }

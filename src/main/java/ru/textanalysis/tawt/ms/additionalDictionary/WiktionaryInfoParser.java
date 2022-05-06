@@ -47,33 +47,30 @@ class WiktionaryInfoParser {
      */
     public List<List<WordForm>> getWordsTags(String word, int sleepTime, int requestTimeOut, List<String> lemmas) {
         List<List<WordForm>> lexems = new ArrayList<>();
-        if (lemmas.contains(word)) {
-            return lexems;
+        if (lemmas.contains(word.toLowerCase(Locale.ROOT))) {
+            return new ArrayList<>();
         }
         if (word.isEmpty()) {
-            return lexems;
+            return new ArrayList<>();
         }
         if (!word.matches("[а-яА-ЯёЁ-]+")) {
-            return lexems;
+            return new ArrayList<>();
         }
         try {
             sleep(sleepTime);
-            parsabilityChecker = new ParsabilityChecker(word, requestTimeOut);
+            parsabilityChecker = new ParsabilityChecker(word.toLowerCase(Locale.ROOT), requestTimeOut);
             if (parsabilityChecker.getDoc() == null) {
                 sleep(sleepTime / 2);
-                boolean isSuccessful = parsabilityChecker.tryRepeatConnection(word, 2 * requestTimeOut);
+                boolean isSuccessful = parsabilityChecker.tryRepeatConnection(word.toLowerCase(Locale.ROOT), 2 * requestTimeOut);
                 if (!isSuccessful) {
-                    throw new Exception("Неудачное повторное соединение.");
+                    throw new SocketTimeoutException("Неудачное повторное соединение.");
                 }
             }
             if (lemmas.contains(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT))) {
-                return lexems;
+                return new ArrayList<>();
             }
             if (!parsabilityChecker.checkParsability(lemmas)) {
-                return lexems;
-            }
-            if (!tryAdd(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT), lemmas)) {
-                return lexems;
+                return new ArrayList<>();
             }
 
             Element table = null;
@@ -106,7 +103,7 @@ class WiktionaryInfoParser {
                             tagsStr.append(mainElements.get(i).text().toLowerCase(Locale.ROOT));
                             tagsStr.append(",");
                         } else if (mainElements.get(i).tagName().equals("h3") || mainElements.get(i).tagName().equals("h4")) {
-                            var info = parseInfo(table, tagsStr.toString(), word, lemmas);
+                            var info = parseInfo(table, tagsStr.toString(), word.toLowerCase(Locale.ROOT), lemmas);
                             isFoundWordTags = false;
                             table = null;
                             tagsStr = new StringBuilder();
@@ -116,14 +113,30 @@ class WiktionaryInfoParser {
                 }
             }
 
+            lexems.removeIf(lexem -> lemmas.contains(lexem.get(0).getWord()));
+
+            if (!tryAdd(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT), lemmas)) {
+                return new ArrayList<>();
+            }
+
             return lexems;
-        } catch (SocketTimeoutException | SSLException | ConnectException exc) {
-            String messages = "https://ru.wiktionary.org/wiki/" + word + ". Не удалось установить соединиение.";
+        } catch (SocketTimeoutException exc) {
+            String messages = "";
+            if (Objects.equals(exc.getMessage(), "Неудачное повторное соединение.")) {
+                messages = "https://ru.wiktionary.org/wiki/" + word.toLowerCase(Locale.ROOT) + ". Неудачное повторное соединение.";
+            } else {
+                messages = "https://ru.wiktionary.org/wiki/" + word.toLowerCase(Locale.ROOT) + ". Не удалось установить соединиение.";
+            }
             log.log(Level.SEVERE, messages, exc);
             return null;
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
+            String messages = "Не удалось разобрать страницу.";
+            log.log(Level.SEVERE, messages, e);
+            return new ArrayList<>();
+        }
+        catch (Exception e) {
             log.log(Level.SEVERE, e.getMessage(), e);
-            return lexems;
+            return new ArrayList<>();
         }
     }
 
@@ -134,12 +147,10 @@ class WiktionaryInfoParser {
         if (table == null) {
             if (tagsStr.contains("наречие") || tagsStr.contains("союз") || tagsStr.contains("предлог")
                     || tagsStr.contains("частица") || tagsStr.contains("междометие") || tagsStr.contains("неизменяем")) {
-                tryAdd(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT), lemmas);
-                lemma.add(tagsToWordFormConverter.convertImmutableToWordForm(word + "\t" + tagsStr));
+                lemma.add(tagsToWordFormConverter.convertImmutableToWordForm(word.toLowerCase(Locale.ROOT) + "\t" + tagsStr));
             }
         } else {
             Elements tags = table.getElementsByTag("tr");
-            tryAdd(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT), lemmas);
 
             if (tagsStr.contains("глагол")) {
                 additionalLemma.add(tagsToWordFormConverter.convertImmutableToWordForm(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT) + "\t" + tagsStr));
@@ -213,9 +224,9 @@ class WiktionaryInfoParser {
                                                 token = token.replaceAll("он она оно", "").replaceAll(",мы", "");
                                             }
                                             if (token.contains("кратк. форма")) {
-                                                additionalLemma.add(tagsToWordFormConverter.convertTableFormToWordForm(token));
+                                                additionalLemma.add(tagsToWordFormConverter.convertTableFormToWordForm(token.toLowerCase(Locale.ROOT)));
                                             } else {
-                                                lemma.add(tagsToWordFormConverter.convertTableFormToWordForm(token));
+                                                lemma.add(tagsToWordFormConverter.convertTableFormToWordForm(token.toLowerCase(Locale.ROOT)));
                                             }
                                         }
                                     }
@@ -253,7 +264,11 @@ class WiktionaryInfoParser {
                 replaceAll("а̀", "а").replaceAll("ѐ", "е")
                 .replaceAll("ѝ", "и").replaceAll("о̀", "о")
                 .replaceAll("у̀", "у").replaceAll("ё̀", "ё")
-                .replaceAll("э̀", "э").replaceAll(",", "");
+                .replaceAll("э̀", "э").replaceAll(",", "")
+                .replaceAll("ѝ", "и").replaceAll("я̀","я")
+                .replaceAll("о̀", "о").replaceAll("о̀", "о")
+                .replaceAll("у̀", "у").replaceAll("я̀", "я")
+                .replaceAll("ы̀", "ы").replaceAll("ю̀", "ю");
         return s;
     }
 }

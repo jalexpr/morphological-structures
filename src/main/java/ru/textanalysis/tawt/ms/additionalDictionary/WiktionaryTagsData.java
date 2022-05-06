@@ -85,9 +85,9 @@ class WiktionaryTagsData {
         tagsDictionary.put("они", "3per");
         tagsDictionary.put("местоимение (притяжательное)", "ADJF,Apro");
         tagsDictionary.put("предикатив", "PRED");
-        tagsDictionary.put("порядковое числительное (счётное прилагательное)", "ADJF, Anum");
-        tagsDictionary.put("порядковое числительное", "ADJF, Anum");
-        tagsDictionary.put("счётное прилагательное", "ADJF, Anum");
+        tagsDictionary.put("порядковое числительное (счётное прилагательное)", "ADJF,Anum");
+        tagsDictionary.put("порядковое числительное", "ADJF,Anum");
+        tagsDictionary.put("счётное прилагательное", "ADJF,Anum");
 
         ToSDictionary = new ArrayList<>();
         ToSDictionary.add("ADJF");
