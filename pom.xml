@@ -12,14 +12,14 @@
     <parent>
         <groupId>ru.textanalysis.tawt</groupId>
         <artifactId>tawt-parent</artifactId>
-        <version>0.0.4</version>
+        <version>0.0.5</version>
     </parent>
 
     <dependencies>
         <!--            jalexpr-->
         <dependency>
             <groupId>com.github.jalexpr</groupId>
-            <artifactId>TemplateWrapperClasses</artifactId>
+            <artifactId>jalexpr-utils</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.jalexpr</groupId>
