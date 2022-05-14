@@ -108,11 +108,7 @@ class XmlDocumentLemmaCreator {
 
                 for (int i = 1; i < forms.size(); i++) {
                     List<String> derivitiveTags = new ArrayList<>(forms.get(i).getTags());
-                    for (int j = overallTags.size() - 1; j >= 0; j--) {
-                        if (!derivitiveTags.contains(overallTags.get(j))) {
-                            overallTags.remove(j);
-                        }
-                    }
+                    overallTags.retainAll(derivitiveTags);
                 }
 
                 org.w3c.dom.Element gElement;
@@ -123,11 +119,7 @@ class XmlDocumentLemmaCreator {
                 for (WordForm form : forms) {
                     org.w3c.dom.Element fElement = createNewElement(lemmaElement, "f", "t", form.toString().split("\t")[0]);
                     List<String> derivitiveTags = new ArrayList<>(form.getTags());
-                    for (int k = derivitiveTags.size() - 1; k >= 0; k--) {
-                        if (overallTags.contains(derivitiveTags.get(k))) {
-                            derivitiveTags.remove(k);
-                        }
-                    }
+                    derivitiveTags.removeAll(overallTags);
                     for (String derivitiveTag : derivitiveTags) {
                         gElement = createNewElement(fElement, "g", "v", derivitiveTag);
                     }
