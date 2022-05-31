@@ -1,29 +1,30 @@
-package ru.textanalysis.tawt.ms.additionalDictionary;
+package ru.textanalysis.tawt.ms.dictionary.wiktionary;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.textanalysis.tawt.ms.dictionary.convertor.WiktionaryTagsData;
+import ru.textanalysis.tawt.ms.dictionary.convertor.WiktionaryToOpenCorporaConverter;
+import ru.textanalysis.tawt.ms.dictionary.convertor.WordFormForConverter;
 
-import javax.net.ssl.SSLException;
-import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.lang.Thread.sleep;
+import static ru.textanalysis.tawt.ms.constant.Const.COMMA_SEPARATOR;
+import static ru.textanalysis.tawt.ms.constant.Const.TAB_SEPARATOR;
 
 /**
  * Парсер информации о тегах слова из Wiktionary
  */
-class WiktionaryInfoParser {
+@Slf4j
+public class WiktionaryInfoParser {
 
-    private static final Logger log = Logger.getLogger(WiktionaryInfoParser.class.getName());
-    private final WiktionaryTagsData wiktionaryTagsData;
-    private final TagsToWordFormConverter tagsToWordFormConverter;
-    private ParsabilityChecker parsabilityChecker;
+    private final WiktionaryToOpenCorporaConverter wiktionaryToOpenCorporaConverter;
+    private WiktionaryParsabilityChecker parsabilityChecker;
 
     /**
      * Instantiates a new Wiktionary info parser.
@@ -31,8 +32,7 @@ class WiktionaryInfoParser {
      * @param wiktionaryTagsData объект с информацией о преобразовании тегов
      */
     public WiktionaryInfoParser(WiktionaryTagsData wiktionaryTagsData) {
-        this.wiktionaryTagsData = wiktionaryTagsData;
-        this.tagsToWordFormConverter = new TagsToWordFormConverter(this.wiktionaryTagsData);
+        this.wiktionaryToOpenCorporaConverter = new WiktionaryToOpenCorporaConverter(wiktionaryTagsData);
     }
 
     /**
@@ -41,12 +41,11 @@ class WiktionaryInfoParser {
      * @param word           исследуемое слово
      * @param sleepTime      время между запросами
      * @param requestTimeOut время ожидания подключения
-     * @param lemmas         List в котором хранятся уже добовленные леммы, для предотвращения дублирования
-     *
+     * @param lemmas         List в котором хранятся уже добавленные леммы, для предотвращения дублирования
      * @return the words tags
      */
-    public List<List<WordForm>> getWordsTags(String word, int sleepTime, int requestTimeOut, List<String> lemmas) {
-        List<List<WordForm>> lexems = new ArrayList<>();
+    public List<List<WordFormForConverter>> getWordsTags(String word, int sleepTime, int requestTimeOut, List<String> lemmas) {
+        List<List<WordFormForConverter>> lexems = new ArrayList<>();
         if (lemmas.contains(word.toLowerCase(Locale.ROOT))) {
             return new ArrayList<>();
         }
@@ -58,7 +57,7 @@ class WiktionaryInfoParser {
         }
         try {
             sleep(sleepTime);
-            parsabilityChecker = new ParsabilityChecker(word.toLowerCase(Locale.ROOT), requestTimeOut);
+            parsabilityChecker = new WiktionaryParsabilityChecker(word.toLowerCase(Locale.ROOT), requestTimeOut);
             if (parsabilityChecker.getDoc() == null) {
                 sleep(sleepTime / 2);
                 boolean isSuccessful = parsabilityChecker.tryRepeatConnection(word.toLowerCase(Locale.ROOT), 2 * requestTimeOut);
@@ -101,9 +100,9 @@ class WiktionaryInfoParser {
                             table = mainElements.get(i);
                         } else if (mainElements.get(i).tagName().equals("p")) {
                             tagsStr.append(mainElements.get(i).text().toLowerCase(Locale.ROOT));
-                            tagsStr.append(",");
+                            tagsStr.append(COMMA_SEPARATOR);
                         } else if (mainElements.get(i).tagName().equals("h3") || mainElements.get(i).tagName().equals("h4")) {
-                            var info = parseInfo(table, tagsStr.toString(), word.toLowerCase(Locale.ROOT), lemmas);
+                            List<List<WordFormForConverter>> info = parseInfo(table, tagsStr.toString(), word.toLowerCase(Locale.ROOT), lemmas);
                             isFoundWordTags = false;
                             table = null;
                             tagsStr = new StringBuilder();
@@ -121,41 +120,39 @@ class WiktionaryInfoParser {
 
             return lexems;
         } catch (SocketTimeoutException exc) {
-            String messages = "";
+            String messages;
             if (Objects.equals(exc.getMessage(), "Неудачное повторное соединение.")) {
                 messages = "https://ru.wiktionary.org/wiki/" + word.toLowerCase(Locale.ROOT) + ". Неудачное повторное соединение.";
             } else {
-                messages = "https://ru.wiktionary.org/wiki/" + word.toLowerCase(Locale.ROOT) + ". Не удалось установить соединиение.";
+                messages = "https://ru.wiktionary.org/wiki/" + word.toLowerCase(Locale.ROOT) + ". Не удалось установить соединение.";
             }
-            log.log(Level.SEVERE, messages, exc);
+            log.error(messages, exc);
             return null;
-        } catch (NullPointerException e) {
-            String messages = "Не удалось разобрать страницу.";
-            log.log(Level.SEVERE, messages, e);
+        } catch (NullPointerException ex) {
+            log.error("Не удалось разобрать страницу.", ex);
             return new ArrayList<>();
-        }
-        catch (Exception e) {
-            log.log(Level.SEVERE, e.getMessage(), e);
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
             return new ArrayList<>();
         }
     }
 
-    private List<List<WordForm>> parseInfo(Element table, String tagsStr, String word, List<String> lemmas) {
-        List<WordForm> lemma = new ArrayList<>();
-        List<WordForm> additionalLemma = new ArrayList<>();
-        List<List<WordForm>> lexems = new ArrayList<>();
+    private List<List<WordFormForConverter>> parseInfo(Element table, String tagsStr, String word, List<String> lemmas) {
+        List<WordFormForConverter> lemma = new ArrayList<>();
+        List<WordFormForConverter> additionalLemma = new ArrayList<>();
+        List<List<WordFormForConverter>> lexems = new ArrayList<>();
         if (table == null) {
             if (tagsStr.contains("наречие") || tagsStr.contains("союз") || tagsStr.contains("предлог")
-                    || tagsStr.contains("частица") || tagsStr.contains("междометие") || tagsStr.contains("неизменяем")) {
-                lemma.add(tagsToWordFormConverter.convertImmutableToWordForm(word.toLowerCase(Locale.ROOT) + "\t" + tagsStr));
+                || tagsStr.contains("частица") || tagsStr.contains("междометие") || tagsStr.contains("неизменяем")) {
+                lemma.add(wiktionaryToOpenCorporaConverter.convertImmutableToWordForm(word.toLowerCase(Locale.ROOT) + TAB_SEPARATOR + tagsStr));
             }
         } else {
             Elements tags = table.getElementsByTag("tr");
 
             if (tagsStr.contains("глагол")) {
-                additionalLemma.add(tagsToWordFormConverter.convertImmutableToWordForm(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT) + "\t" + tagsStr));
+                additionalLemma.add(wiktionaryToOpenCorporaConverter.convertImmutableToWordForm(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT) + TAB_SEPARATOR + tagsStr));
             }
-            var tokenTags = new ArrayList<String>();
+            List<String> tokenTags = new ArrayList<>();
             for (int tag = 0; tag < tags.size(); tag++) {
                 Elements child = tags.get(tag).children();
                 int counter = 0;
@@ -180,16 +177,16 @@ class WiktionaryInfoParser {
                                 }
                             } else {
                                 for (int k = 0; k < colSpan; k++) {
-                                    tokenTags.set(counter, tokenTags.get(counter) + "," + child.get(counter).text().toLowerCase(Locale.ROOT));
+                                    tokenTags.set(counter, tokenTags.get(counter) + COMMA_SEPARATOR + child.get(counter).text().toLowerCase(Locale.ROOT));
                                     counter++;
                                 }
                             }
                         } else if (child.get(j).tagName().equals("td")) {
-                            if (child.get(j).childrenSize() != 0 && !child.get(j).children().get(0).tagName().equals("br")) {
+                            if (!child.get(j).children().isEmpty() && !child.get(j).children().get(0).tagName().equals("br")) {
                                 if (rowTokenTags.length() == 0) {
                                     rowTokenTags = new StringBuilder(child.get(j).getElementsByTag("a").text().toLowerCase(Locale.ROOT));
                                 } else {
-                                    rowTokenTags.append(",");
+                                    rowTokenTags.append(COMMA_SEPARATOR);
                                     rowTokenTags.append(child.get(j).getElementsByTag("a").text().toLowerCase(Locale.ROOT));
                                 }
                             } else {
@@ -201,7 +198,7 @@ class WiktionaryInfoParser {
                                     if (!(p > 0 && repeatingForm)) {
                                         tex[p] = changeSpecialCharacter(tex[p]);
                                         if (!tex[p].equals("—")) {
-                                            String token = tex[p] + "\t" + tagsStr + "," + tokenTags.get(columnNumber) + "," + rowTokenTags;
+                                            String token = tex[p] + TAB_SEPARATOR + tagsStr + COMMA_SEPARATOR + tokenTags.get(columnNumber) + COMMA_SEPARATOR + rowTokenTags;
                                             if (token.contains("он она оно") && tex.length > 1) {
                                                 if (p == 0) {
                                                     token += ",муж. р.";
@@ -217,16 +214,16 @@ class WiktionaryInfoParser {
                                                 continue;
                                             }
                                             if ((rowTokenTags.toString().contains("я") || rowTokenTags.toString().contains("ты") || rowTokenTags.toString().contains("вы")
-                                                    || rowTokenTags.toString().contains("они")) && tokenTags.get(columnNumber).contains("прош.")) {
+                                                || rowTokenTags.toString().contains("они")) && tokenTags.get(columnNumber).contains("прош.")) {
                                                 continue;
                                             } else if ((rowTokenTags.toString().contains("он она оно") || rowTokenTags.toString().contains("мы"))
-                                                    && tokenTags.get(columnNumber).contains("прош.")) {
+                                                && tokenTags.get(columnNumber).contains("прош.")) {
                                                 token = token.replaceAll("он она оно", "").replaceAll(",мы", "");
                                             }
                                             if (token.contains("кратк. форма")) {
-                                                additionalLemma.add(tagsToWordFormConverter.convertTableFormToWordForm(token.toLowerCase(Locale.ROOT)));
+                                                additionalLemma.add(wiktionaryToOpenCorporaConverter.convertTableFormToWordForm(token.toLowerCase(Locale.ROOT)));
                                             } else {
-                                                lemma.add(tagsToWordFormConverter.convertTableFormToWordForm(token.toLowerCase(Locale.ROOT)));
+                                                lemma.add(wiktionaryToOpenCorporaConverter.convertTableFormToWordForm(token.toLowerCase(Locale.ROOT)));
                                             }
                                         }
                                     }
@@ -260,15 +257,15 @@ class WiktionaryInfoParser {
     }
 
     private String changeSpecialCharacter(String s) {
-        s = s.replaceAll("́", "").replaceAll("́ѐ", "е").replaceAll("́о̀", "о").
-                replaceAll("а̀", "а").replaceAll("ѐ", "е")
-                .replaceAll("ѝ", "и").replaceAll("о̀", "о")
-                .replaceAll("у̀", "у").replaceAll("ё̀", "ё")
-                .replaceAll("э̀", "э").replaceAll(",", "")
-                .replaceAll("ѝ", "и").replaceAll("я̀","я")
-                .replaceAll("о̀", "о").replaceAll("о̀", "о")
-                .replaceAll("у̀", "у").replaceAll("я̀", "я")
-                .replaceAll("ы̀", "ы").replaceAll("ю̀", "ю");
+        s = s.replaceAll("́", "").replaceAll("́ѐ", "е").replaceAll("́о̀", "о")
+            .replaceAll("а̀", "а").replaceAll("ѐ", "е")
+            .replaceAll("ѝ", "и").replaceAll("о̀", "о")
+            .replaceAll("у̀", "у").replaceAll("ё̀", "ё")
+            .replaceAll("э̀", "э").replaceAll(COMMA_SEPARATOR, "")
+            .replaceAll("ѝ", "и").replaceAll("я̀", "я")
+            .replaceAll("о̀", "о").replaceAll("о̀", "о")
+            .replaceAll("у̀", "у").replaceAll("я̀", "я")
+            .replaceAll("ы̀", "ы").replaceAll("ю̀", "ю");
         return s;
     }
 }

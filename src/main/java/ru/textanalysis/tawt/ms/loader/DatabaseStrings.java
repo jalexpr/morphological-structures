@@ -106,10 +106,7 @@ public class DatabaseStrings {
                 .filter(form -> !form.isFirstKey())
                 .forEach(form -> {
                     int id = form.getKey();
-                    String name = form.getStringName();
-                    if (name.contains("'")) {
-                        name = name.replace("'", "");
-                    }
+                    String name = form.getStringName().replace("'", "");
                     String query = String.format(CONTINUED_INSERT, id, name);
                     if (form.isInitialForm()) {
                         insert(multipleInsertInitial, query, dbInitialFormString);

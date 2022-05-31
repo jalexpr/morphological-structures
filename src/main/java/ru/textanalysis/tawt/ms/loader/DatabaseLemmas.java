@@ -46,8 +46,12 @@ public class DatabaseLemmas {
 
     public void decompressDd() {
         boolean needDecompress;
-        //todo проверка, что версия старая
-        needDecompress = !file.exists();
+        if (file.exists()) {
+            //todo проверка, что версия старая. Проверка еще не реализована
+            needDecompress = false;
+        } else {
+            needDecompress = true;
+        }
         if (needDecompress) {
             System.out.println("Decompress DB. Please wait a few minutes");
             File dir = file.getParentFile();
@@ -58,7 +62,7 @@ public class DatabaseLemmas {
             String path = FOLDER + nameExp;
             URL pathZip = getClass().getClassLoader().getResource(path);
             if (pathZip != null) {
-                deCompressionFile(path, 138829120, file);
+                deCompressionFile(path, file);
             } else {
                 log.info("Not create file '{}' for decompress", path);
             }

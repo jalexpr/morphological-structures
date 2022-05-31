@@ -52,6 +52,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static ru.textanalysis.tawt.ms.constant.Const.COMMA_SEPARATOR;
+import static ru.textanalysis.tawt.ms.constant.Const.TAB_SEPARATOR;
+import static ru.textanalysis.tawt.ms.constant.TypeOfSpeechs.INFN;
+import static ru.textanalysis.tawt.ms.constant.TypeOfSpeechs.VERB;
+
 @Slf4j
 public class ConversionDictionary {
 
@@ -63,7 +68,6 @@ public class ConversionDictionary {
         conversionDictionary.conversionDictionary("dict.opcorpora.xml", StandardCharsets.UTF_8);
     }
 
-    //  todo: йо
     public void conversionDictionary(String sourceDictionaryPath, Charset encoding, String... additionalDictionaryPaths) {
         List<List<FormForConversion>> lemmas = convertLemmasFromInitDictionary(sourceDictionaryPath, encoding, additionalDictionaryPaths);
         databaseLemmas.recreate(lemmas);
@@ -79,7 +83,7 @@ public class ConversionDictionary {
         dictionaryPaths.addAll(Arrays.asList(additionalDictionaryPaths));
         List<List<FormForConversion>> lemmas = new ArrayList<>();
         HashMap<Integer, List<FormForConversion>> lemmasMap = new HashMap<>();
-        HashMap<Integer, List<String>> InfnVerb = new HashMap<>();
+        HashMap<Integer, List<String>> verbs = new HashMap<>();
 
         try {
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -117,7 +121,7 @@ public class ConversionDictionary {
                                             Node characteristic = valueProps.item(m);
                                             if (characteristic.getNodeType() != Node.TEXT_NODE && characteristic.getNodeName().equals("g")) {
                                                 commonCharacteristics += characteristic.getAttributes().getNamedItem("v").getNodeValue();
-                                                commonCharacteristics += ",";
+                                                commonCharacteristics += COMMA_SEPARATOR;
                                             }
                                         }
                                         if (commonCharacteristics.length() > 0) {
@@ -125,17 +129,17 @@ public class ConversionDictionary {
                                         }
                                     } else if (value.getNodeType() != Node.TEXT_NODE && value.getNodeName().equals("f")) {
                                         StringBuilder formCharacteristics = new StringBuilder(value.getAttributes().getNamedItem("t").getNodeValue());
-                                        formCharacteristics.append("\t");
+                                        formCharacteristics.append(TAB_SEPARATOR);
                                         formCharacteristics.append(commonCharacteristics);
                                         NodeList valueProps = value.getChildNodes();
                                         for (int m = 0; m < valueProps.getLength(); m++) {
                                             Node characteristic = valueProps.item(m);
                                             if (characteristic.getNodeType() != Node.TEXT_NODE && characteristic.getNodeName().equals("g")) {
-                                                formCharacteristics.append(",");
+                                                formCharacteristics.append(COMMA_SEPARATOR);
                                                 formCharacteristics.append(characteristic.getAttributes().getNamedItem("v").getNodeValue());
                                             }
                                         }
-                                        if (formCharacteristics.toString().contains("INFN") || formCharacteristics.toString().contains("VERB")) {
+                                        if (formCharacteristics.toString().contains(INFN) || formCharacteristics.toString().contains(VERB)) {
                                             isVerb = true;
                                             verbInfn.add(formCharacteristics.toString());
                                         } else {
@@ -150,7 +154,7 @@ public class ConversionDictionary {
                                     }
                                 }
                                 if (isVerb) {
-                                    InfnVerb.put(Integer.valueOf(lemma.getAttributes().getNamedItem("id").getNodeValue()), verbInfn);
+                                    verbs.put(Integer.valueOf(lemma.getAttributes().getNamedItem("id").getNodeValue()), verbInfn);
                                 } else {
                                     lemmasMap.put(Integer.valueOf(lemma.getAttributes().getNamedItem("id").getNodeValue()), wordLemma);
                                 }
@@ -166,10 +170,10 @@ public class ConversionDictionary {
                             if (lemma.getNodeType() != Node.TEXT_NODE && lemma.getNodeName().equals("link")) {
                                 if (Objects.equals(lemma.getAttributes().getNamedItem("type").getNodeValue(), "3")) {
                                     List<FormForConversion> wordLemma = new LinkedList<>();
-                                    var infn = InfnVerb.get(Integer.parseInt(lemma.getAttributes().getNamedItem("from").getNodeValue()));
-                                    FormForConversion initialForm = createForm(infn.get(0).replaceAll("INFN", "VERB"), true);
+                                    List<String> infn = verbs.get(Integer.parseInt(lemma.getAttributes().getNamedItem("from").getNodeValue()));
+                                    FormForConversion initialForm = createForm(infn.get(0).replaceAll(INFN, VERB), true);
                                     wordLemma.add(initialForm);
-                                    var verb = InfnVerb.get(Integer.parseInt(lemma.getAttributes().getNamedItem("to").getNodeValue()));
+                                    List<String> verb = verbs.get(Integer.parseInt(lemma.getAttributes().getNamedItem("to").getNodeValue()));
                                     verb.forEach(form -> {
                                         FormForConversion derivativeForm = createForm(form, false);
                                         wordLemma.add(derivativeForm);
@@ -195,42 +199,44 @@ public class ConversionDictionary {
             }
             lemmas = new ArrayList<>(lemmasMap.values());
             lemmasMap.clear();
-            InfnVerb.clear();
-            boolean firstYo = true;
-            List<FormForConversion> yoLemma = new LinkedList<>();
-            for (List<FormForConversion> lemma : lemmas) {
-                for (int j = 0; j < lemma.size(); j++) {
-                    if (lemma.get(j).getStringName().contains("ё")) {
-                        FormForConversion curLemma = lemma.get(j);
-                        String curLemmaString = curLemma.getStringName().split("\t")[0];
-                        if (firstYo) {
-                            FormForConversion yoForm = createForm(curLemmaString.replaceAll("ё", "е"), true);
-                            yoForm.setLink(curLemma.hashCode(), curLemma.getKey());
-                            yoLemma.add(yoForm);
-                            firstYo = false;
-                        } else {
-                            FormForConversion yoForm = createForm(curLemmaString.replaceAll("ё", "е"), false);
-                            yoForm.setLink(curLemma.hashCode(), curLemma.getKey());
-                            yoLemma.add(yoForm);
-                        }
-                    }
-                }
-            }
-            lemmas.add(yoLemma);
+            verbs.clear();
+            lemmas.add(addSupportYo(lemmas));
         } catch (Exception ex) {
             log.error("Ошибка при чтении файла. Файл: {}", sourceDictionaryPath, ex);
         }
         return lemmas;
     }
 
+    private List<FormForConversion> addSupportYo(List<List<FormForConversion>> lemmas) {
+        boolean firstYo = true;
+        List<FormForConversion> yoLemma = new LinkedList<>();
+        for (List<FormForConversion> lemma : lemmas) {
+            for (FormForConversion formForConversion : lemma) {
+                if (formForConversion.getStringName().contains("ё")) {
+                    String curLemmaString = formForConversion.getStringName().split(TAB_SEPARATOR)[0];
+                    if (firstYo) {
+                        FormForConversion yoForm = createForm(curLemmaString.replaceAll("ё", "е"), true);
+                        yoForm.setLink(formForConversion.hashCode(), formForConversion.getKey());
+                        yoLemma.add(yoForm);
+                        firstYo = false;
+                    } else {
+                        FormForConversion yoForm = createForm(curLemmaString.replaceAll("ё", "е"), false);
+                        yoForm.setLink(formForConversion.hashCode(), formForConversion.getKey());
+                        yoLemma.add(yoForm);
+                    }
+                }
+            }
+        }
+        return yoLemma;
+    }
+
     private FormForConversion createForm(String line, boolean isInitialForm) {
-        String[] parameters = line.toLowerCase(Locale.ROOT).split("\t");
+        String[] parameters = line.toLowerCase(Locale.ROOT).split(TAB_SEPARATOR);
         FormForConversion form = new FormForConversion(parameters[0], isInitialForm);
         if (parameters.length > 1) {
             form.setCharacteristics(parameters[1].split("[, ]"));
         } else {
             form.setCharacteristics(new String[0]);
-            //System.out.println("error"); //todo
         }
         return form;
     }

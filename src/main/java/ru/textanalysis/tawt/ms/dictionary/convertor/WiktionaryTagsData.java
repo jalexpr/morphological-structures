@@ -1,23 +1,23 @@
-package ru.textanalysis.tawt.ms.additionalDictionary;
+package ru.textanalysis.tawt.ms.dictionary.convertor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import static ru.textanalysis.tawt.ms.constant.TypeOfSpeechs.*;
 
 /**
  * Хранение преобразованания тегов с Wiktionary в стандарт OpenCorpora
  */
-class WiktionaryTagsData {
+public class WiktionaryTagsData {
 
-    private static final Logger log = Logger.getLogger(WiktionaryTagsData.class.getName());
     private final Map<String, String> tagsDictionary;
-    private List<String> ToSDictionary;
+    private final List<String> toSDictionary;
 
     public WiktionaryTagsData() {
         tagsDictionary = new HashMap<>();
-        tagsDictionary.put("прилагательное", "ADJF");
+        tagsDictionary.put("прилагательное", ADJF);
         tagsDictionary.put("качественное", "Qual");
         tagsDictionary.put("ед. ч.", "sing");
         tagsDictionary.put("мн. ч.", "plur");
@@ -27,8 +27,8 @@ class WiktionaryTagsData {
         tagsDictionary.put("существительное", "NOUN");
         tagsDictionary.put("притяжательное прилагательное", "ADJF,Poss");
         tagsDictionary.put("прилагательное (притяжательное)", "ADJF,Poss");
-        tagsDictionary.put("прилагательное (относительное)", "ADJF");
-        tagsDictionary.put("относительное прилагательное", "ADJF");
+        tagsDictionary.put("прилагательное (относительное)", ADJF);
+        tagsDictionary.put("относительное прилагательное", ADJF);
         tagsDictionary.put("местоименное прилагательное", "ADJF,Apro");
         tagsDictionary.put("притяжательное местоимение (местоименное прилагательное)", "NPRO,Poss");
         tagsDictionary.put("определительное местоимение (местоименное прилагательное)", "ADJF,Apro");
@@ -43,7 +43,7 @@ class WiktionaryTagsData {
         tagsDictionary.put("пр.", "loct");
         tagsDictionary.put("одуш.", "anim");
         tagsDictionary.put("неод.", "inan");
-        tagsDictionary.put("глагол", "VERB");
+        tagsDictionary.put("глагол", VERB);
         tagsDictionary.put("одушевлённое", "anim");
         tagsDictionary.put("неодушевлённое", "inan");
         tagsDictionary.put("совершенный вид", "perf");
@@ -68,7 +68,7 @@ class WiktionaryTagsData {
         tagsDictionary.put("возвратное деепричастие", "GRND,Refl");
         tagsDictionary.put("возвратный", "Refl");
         tagsDictionary.put("возвратное причастие", "PRTF,Refl");
-        tagsDictionary.put("числительное", "NUMR");
+        tagsDictionary.put("числительное", NUMR);
         tagsDictionary.put("порядковое", "Anum");
         tagsDictionary.put("вводное слово", "CONJ,Prnt");
         tagsDictionary.put("также вводное слово", "Prnt");
@@ -89,27 +89,23 @@ class WiktionaryTagsData {
         tagsDictionary.put("порядковое числительное", "ADJF,Anum");
         tagsDictionary.put("счётное прилагательное", "ADJF,Anum");
 
-        ToSDictionary = new ArrayList<>();
-        ToSDictionary.add("ADJF");
-        ToSDictionary.add("ADJS");
-        ToSDictionary.add("NOUN");
-        ToSDictionary.add("PRED");
-        ToSDictionary.add("INTJ");
-        ToSDictionary.add("PRCL");
-        ToSDictionary.add("CONJ");
-        ToSDictionary.add("PREP");
-        ToSDictionary.add("ADVB");
-        ToSDictionary.add("NUMR");
-        ToSDictionary.add("PRTF");
-        ToSDictionary.add("PRTS");
-        ToSDictionary.add("GRND");
-        ToSDictionary.add("VERB");
-        ToSDictionary.add("INFN");
-        ToSDictionary.add("NPRO");
-    }
-
-    public WiktionaryTagsData(HashMap<String, String> tags) {
-        tagsDictionary = tags;
+        toSDictionary = new ArrayList<>();
+        toSDictionary.add(ADJF);
+        toSDictionary.add(ADJS);
+        toSDictionary.add("NOUN");
+        toSDictionary.add("PRED");
+        toSDictionary.add("INTJ");
+        toSDictionary.add("PRCL");
+        toSDictionary.add("CONJ");
+        toSDictionary.add("PREP");
+        toSDictionary.add("ADVB");
+        toSDictionary.add(NUMR);
+        toSDictionary.add(PRTF);
+        toSDictionary.add(PRTS);
+        toSDictionary.add("GRND");
+        toSDictionary.add(VERB);
+        toSDictionary.add(INFN);
+        toSDictionary.add("NPRO");
     }
 
     public Map<String, String> getTags() {
@@ -117,6 +113,6 @@ class WiktionaryTagsData {
     }
 
     public List<String> getToS() {
-        return ToSDictionary;
+        return toSDictionary;
     }
 }

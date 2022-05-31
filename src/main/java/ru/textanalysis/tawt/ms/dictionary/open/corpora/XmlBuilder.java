@@ -1,4 +1,9 @@
-package ru.textanalysis.tawt.ms.additionalDictionary;
+package ru.textanalysis.tawt.ms.dictionary.open.corpora;
+
+import lombok.extern.slf4j.Slf4j;
+import ru.textanalysis.tawt.ms.dictionary.convertor.WiktionaryTagsData;
+import ru.textanalysis.tawt.ms.dictionary.convertor.WordFormForConverter;
+import ru.textanalysis.tawt.ms.dictionary.wiktionary.WiktionaryInfoParser;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -10,8 +15,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Основной класс
@@ -20,9 +23,9 @@ import java.util.logging.Logger;
  * Добавление новых лемм в xml файл
  * Запись информации в xml файл
  */
+@Slf4j
 public class XmlBuilder {
 
-    private static final Logger log = Logger.getLogger(XmlBuilder.class.getName());
     private final OpenCorporaXmlDocument xmlDocument;
     private final XmlDocumentLemmaCreator lemmaCreator;
     private final WiktionaryTagsData wiktionaryTagsData;
@@ -59,10 +62,9 @@ public class XmlBuilder {
      * @param word           исследуемое слово
      * @param sleepTime      время между запросами
      * @param requestTimeOut время ожидания подключения
-     *
      * @return the words tags
      */
-    public List<List<WordForm>> getWordsTags(String word, int sleepTime, int requestTimeOut) {
+    public List<List<WordFormForConverter>> getWordsTags(String word, int sleepTime, int requestTimeOut) {
         return wiktionaryInfoParser.getWordsTags(word, sleepTime, requestTimeOut, lemmas);
     }
 
@@ -71,7 +73,7 @@ public class XmlBuilder {
      *
      * @param forms список форм в стандарте OpenCorpora
      */
-    public void addLemmaForms(List<List<WordForm>> forms) {
+    public void addLemmaForms(List<List<WordFormForConverter>> forms) {
         synchronized (lemmaCreator) {
             lemmaCreator.addLemmaForms(forms);
         }
@@ -94,9 +96,8 @@ public class XmlBuilder {
             StreamResult streamResult = new StreamResult(new File(filePath));
 
             transformer.transform(domSource, streamResult);
-        } catch (TransformerException e) {
-            String messages = "Ошибка записи в файл.";
-            log.log(Level.SEVERE, messages, e);
+        } catch (TransformerException ex) {
+            log.error("Ошибка записи в файл.", ex);
         }
     }
 }

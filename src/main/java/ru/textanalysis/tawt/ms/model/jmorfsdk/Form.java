@@ -4,6 +4,7 @@ import ru.textanalysis.tawt.ms.grammeme.MorfologyParametersHelper;
 import ru.textanalysis.tawt.ms.loader.DatabaseFactory;
 import ru.textanalysis.tawt.ms.loader.DatabaseStrings;
 
+import static ru.textanalysis.tawt.ms.constant.Const.COMMA_SEPARATOR;
 import static ru.textanalysis.tawt.ms.loader.LoadHelper.getControlHashCode;
 import static ru.textanalysis.tawt.ms.loader.LoadHelper.getControlValue;
 
@@ -16,13 +17,13 @@ public abstract class Form {
 	protected static int formCount = 0;
 
 	protected final long morphCharacteristics;
-	protected final long Link;
+	protected final long link;
 	protected final int formKeyInBD;
 	protected final int order;
 
-	protected Form(int formKey, long morphCharacteristics, long Link) {
+	protected Form(int formKey, long morphCharacteristics, long link) {
 		this.morphCharacteristics = morphCharacteristics;
-		this.Link = Link;
+		this.link = link;
 		this.formKeyInBD = formKey;
 		formCount++;
 		order = formCount;
@@ -33,7 +34,7 @@ public abstract class Form {
 	}
 
 	public long getLink() {
-		return Link;
+		return link;
 	}
 
 	public String getMyString() {
@@ -103,11 +104,11 @@ public abstract class Form {
 	@Override
 	public String toString() {
 		return "{" +
-			"TF=" + getTypeForm() + "," +
-			"isInit=" + isInitialForm() + "," +
-			"hash=" + hashCode() + "," +
+			"TF=" + getTypeForm() + COMMA_SEPARATOR +
+			"isInit=" + isInitialForm() + COMMA_SEPARATOR +
+			"hash=" + hashCode() + COMMA_SEPARATOR +
 			"str='" + getMyString() + "'," +
-			"ToS=" + getTypeOfSpeech() + "," +
+			"ToS=" + getTypeOfSpeech() + COMMA_SEPARATOR +
 			"morf=" + morphCharacteristics +
 			"}";
 	}

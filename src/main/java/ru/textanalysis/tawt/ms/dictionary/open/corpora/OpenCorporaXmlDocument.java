@@ -1,5 +1,6 @@
-package ru.textanalysis.tawt.ms.additionalDictionary;
+package ru.textanalysis.tawt.ms.dictionary.open.corpora;
 
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -12,17 +13,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Предоставляет создание нового xml файла,
  * открытие существующего xml файла в стандарте OpenCorpora,
  * добавление новых лемм в xml файлом
  */
-class OpenCorporaXmlDocument {
+@Slf4j
+public class OpenCorporaXmlDocument {
 
-    private static final Logger log = Logger.getLogger(OpenCorporaXmlDocument.class.getName());
     private Document doc;
     private org.w3c.dom.Element lemmataElement;
     private org.w3c.dom.Element linksElement;
@@ -52,15 +51,15 @@ class OpenCorporaXmlDocument {
 
             lemmaId = 100000001;
         } catch (ParserConfigurationException e) {
-            log.log(Level.WARNING, e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
     /**
      * Instantiates a new Open corpora xml document.
      *
-     * @param filePath путь до фоайла xml в стандарте OpenCorpora
-     * @param lemmas   List в котором хранятся уже добовленные леммы, для предотвращения дублирования
+     * @param filePath путь до файла xml в стандарте OpenCorpora
+     * @param lemmas   List в котором хранятся уже добавленные леммы, для предотвращения дублирования
      */
     public OpenCorporaXmlDocument(String filePath, List<String> lemmas) {
         try {
@@ -120,12 +119,11 @@ class OpenCorporaXmlDocument {
             if (lemmaId == 0) {
                 lemmaId = 100000001;
             }
-        } catch (XMLParseException exc) {
-            String messages = "Неправильный формат xml файла.";
-            log.log(Level.SEVERE, messages, exc);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.log(Level.SEVERE, e.getMessage(), e);
+        } catch (XMLParseException ex) {
+            log.error("Неправильный формат xml файла.", ex);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
     }
 
@@ -151,7 +149,7 @@ class OpenCorporaXmlDocument {
 
     private void deleteEmptyNodes(org.w3c.dom.Element element) {
         if (element.hasChildNodes()) {
-            var nodelist = element.getChildNodes();
+            NodeList nodelist = element.getChildNodes();
             for (int i = nodelist.getLength() - 1; i >= 0; i--) {
                 if (nodelist.item(i).getNodeType() != Node.ELEMENT_NODE) {
                     element.removeChild(nodelist.item(i));

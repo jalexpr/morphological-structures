@@ -7,8 +7,8 @@ public final class DerivativeForm extends Form {
 
 	private InitialForm initialForm;
 
-	public DerivativeForm(int formKey, long morfCharacteristics, long Link) {
-		super(formKey, morfCharacteristics, Link);
+	public DerivativeForm(int formKey, long morfCharacteristics, long link) {
+		super(formKey, morfCharacteristics, link);
 	}
 
 	@Override

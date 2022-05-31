@@ -1,17 +1,20 @@
-package ru.textanalysis.tawt.ms.additionalDictionary;
+package ru.textanalysis.tawt.ms.dictionary.convertor;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import static ru.textanalysis.tawt.ms.constant.Const.COMMA_SEPARATOR;
+import static ru.textanalysis.tawt.ms.constant.Const.TAB_SEPARATOR;
 
 /**
  * Хранение слова и его тегов
  */
-class WordForm {
+@Slf4j
+public class WordFormForConverter {
 
-    private static final Logger log = Logger.getLogger(WordForm.class.getName());
     private String word;
     private List<String> tags;
 
@@ -20,21 +23,21 @@ class WordForm {
      *
      * @param OpenCorporaWordForm слово и его теги в стандарте OpenCorpora
      */
-    public WordForm(String OpenCorporaWordForm) {
+    public WordFormForConverter(String OpenCorporaWordForm) {
         try {
             if (OpenCorporaWordForm.length() == 0) {
                 throw new Exception("Неверный формат словоформы");
             }
-            String[] wordTags = OpenCorporaWordForm.split("\t");
+            String[] wordTags = OpenCorporaWordForm.split(TAB_SEPARATOR);
             if (wordTags.length != 2) {
                 throw new Exception("Неверный формат словоформы");
             }
             this.word = wordTags[0];
-            String[] tags = wordTags[1].split(",");
+            String[] tags = wordTags[1].split(COMMA_SEPARATOR);
             this.tags = new ArrayList<>();
             this.tags.addAll(Arrays.asList(tags));
-        } catch (Exception e) {
-            log.log(Level.INFO, e.getMessage(), e);
+        } catch (Exception ex) {
+            log.info(ex.getMessage(), ex);
         }
     }
 
@@ -60,15 +63,14 @@ class WordForm {
     @Override
     public String toString() {
         try {
-            StringBuilder result = new StringBuilder(this.word + "\t" + this.tags.get(0));
+            StringBuilder result = new StringBuilder(this.word + TAB_SEPARATOR + this.tags.get(0));
             for (int i = 1; i < this.tags.size(); i++) {
-                result.append(",");
+                result.append(COMMA_SEPARATOR);
                 result.append(this.tags.get(i));
             }
             return result.toString();
-        } catch (Exception e) {
-            String messages = "Не удалось получить токен.";
-            log.log(Level.SEVERE, messages, e);
+        } catch (Exception ex) {
+            log.error("Не удалось получить токен.", ex);
             return "";
         }
     }
