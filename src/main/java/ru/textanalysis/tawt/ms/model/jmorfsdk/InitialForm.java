@@ -14,8 +14,8 @@ public class InitialForm extends Form {
 	private final List<DerivativeForm> derivativeForms;
 
 	@Builder
-	protected InitialForm(int formKey, byte typeOfSpeech, long morfCharacteristics, List<DerivativeForm> derivativeForms) {
-		super(formKey, morfCharacteristics);
+	protected InitialForm(int formKey, byte typeOfSpeech, long morfCharacteristics, long link, List<DerivativeForm> derivativeForms) {
+		super(formKey, morfCharacteristics, link);
 		this.typeOfSpeech = typeOfSpeech;
 		this.derivativeForms = Collections.unmodifiableList(derivativeForms);
 		derivativeForms.forEach(form -> form.setInitialForm(this));

@@ -49,6 +49,6 @@ public class BearingPhrase {
 	@Override
 	public String toString() {
 		return "\nBearingPhrase:\n" +
-			super.toString();
+			words.toString();
 	}
 }

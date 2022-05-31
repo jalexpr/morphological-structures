@@ -49,6 +49,6 @@ public class Sentence {
 	@Override
 	public String toString() {
 		return "\nSentence:\n" +
-			super.toString();
+			bearingPhrases.toString();
 	}
 }

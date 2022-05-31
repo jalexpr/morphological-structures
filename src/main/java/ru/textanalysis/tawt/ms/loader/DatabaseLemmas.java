@@ -47,7 +47,7 @@ public class DatabaseLemmas {
     public void decompressDd() {
         boolean needDecompress;
         if (file.exists()) {
-            //todo проверка, что версия старая
+            //todo проверка, что версия старая. Проверка еще не реализована
             needDecompress = false;
         } else {
             needDecompress = true;

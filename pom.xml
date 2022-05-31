@@ -12,8 +12,12 @@
     <parent>
         <groupId>ru.textanalysis.tawt</groupId>
         <artifactId>tawt-parent</artifactId>
-        <version>0.0.5</version>
+        <version>0.1.0</version>
     </parent>
+
+    <properties>
+        <jsoup.version>1.10.2</jsoup.version>
+    </properties>
 
     <dependencies>
         <!--            jalexpr-->
@@ -48,6 +52,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <!--            jsoup-->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
         </dependency>
     </dependencies>
 

@@ -23,11 +23,14 @@ public class FormForConversion {
 	private final int key;
 	private byte partOfSpeech;
     private byte[] morfCharacteristics;
-    private boolean isFirstKey;
+	private byte[] link;
+	private boolean isFirstKey;
 
 	protected FormForConversion(String stringName, boolean isInitialForm) {
         this.stringName = stringName.toLowerCase(Locale.ROOT);
         key = createKey(isInitialForm);
+		long link = 0;
+		this.link = getBytes(link);
 	}
 
     public String getStringName() {
@@ -35,13 +38,26 @@ public class FormForConversion {
     }
 
 	protected void setCharacteristics(String[] characteristics) {
-		List<String> parameters = new ArrayList<>(Arrays.asList(characteristics));
-		setPartOfSpeech(conversionPartOfSpeech(parameters));
-		setMorfCharacteristics(getBytes(conversionMorfCharacteristics(parameters)));
+		if (characteristics.length > 0) {
+			List<String> parameters = new ArrayList<>(Arrays.asList(characteristics));
+			setPartOfSpeech(conversionPartOfSpeech(parameters));
+			setMorfCharacteristics(getBytes(conversionMorfCharacteristics(parameters)));
+		} else {
+			setPartOfSpeech((byte) 0);
+			long chars = 0;
+			setMorfCharacteristics(getBytes(chars));
+		}
 	}
 
 	private void setPartOfSpeech(byte partOfSpeech) {
 		this.partOfSpeech = partOfSpeech;
+	}
+
+	protected void setLink(int hash, int key) {
+		long morphLink = hash;
+		morphLink = morphLink << 32;
+		morphLink += key;
+		this.link = getBytes(morphLink);
 	}
 
 	private byte getPartOfSpeech() {
@@ -114,6 +130,10 @@ public class FormForConversion {
         return morfCharacteristics;
     }
 
+	private byte[] getLink() {
+		return link;
+	}
+
     public int getKey() {
         return key;
     }
@@ -157,6 +177,7 @@ public class FormForConversion {
             bytesFormat = plusByte(bytesFormat, getPartOfSpeech());
         }
         bytesFormat = plusByte(bytesFormat, getMorfCharacteristics());
+		bytesFormat = plusByte(bytesFormat, getLink());
         return bytesFormat;
     }
 
