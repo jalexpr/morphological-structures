@@ -12,7 +12,7 @@ public class NumberForm extends InitialForm {
 	private final String textNumber;
 
 	public NumberForm(String textNumber) {
-		super(textNumber.hashCode(), TypeOfSpeech.NUMERAL, 0, List.of());
+		super(textNumber.hashCode(), TypeOfSpeech.NUMERAL, 0, 0, List.of());
 		this.textNumber = textNumber;
 	}
 
