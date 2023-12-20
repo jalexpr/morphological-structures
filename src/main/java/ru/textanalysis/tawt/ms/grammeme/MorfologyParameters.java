@@ -521,8 +521,9 @@ public interface MorfologyParameters {
 		byte NUMERAL = 0x1C;
 		byte COLLECTIVE_NUMERAL = 0x1D;
 
-		byte NOUN_PRONOUN = 0x1E; //30 местоимеение
-		byte ANAPHORICPRONOUN = 0x1F;
+		byte NOUN_PRONOUN = 0x1E; //30 местоимение
+
+		byte ANAPHORIC_PRONOUN = 0x1F;
 
 		byte ADVERB = 0x9;
 		byte COMPARATIVE = 0xA;
@@ -533,6 +534,8 @@ public interface MorfologyParameters {
 		byte INTERJECTION = 0xF;
 
 		byte UNFAMILIAR = 0x1;
+
+		byte PUNCTUATION = 0x10;
 
 		byte IDENTIFIER = 0x1F;
 	}
