@@ -11,6 +11,10 @@ public class LoadHelper {
 		return (int) CityHash.cityHash64(str);
 	}
 
+	public static int getHashCode(byte[] str) {
+		return (int) CityHash.cityHash64(str);
+	}
+
 	public static int getControlHashCode(String str) {
 		return (str.hashCode() >> CONTROL_OFFSET) & 255;
 	}

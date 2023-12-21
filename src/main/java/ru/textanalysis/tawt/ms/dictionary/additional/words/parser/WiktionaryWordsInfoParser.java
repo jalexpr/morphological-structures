@@ -1,11 +1,14 @@
-package ru.textanalysis.tawt.ms.dictionary.wiktionary;
+package ru.textanalysis.tawt.ms.dictionary.additional.words.parser;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import ru.textanalysis.tawt.ms.dictionary.convertor.WiktionaryTagsData;
-import ru.textanalysis.tawt.ms.dictionary.convertor.WiktionaryToOpenCorporaConverter;
-import ru.textanalysis.tawt.ms.dictionary.convertor.WordFormForConverter;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.convertor.TagsForOpenCorporaDictionaryConversion;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.convertor.WiktionaryToOpenCorporaConverter;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.convertor.WordFormForConverter;
+import ru.textanalysis.tawt.ms.dictionary.parser.AbstractInfoParser;
+import ru.textanalysis.tawt.ms.dictionary.parser.InfoParserResponse;
+import ru.textanalysis.tawt.ms.dictionary.wiktionary.WiktionaryParsabilityChecker;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ import static ru.textanalysis.tawt.ms.constant.Const.TAB_SEPARATOR;
  * Парсер информации о тегах слова из Wiktionary
  */
 @Slf4j
-public class WiktionaryInfoParser {
+public class WiktionaryWordsInfoParser extends AbstractInfoParser {
 
     private final WiktionaryToOpenCorporaConverter wiktionaryToOpenCorporaConverter;
     private WiktionaryParsabilityChecker parsabilityChecker;
@@ -31,8 +34,23 @@ public class WiktionaryInfoParser {
      *
      * @param wiktionaryTagsData объект с информацией о преобразовании тегов
      */
-    public WiktionaryInfoParser(WiktionaryTagsData wiktionaryTagsData) {
+    public WiktionaryWordsInfoParser(TagsForOpenCorporaDictionaryConversion wiktionaryTagsData, List<String> lemmas) {
+        super(lemmas);
         this.wiktionaryToOpenCorporaConverter = new WiktionaryToOpenCorporaConverter(wiktionaryTagsData);
+    }
+
+    /**
+     * Получение информации о слове и его тегах с Wiktionary
+     *
+     * @param word           исследуемое слово
+     *
+     * @return the words tags
+     */
+	@Override
+    public InfoParserResponse<List<List<WordFormForConverter>>> getInfo(String word) {
+		return InfoParserResponse.<List<List<WordFormForConverter>>>builder()
+			.response(getInfo(word, sleepTime, requestTimeOut))
+			.build();
     }
 
     /**
@@ -41,12 +59,11 @@ public class WiktionaryInfoParser {
      * @param word           исследуемое слово
      * @param sleepTime      время между запросами
      * @param requestTimeOut время ожидания подключения
-     * @param lemmas         List в котором хранятся уже добавленные леммы, для предотвращения дублирования
      * @return the words tags
      */
-    public List<List<WordFormForConverter>> getWordsTags(String word, int sleepTime, int requestTimeOut, List<String> lemmas) {
+    private List<List<WordFormForConverter>> getInfo(String word, int sleepTime, int requestTimeOut) {
         List<List<WordFormForConverter>> lexems = new ArrayList<>();
-        if (lemmas.contains(word.toLowerCase(Locale.ROOT))) {
+        if (getLemmas().contains(word.toLowerCase(Locale.ROOT))) {
             return new ArrayList<>();
         }
         if (word.isEmpty()) {
@@ -57,18 +74,8 @@ public class WiktionaryInfoParser {
         }
         try {
             sleep(sleepTime);
-            parsabilityChecker = new WiktionaryParsabilityChecker(word.toLowerCase(Locale.ROOT), requestTimeOut);
-            if (parsabilityChecker.getDoc() == null) {
-                sleep(sleepTime / 2);
-                boolean isSuccessful = parsabilityChecker.tryRepeatConnection(word.toLowerCase(Locale.ROOT), 2 * requestTimeOut);
-                if (!isSuccessful) {
-                    throw new SocketTimeoutException("Неудачное повторное соединение.");
-                }
-            }
-            if (lemmas.contains(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT))) {
-                return new ArrayList<>();
-            }
-            if (!parsabilityChecker.checkParsability(lemmas)) {
+            boolean isConnected = checkConnection(word, sleepTime, requestTimeOut);
+            if (!isConnected){
                 return new ArrayList<>();
             }
 
@@ -102,7 +109,7 @@ public class WiktionaryInfoParser {
                             tagsStr.append(mainElements.get(i).text().toLowerCase(Locale.ROOT));
                             tagsStr.append(COMMA_SEPARATOR);
                         } else if (mainElements.get(i).tagName().equals("h3") || mainElements.get(i).tagName().equals("h4")) {
-                            List<List<WordFormForConverter>> info = parseInfo(table, tagsStr.toString(), word.toLowerCase(Locale.ROOT), lemmas);
+                            List<List<WordFormForConverter>> info = parseInfo(table, tagsStr.toString(), word.toLowerCase(Locale.ROOT));
                             isFoundWordTags = false;
                             table = null;
                             tagsStr = new StringBuilder();
@@ -112,9 +119,9 @@ public class WiktionaryInfoParser {
                 }
             }
 
-            lexems.removeIf(lexem -> lemmas.contains(lexem.get(0).getWord()));
+            lexems.removeIf(lexem -> getLemmas().contains(lexem.get(0).getWord()));
 
-            if (!tryAdd(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT), lemmas)) {
+            if (!tryAdd(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT))) {
                 return new ArrayList<>();
             }
 
@@ -127,7 +134,7 @@ public class WiktionaryInfoParser {
                 messages = "https://ru.wiktionary.org/wiki/" + word.toLowerCase(Locale.ROOT) + ". Не удалось установить соединение.";
             }
             log.error(messages, exc);
-            return null;
+            return new ArrayList<>();
         } catch (NullPointerException ex) {
             log.error("Не удалось разобрать страницу.", ex);
             return new ArrayList<>();
@@ -137,7 +144,7 @@ public class WiktionaryInfoParser {
         }
     }
 
-    private List<List<WordFormForConverter>> parseInfo(Element table, String tagsStr, String word, List<String> lemmas) {
+    private List<List<WordFormForConverter>> parseInfo(Element table, String tagsStr, String word) {
         List<WordFormForConverter> lemma = new ArrayList<>();
         List<WordFormForConverter> additionalLemma = new ArrayList<>();
         List<List<WordFormForConverter>> lexems = new ArrayList<>();
@@ -246,26 +253,23 @@ public class WiktionaryInfoParser {
         return lexems;
     }
 
-    private boolean tryAdd(String initialForm, List<String> lemmas) {
-        synchronized (lemmas) {
-            if (!lemmas.contains(initialForm)) {
-                lemmas.add(initialForm);
-                return true;
+    private boolean checkConnection(String word, int sleepTime, int requestTimeOut) throws SocketTimeoutException {
+        try {
+            parsabilityChecker = new WiktionaryParsabilityChecker(word.toLowerCase(Locale.ROOT), requestTimeOut);
+            if (parsabilityChecker.getDoc() == null) {
+                sleep(sleepTime / 2);
+                boolean isSuccessful = parsabilityChecker.tryRepeatConnection(word.toLowerCase(Locale.ROOT), 2 * requestTimeOut);
+                if (!isSuccessful) {
+                    throw new SocketTimeoutException("Неудачное повторное соединение.");
+                }
             }
+            if (getLemmas().contains(parsabilityChecker.getInitialForm().text().toLowerCase(Locale.ROOT))) {
+                return false;
+            }
+            return parsabilityChecker.checkParsability(getLemmas());
+        } catch (IllegalArgumentException | InterruptedException e) {
+            log.error(e.getMessage(), e);
             return false;
         }
-    }
-
-    private String changeSpecialCharacter(String s) {
-        s = s.replaceAll("́", "").replaceAll("́ѐ", "е").replaceAll("́о̀", "о")
-            .replaceAll("а̀", "а").replaceAll("ѐ", "е")
-            .replaceAll("ѝ", "и").replaceAll("о̀", "о")
-            .replaceAll("у̀", "у").replaceAll("ё̀", "ё")
-            .replaceAll("э̀", "э").replaceAll(COMMA_SEPARATOR, "")
-            .replaceAll("ѝ", "и").replaceAll("я̀", "я")
-            .replaceAll("о̀", "о").replaceAll("о̀", "о")
-            .replaceAll("у̀", "у").replaceAll("я̀", "я")
-            .replaceAll("ы̀", "ы").replaceAll("ю̀", "ю");
-        return s;
     }
 }

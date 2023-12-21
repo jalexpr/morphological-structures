@@ -1,4 +1,4 @@
-package ru.textanalysis.tawt.ms.dictionary.convertor;
+package ru.textanalysis.tawt.ms.dictionary.additional.words.convertor;
 
 import lombok.extern.slf4j.Slf4j;
 

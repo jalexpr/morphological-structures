@@ -1,9 +1,13 @@
-package ru.textanalysis.tawt.ms.dictionary.open.corpora;
+package ru.textanalysis.tawt.ms.dictionary.additional.words.builder;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import ru.textanalysis.tawt.ms.dictionary.convertor.WiktionaryTagsData;
-import ru.textanalysis.tawt.ms.dictionary.convertor.WordFormForConverter;
-import ru.textanalysis.tawt.ms.dictionary.wiktionary.WiktionaryInfoParser;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.convertor.TagsForOpenCorporaDictionaryConversion;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.convertor.WordFormForConverter;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.open.corpora.OpenCorporaXmlDocument;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.open.corpora.XmlDocumentLemmaCreator;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.parser.WiktionaryWordsInfoParser;
+import ru.textanalysis.tawt.ms.dictionary.builder.DictionaryBuilder;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -24,23 +28,28 @@ import java.util.List;
  * Запись информации в xml файл
  */
 @Slf4j
-public class XmlBuilder {
+public class XmlBuilder implements DictionaryBuilder {
+
+    private final String DEFAULT_RESULT_FILE_PATH = "/result.xml";
 
     private final OpenCorporaXmlDocument xmlDocument;
     private final XmlDocumentLemmaCreator lemmaCreator;
-    private final WiktionaryTagsData wiktionaryTagsData;
-    private final WiktionaryInfoParser wiktionaryInfoParser;
+    private final TagsForOpenCorporaDictionaryConversion tagsForOpenCorporaDictionaryConversion;
+    private final WiktionaryWordsInfoParser wiktionaryWordsInfoParser;
     private final List<String> lemmas;
+    @Setter
+    private String resultFilePath;
 
     /**
      * Instantiates a new Xml builder.
      */
     public XmlBuilder() {
+        this.resultFilePath = DEFAULT_RESULT_FILE_PATH;
         this.lemmas = Collections.synchronizedList(new ArrayList<>());
         xmlDocument = new OpenCorporaXmlDocument();
-        wiktionaryTagsData = new WiktionaryTagsData();
-        lemmaCreator = new XmlDocumentLemmaCreator(wiktionaryTagsData, xmlDocument);
-        wiktionaryInfoParser = new WiktionaryInfoParser(wiktionaryTagsData);
+        tagsForOpenCorporaDictionaryConversion = new TagsForOpenCorporaDictionaryConversion();
+        lemmaCreator = new XmlDocumentLemmaCreator(tagsForOpenCorporaDictionaryConversion, xmlDocument);
+        wiktionaryWordsInfoParser = new WiktionaryWordsInfoParser(tagsForOpenCorporaDictionaryConversion, this.lemmas);
     }
 
     /**
@@ -51,21 +60,25 @@ public class XmlBuilder {
     public XmlBuilder(String filePath) {
         this.lemmas = Collections.synchronizedList(new ArrayList<>());
         xmlDocument = new OpenCorporaXmlDocument(filePath, this.lemmas);
-        wiktionaryTagsData = new WiktionaryTagsData();
-        lemmaCreator = new XmlDocumentLemmaCreator(wiktionaryTagsData, xmlDocument);
-        wiktionaryInfoParser = new WiktionaryInfoParser(wiktionaryTagsData);
+        tagsForOpenCorporaDictionaryConversion = new TagsForOpenCorporaDictionaryConversion();
+        lemmaCreator = new XmlDocumentLemmaCreator(tagsForOpenCorporaDictionaryConversion, xmlDocument);
+        wiktionaryWordsInfoParser = new WiktionaryWordsInfoParser(tagsForOpenCorporaDictionaryConversion, this.lemmas);
     }
 
     /**
      * Получение информации о слове и его тегах в стандарте OpenCorpora
      *
      * @param word           исследуемое слово
-     * @param sleepTime      время между запросами
-     * @param requestTimeOut время ожидания подключения
      * @return the words tags
      */
-    public List<List<WordFormForConverter>> getWordsTags(String word, int sleepTime, int requestTimeOut) {
-        return wiktionaryInfoParser.getWordsTags(word, sleepTime, requestTimeOut, lemmas);
+    @Override
+    public boolean addInfo(String word) {
+		List<List<WordFormForConverter>> forms = wiktionaryWordsInfoParser.getInfo(word).getResponse();
+        if (!forms.isEmpty()) {
+            addLemmaForms(forms);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -73,10 +86,18 @@ public class XmlBuilder {
      *
      * @param forms список форм в стандарте OpenCorpora
      */
-    public void addLemmaForms(List<List<WordFormForConverter>> forms) {
+    private void addLemmaForms(List<List<WordFormForConverter>> forms) {
         synchronized (lemmaCreator) {
             lemmaCreator.addLemmaForms(forms);
         }
+    }
+
+    /**
+     * Записывает информацию в xml файл
+     */
+    @Override
+    public synchronized void recordInFile() {
+        recordInFile(this.resultFilePath);
     }
 
     /**

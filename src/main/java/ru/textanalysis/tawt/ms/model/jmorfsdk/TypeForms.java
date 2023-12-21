@@ -7,7 +7,9 @@ public enum TypeForms implements IEnumWithLongValue<Integer> {
     INITIAL(2),
     NUMBER(3),
 	DERIVATIVE(4),
-	PUNCTUATION(5);
+	PUNCTUATION(5),
+    PREDICTED_INITIAL(6),
+    PREDICTED_DERIVATIVE(7);
 
     private final Integer id;
 
