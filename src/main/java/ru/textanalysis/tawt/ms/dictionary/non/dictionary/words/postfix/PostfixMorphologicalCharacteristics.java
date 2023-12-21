@@ -56,7 +56,12 @@ public class PostfixMorphologicalCharacteristics {
 		long tagsBits = 0;
 		try {
 			for (String tag : tags) {
-				tagsBits |= MorfologyParametersHelper.getParameter(tag);
+				try {
+					long morphologyParameterLong = MorfologyParametersHelper.getParameter(tag);
+					tagsBits |= morphologyParameterLong;
+				} catch (NullPointerException ex) {
+
+				}
 			}
 		} catch (Exception e) {
 			log.error("Морфологическая характеристика не была найдена", e);

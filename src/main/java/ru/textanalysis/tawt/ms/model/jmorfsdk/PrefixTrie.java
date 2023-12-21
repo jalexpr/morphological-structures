@@ -9,27 +9,33 @@ import static ru.textanalysis.tawt.ms.constant.Const.MIN_WORD_ROOT_LENGTH;
 
 public class PrefixTrie implements Trie {
 
-	private TrieNode root;
+	private final TrieNode root;
 
 	public PrefixTrie() {
 		root = new TrieNode();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void insert(String word) {
+	public void insert(String prefix) {
 		TrieNode current = root;
 
-		for (char l : word.toCharArray()) {
+		for (char l : prefix.toCharArray()) {
 			current = current.getChildren().computeIfAbsent(l, c -> new TrieNode());
 		}
 		current.setEndOfWord(true);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public boolean contains(String word) {
+	public boolean contains(String prefix) {
 		TrieNode current = root;
-		for (int i = 0; i < word.length(); i++) {
-			char ch = word.charAt(i);
+		for (int i = 0; i < prefix.length(); i++) {
+			char ch = prefix.charAt(i);
 			TrieNode node = current.getChildren().get(ch);
 			if (node == null) {
 				return false;
@@ -39,6 +45,9 @@ public class PrefixTrie implements Trie {
 		return current.isEndOfWord();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String findLongest(String word) {
 		String prefix = "";
@@ -62,6 +71,9 @@ public class PrefixTrie implements Trie {
 		return prefix;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<String> findAll(String word) {
 		List<String> prefixes = new ArrayList<>();

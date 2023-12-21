@@ -1,8 +1,10 @@
 package ru.textanalysis.tawt.ms.model.jmorfsdk.command;
 
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
+@Getter
 public class PredictedFormCreateCommand {
 
 	String derivativeFormString;
@@ -10,24 +12,4 @@ public class PredictedFormCreateCommand {
 	String initialFormString;
 	Byte typeOfSpeech;
 	Long initialFormMorphCharacteristics;
-
-	public String getDerivativeFormString() {
-		return derivativeFormString;
-	}
-
-	public Long getDerivativeFormMorphCharacteristics() {
-		return derivativeFormMorphCharacteristics;
-	}
-
-	public String getInitialFormString() {
-		return initialFormString;
-	}
-
-	public Byte getTypeOfSpeech() {
-		return typeOfSpeech;
-	}
-
-	public Long getInitialFormMorphCharacteristics() {
-		return initialFormMorphCharacteristics;
-	}
 }
