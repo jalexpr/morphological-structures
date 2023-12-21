@@ -32,16 +32,16 @@ public class PostfixMorphologicalCharacteristicsOccurrence {
 
 	public List<Byte> getPartOfSpeeches() {
 		List<Byte> partOfSpeeches = new ArrayList<>();
-		Object[] a = map.entrySet().toArray();
-		Arrays.sort(a, new Comparator() {
+		Object[] postfixOccurrences = map.entrySet().toArray();
+		Arrays.sort(postfixOccurrences, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				return ((Map.Entry<String, Integer>) o2).getValue()
 					.compareTo(((Map.Entry<String, Integer>) o1).getValue());
 			}
 		});
 		try {
-			for (Object e : a) {
-				partOfSpeeches.add(MorfologyParametersHelper.getTypeOfSpeech(((Map.Entry<String, Integer>) e).getKey().split(",")[0].toLowerCase(Locale.ROOT)));
+			for (Object postfixOccurrence : postfixOccurrences) {
+				partOfSpeeches.add(MorfologyParametersHelper.getTypeOfSpeech(((Map.Entry<String, Integer>) postfixOccurrence).getKey().split(",")[0].toLowerCase(Locale.ROOT)));
 			}
 		} catch (Exception e) {
 			log.error("Морфологическая характеристика не была найдена", e);
@@ -52,19 +52,24 @@ public class PostfixMorphologicalCharacteristicsOccurrence {
 
 	public List<Long> getTags() {
 		List<Long> tags = new ArrayList<>();
-		Object[] a = map.entrySet().toArray();
-		Arrays.sort(a, new Comparator() {
+		Object[] postfixOccurrences = map.entrySet().toArray();
+		Arrays.sort(postfixOccurrences, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				return ((Map.Entry<String, Integer>) o2).getValue()
 					.compareTo(((Map.Entry<String, Integer>) o1).getValue());
 			}
 		});
 		try {
-			for (Object e : a) {
-				String[] formTags = (((Map.Entry<String, Integer>) e).getKey().split(","));
+			for (Object postfixOccurrence : postfixOccurrences) {
+				String[] formTags = (((Map.Entry<String, Integer>) postfixOccurrence).getKey().split(","));
 				long tagsBits = 0;
 				for (int i = 1; i < formTags.length; i++) {
-					tagsBits |= MorfologyParametersHelper.getParameter(formTags[i]);
+					try {
+						long tagBitValue = MorfologyParametersHelper.getParameter(formTags[i]);
+						tagsBits |= tagBitValue;
+					} catch (NullPointerException ex) {
+
+					}
 				}
 				tags.add(tagsBits);
 			}

@@ -5,6 +5,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ru.textanalysis.tawt.ms.constant.OpenCorporaDictionaryConst;
 
 import javax.management.modelmbean.XMLParseException;
 import javax.xml.parsers.DocumentBuilder;
@@ -42,11 +43,11 @@ public class OpenCorporaXmlDocument {
             rootElement.appendChild(grammemesElement);
             Element restrictionsElement = doc.createElement("restrictions");
             rootElement.appendChild(restrictionsElement);
-            this.lemmataElement = doc.createElement("lemmata");
+            this.lemmataElement = doc.createElement(OpenCorporaDictionaryConst.LEMMATA);
             rootElement.appendChild(lemmataElement);
             Element linkTypesElement = doc.createElement("link_types");
             rootElement.appendChild(linkTypesElement);
-            this.linksElement = doc.createElement("links");
+            this.linksElement = doc.createElement(OpenCorporaDictionaryConst.LINKS);
             rootElement.appendChild(linksElement);
 
             lemmaId = 100000001;
@@ -77,23 +78,23 @@ public class OpenCorporaXmlDocument {
                 for (int i = 0; i < rootElementChilds.getLength(); i++) {
                     Node nNode = rootElementChilds.item(i);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) nNode;
-                        if (eElement.getTagName().equals("lemmata")) {
+                        Element eElement = (org.w3c.dom.Element) nNode;
+                        if (eElement.getTagName().equals(OpenCorporaDictionaryConst.LEMMATA)) {
                             this.lemmataElement = eElement;
                             NodeList lemmataElementChilds = lemmataElement.getChildNodes();
                             for (int j = 0; j < lemmataElementChilds.getLength(); j++) {
                                 Node lNode = lemmataElementChilds.item(j);
                                 if (lNode.getNodeType() == Node.ELEMENT_NODE) {
-                                    Element lElement = (Element) lNode;
-                                    if (lElement.getTagName().equals("lemma")) {
-                                        if (this.lemmaId < Integer.parseInt(lElement.getAttributeNode("id").getValue())) {
-                                            this.lemmaId = Integer.parseInt(lElement.getAttributeNode("id").getValue());
+                                    Element lElement = (org.w3c.dom.Element) lNode;
+                                    if (lElement.getTagName().equals(OpenCorporaDictionaryConst.LEMMA)) {
+                                        if (this.lemmaId < Integer.parseInt(lElement.getAttributeNode(OpenCorporaDictionaryConst.ID).getValue())) {
+                                            this.lemmaId = Integer.parseInt(lElement.getAttributeNode(OpenCorporaDictionaryConst.ID).getValue());
                                         }
                                         NodeList lemmaElementChilds = lElement.getChildNodes();
                                         for (int k = 0; k < lemmaElementChilds.getLength(); k++) {
                                             Node tNode = lemmaElementChilds.item(k);
                                             if (tNode.getNodeType() == Node.ELEMENT_NODE) {
-                                                Element tElement = (Element) tNode;
+                                                Element tElement = (org.w3c.dom.Element) tNode;
                                                 if (tElement.getTagName().equals("l")) {
                                                     synchronized (lemmas) {
                                                         lemmas.add(tElement.getAttributeNode("t").getValue());
@@ -105,7 +106,7 @@ public class OpenCorporaXmlDocument {
                                 }
                             }
                             this.lemmaId++;
-                        } else if (eElement.getTagName().equals("links")) {
+                        } else if (eElement.getTagName().equals(OpenCorporaDictionaryConst.LINKS)) {
                             this.linksElement = eElement;
                         }
                     }
@@ -147,7 +148,7 @@ public class OpenCorporaXmlDocument {
         this.lemmaId = lemmaId;
     }
 
-    private void deleteEmptyNodes(Element element) {
+    private void deleteEmptyNodes(org.w3c.dom.Element element) {
         if (element.hasChildNodes()) {
             NodeList nodelist = element.getChildNodes();
             for (int i = nodelist.getLength() - 1; i >= 0; i--) {
@@ -156,7 +157,7 @@ public class OpenCorporaXmlDocument {
                 }
             }
             for (int i = 0; i < element.getChildNodes().getLength(); i++) {
-                deleteEmptyNodes((Element) element.getChildNodes().item(i));
+                deleteEmptyNodes((org.w3c.dom.Element) element.getChildNodes().item(i));
             }
         }
     }
