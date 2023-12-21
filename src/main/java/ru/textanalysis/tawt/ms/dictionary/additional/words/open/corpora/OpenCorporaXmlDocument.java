@@ -1,4 +1,4 @@
-package ru.textanalysis.tawt.ms.dictionary.open.corpora;
+package ru.textanalysis.tawt.ms.dictionary.additional.words.open.corpora;
 
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
@@ -77,14 +77,14 @@ public class OpenCorporaXmlDocument {
                 for (int i = 0; i < rootElementChilds.getLength(); i++) {
                     Node nNode = rootElementChilds.item(i);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (org.w3c.dom.Element) nNode;
+                        Element eElement = (Element) nNode;
                         if (eElement.getTagName().equals("lemmata")) {
                             this.lemmataElement = eElement;
                             NodeList lemmataElementChilds = lemmataElement.getChildNodes();
                             for (int j = 0; j < lemmataElementChilds.getLength(); j++) {
                                 Node lNode = lemmataElementChilds.item(j);
                                 if (lNode.getNodeType() == Node.ELEMENT_NODE) {
-                                    Element lElement = (org.w3c.dom.Element) lNode;
+                                    Element lElement = (Element) lNode;
                                     if (lElement.getTagName().equals("lemma")) {
                                         if (this.lemmaId < Integer.parseInt(lElement.getAttributeNode("id").getValue())) {
                                             this.lemmaId = Integer.parseInt(lElement.getAttributeNode("id").getValue());
@@ -93,7 +93,7 @@ public class OpenCorporaXmlDocument {
                                         for (int k = 0; k < lemmaElementChilds.getLength(); k++) {
                                             Node tNode = lemmaElementChilds.item(k);
                                             if (tNode.getNodeType() == Node.ELEMENT_NODE) {
-                                                Element tElement = (org.w3c.dom.Element) tNode;
+                                                Element tElement = (Element) tNode;
                                                 if (tElement.getTagName().equals("l")) {
                                                     synchronized (lemmas) {
                                                         lemmas.add(tElement.getAttributeNode("t").getValue());
@@ -147,7 +147,7 @@ public class OpenCorporaXmlDocument {
         this.lemmaId = lemmaId;
     }
 
-    private void deleteEmptyNodes(org.w3c.dom.Element element) {
+    private void deleteEmptyNodes(Element element) {
         if (element.hasChildNodes()) {
             NodeList nodelist = element.getChildNodes();
             for (int i = nodelist.getLength() - 1; i >= 0; i--) {
@@ -156,7 +156,7 @@ public class OpenCorporaXmlDocument {
                 }
             }
             for (int i = 0; i < element.getChildNodes().getLength(); i++) {
-                deleteEmptyNodes((org.w3c.dom.Element) element.getChildNodes().item(i));
+                deleteEmptyNodes((Element) element.getChildNodes().item(i));
             }
         }
     }

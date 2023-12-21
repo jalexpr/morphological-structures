@@ -1,4 +1,4 @@
-package ru.textanalysis.tawt.ms.dictionary.convertor;
+package ru.textanalysis.tawt.ms.dictionary.additional.words.convertor;
 
 import static ru.textanalysis.tawt.ms.constant.Const.*;
 import static ru.textanalysis.tawt.ms.constant.TypeOfSpeechs.*;
@@ -8,15 +8,15 @@ import static ru.textanalysis.tawt.ms.constant.TypeOfSpeechs.*;
  */
 public class WiktionaryToOpenCorporaConverter {
 
-    private final WiktionaryTagsData wiktionaryTagsData;
+    private final TagsForOpenCorporaDictionaryConversion tagsForOpenCorporaDictionaryConversion;
 
     /**
      * Instantiates a new Tags to word form converter.
      *
-     * @param wiktionaryTagsData объект с информацией о преобразовании тегов
+     * @param tagsForOpenCorporaDictionaryConversion объект с информацией о преобразовании тегов
      */
-    public WiktionaryToOpenCorporaConverter(WiktionaryTagsData wiktionaryTagsData) {
-        this.wiktionaryTagsData = wiktionaryTagsData;
+    public WiktionaryToOpenCorporaConverter(TagsForOpenCorporaDictionaryConversion tagsForOpenCorporaDictionaryConversion) {
+        this.tagsForOpenCorporaDictionaryConversion = tagsForOpenCorporaDictionaryConversion;
     }
 
     /**
@@ -32,8 +32,8 @@ public class WiktionaryToOpenCorporaConverter {
         StringBuilder builder = new StringBuilder(tokens[0]).append(TAB_SEPARATOR);
         for (String tag : tags) {
             tag = tag.trim();
-            if (wiktionaryTagsData.getTags().containsKey(tag)) {
-                builder.append(wiktionaryTagsData.getTags().get(tag)).append(COMMA_SEPARATOR);
+            if (tagsForOpenCorporaDictionaryConversion.getTags().containsKey(tag)) {
+                builder.append(tagsForOpenCorporaDictionaryConversion.getTags().get(tag)).append(COMMA_SEPARATOR);
             }
         }
         String result = builder.toString();
@@ -57,8 +57,8 @@ public class WiktionaryToOpenCorporaConverter {
         StringBuilder builder = new StringBuilder(tokens[0]).append(TAB_SEPARATOR);
         for (String tag : tags) {
             tag = tag.trim();
-            if (wiktionaryTagsData.getTags().containsKey(tag) && builder.indexOf(wiktionaryTagsData.getTags().get(tag)) == -1) {
-                builder.append(wiktionaryTagsData.getTags().get(tag)).append(COMMA_SEPARATOR);
+            if (tagsForOpenCorporaDictionaryConversion.getTags().containsKey(tag) && builder.indexOf(tagsForOpenCorporaDictionaryConversion.getTags().get(tag)) == -1) {
+                builder.append(tagsForOpenCorporaDictionaryConversion.getTags().get(tag)).append(COMMA_SEPARATOR);
             }
         }
         String result = builder.toString();
