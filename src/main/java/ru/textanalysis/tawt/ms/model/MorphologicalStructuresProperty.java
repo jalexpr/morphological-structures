@@ -57,6 +57,11 @@ public final class MorphologicalStructuresProperty {
 	public final static String PREFIXES = "dictionary.format.prefixes";
 	public final static String POSTFIXES = "dictionary.format.postfixes";
 	public final static int CONTROL_VALUE = -1;
+	public final static int ACTION_BITS = 192;
+	public final static int PREFIX_OFFSET_INFO = 63;
+	public final static int PREFIX_SET_PART_OF_SPEECH_VALUE = 64;
+	public final static int PREFIX_ADD_CHARACTERISTIC_VALUE = -128;
+	public final static int PREFIX_DELETE_CHARACTERISTIC_VALUE = 0;
 	public final static int KEY_OFFSET = 8;
 	public final static int START_ID_INITIAL_FORM = 1 << KEY_OFFSET;
 	public final static int START_ID_DERIVATIVE_FORM = 524287 << KEY_OFFSET;
