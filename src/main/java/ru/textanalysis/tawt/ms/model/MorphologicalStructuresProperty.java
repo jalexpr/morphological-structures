@@ -54,6 +54,8 @@ public final class MorphologicalStructuresProperty {
 	public final static String NAME_BD_INITIAL_FORM = "dictionary.initialFormString.db";
 	public final static String NAME_HASH_AND_MORF_CHARACTERISTICS = "dictionary.format.morfCharacteristic";
 	public final static String OMO_FORM_STATISTICS = "dictionary.format.omoFormStatistics";
+	public final static String PREFIXES = "dictionary.format.prefixes";
+	public final static String POSTFIXES = "dictionary.format.postfixes";
 	public final static int CONTROL_VALUE = -1;
 	public final static int KEY_OFFSET = 8;
 	public final static int START_ID_INITIAL_FORM = 1 << KEY_OFFSET;
