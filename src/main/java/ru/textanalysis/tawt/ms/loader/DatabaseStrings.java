@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static ru.textanalysis.tawt.ms.constant.Const.*;
-import static ru.textanalysis.tawt.ms.model.Property.*;
+import static ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty.*;
 import static template.wrapper.classes.Lzma2FileHelper.*;
 
 @Slf4j
@@ -26,8 +26,8 @@ public class DatabaseStrings {
     private final BDSqlite dbDerivativeFormString;
 
     protected DatabaseStrings(String path) {
-        this.dbInitialFormStringFile = Paths.get(path, FOLDER, VERSION, NAME_BD_INITIAL_FORM).toFile();
-        this.dbDerivativeFormStringFile = Paths.get(path, FOLDER, VERSION, NAME_BD_DERIVATIVE_FORM).toFile();
+		this.dbInitialFormStringFile = Paths.get(path, FOLDER, MS_VERSION, NAME_BD_INITIAL_FORM).toFile();
+		this.dbDerivativeFormStringFile = Paths.get(path, FOLDER, MS_VERSION, NAME_BD_DERIVATIVE_FORM).toFile();
         this.dbInitialFormString = new BDSqlite(dbInitialFormStringFile.getAbsolutePath());
         this.dbDerivativeFormString = new BDSqlite(dbDerivativeFormStringFile.getAbsolutePath());
     }

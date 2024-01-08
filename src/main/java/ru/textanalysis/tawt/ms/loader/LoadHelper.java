@@ -1,11 +1,11 @@
 package ru.textanalysis.tawt.ms.loader;
 
-import ru.textanalysis.tawt.ms.model.Property;
+import ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty;
 import template.wrapper.hash.CityHash;
 
 public class LoadHelper {
 
-	public final static byte CONTROL_OFFSET = Property.CONTROL_OFFSET;
+	public final static byte CONTROL_OFFSET = MorphologicalStructuresProperty.CONTROL_OFFSET;
 
 	public static int getHashCode(String str) {
 		return (int) CityHash.cityHash64(str);
@@ -16,7 +16,7 @@ public class LoadHelper {
 	}
 
 	public static int createKeyWithControlCode(int start, int oldIndex, String str) throws Exception {
-		return createKeyWithControlCode(start + (oldIndex << Property.KEY_OFFSET), getControlHashCode(str));
+		return createKeyWithControlCode(start + (oldIndex << MorphologicalStructuresProperty.KEY_OFFSET), getControlHashCode(str));
 	}
 
 	private static int createKeyWithControlCode(int index, int controlHash) throws Exception {

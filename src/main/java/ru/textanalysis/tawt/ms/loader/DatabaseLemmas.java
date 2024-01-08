@@ -2,7 +2,7 @@ package ru.textanalysis.tawt.ms.loader;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.textanalysis.tawt.ms.conversion.dictionary.FormForConversion;
-import ru.textanalysis.tawt.ms.model.Property;
+import ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,17 +13,17 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static ru.textanalysis.tawt.ms.constant.Const.LAVAL_COMPRESS;
-import static ru.textanalysis.tawt.ms.model.Property.*;
+import static ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty.*;
 import static template.wrapper.classes.Lzma2FileHelper.*;
 
 @Slf4j
 public class DatabaseLemmas {
 
-    private final byte[] CONTROL_VALUE = ByteBuffer.allocate(4).putInt(Property.CONTROL_VALUE).array();
+	private final byte[] CONTROL_VALUE = ByteBuffer.allocate(4).putInt(MorphologicalStructuresProperty.CONTROL_VALUE).array();
     private final File file;
 
     protected DatabaseLemmas(String path) {
-        this.file = Paths.get(path, FOLDER, VERSION, NAME_HASH_AND_MORF_CHARACTERISTICS).toFile();
+		this.file = Paths.get(path, FOLDER, MS_VERSION, NAME_HASH_AND_MORF_CHARACTERISTICS).toFile();
     }
 
     public String getFilePath() {

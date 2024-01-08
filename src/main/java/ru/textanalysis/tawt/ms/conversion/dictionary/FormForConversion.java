@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 
 import static ru.textanalysis.tawt.ms.loader.LoadHelper.createKeyWithControlCode;
 import static ru.textanalysis.tawt.ms.loader.LoadHelper.getHashCode;
-import static ru.textanalysis.tawt.ms.model.Property.START_ID_DERIVATIVE_FORM;
-import static ru.textanalysis.tawt.ms.model.Property.START_ID_INITIAL_FORM;
+import static ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty.START_ID_DERIVATIVE_FORM;
+import static ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty.START_ID_INITIAL_FORM;
 import static template.wrapper.conversion.Bytes.getBytes;
 import static template.wrapper.conversion.Bytes.plusByte;
 

@@ -46,7 +46,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class Property {
+public final class MorphologicalStructuresProperty {
 
 	public final static String MY_REPOSITORY = "https://github.com/jalexpr/MorphologicalStructures";
 	public final static String FOLDER = "dictionary/";
@@ -60,7 +60,7 @@ public final class Property {
 	public final static int START_ID_DERIVATIVE_FORM = 524287 << KEY_OFFSET;
 	public final static byte CONTROL_OFFSET = 23;
 	public final static String MOVE_TO_NEW_LINE = System.lineSeparator();
-	public final static String VERSION = "2022.05.31";
+	public final static String MS_VERSION = "2023.12.27";
 
 	static {
 //		loadProperty();
@@ -74,7 +74,7 @@ public final class Property {
 			readProperty(root);
 		} catch (ParserConfigurationException | SAXException | IOException ex) {
 			String messages = "Не удается найти property.xml\r\nПрименены параметры по умолчанию!\r\n";
-			Logger.getLogger(Property.class.getName()).log(Level.WARNING, messages);
+			Logger.getLogger(MorphologicalStructuresProperty.class.getName()).log(Level.WARNING, messages);
 		}
 	}
 
