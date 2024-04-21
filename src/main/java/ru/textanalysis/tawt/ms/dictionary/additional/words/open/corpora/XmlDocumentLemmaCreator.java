@@ -1,10 +1,11 @@
-package ru.textanalysis.tawt.ms.dictionary.open.corpora;
+package ru.textanalysis.tawt.ms.dictionary.additional.words.open.corpora;
 
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
-import ru.textanalysis.tawt.ms.dictionary.convertor.WiktionaryTagsData;
-import ru.textanalysis.tawt.ms.dictionary.convertor.WordFormForConverter;
+import ru.textanalysis.tawt.ms.constant.OpenCorporaDictionaryConst;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.convertor.TagsForOpenCorporaDictionaryConversion;
+import ru.textanalysis.tawt.ms.dictionary.additional.words.convertor.WordFormForConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,16 +19,16 @@ import static ru.textanalysis.tawt.ms.constant.TypeOfSpeechs.*;
 @Slf4j
 public class XmlDocumentLemmaCreator {
 
-    private final WiktionaryTagsData wiktionaryTagsData;
+    private final TagsForOpenCorporaDictionaryConversion tagsForOpenCorporaDictionaryConversion;
     private final OpenCorporaXmlDocument xmlDocument;
 
     /**
      * Instantiates a new Xml document lemma creator.
      *
-     * @param wiktionaryTagsData объект с информацией о преобразовании тегов
+     * @param tagsForOpenCorporaDictionaryConversion объект с информацией о преобразовании тегов
      */
-    public XmlDocumentLemmaCreator(WiktionaryTagsData wiktionaryTagsData, OpenCorporaXmlDocument xmlDocument) {
-        this.wiktionaryTagsData = wiktionaryTagsData;
+    public XmlDocumentLemmaCreator(TagsForOpenCorporaDictionaryConversion tagsForOpenCorporaDictionaryConversion, OpenCorporaXmlDocument xmlDocument) {
+        this.tagsForOpenCorporaDictionaryConversion = tagsForOpenCorporaDictionaryConversion;
         this.xmlDocument = xmlDocument;
     }
 
@@ -75,12 +76,12 @@ public class XmlDocumentLemmaCreator {
     }
 
     private Element createNewElement(Element parentElement, int fromIndex, int toIndex, int linkType) {
-        Element newElement = xmlDocument.getDoc().createElement("link");
+        Element newElement = xmlDocument.getDoc().createElement(OpenCorporaDictionaryConst.LINK);
         parentElement.appendChild(newElement);
-        Attr firstAttr = xmlDocument.getDoc().createAttribute("from");
+        Attr firstAttr = xmlDocument.getDoc().createAttribute(OpenCorporaDictionaryConst.FROM);
         firstAttr.setValue(String.valueOf(fromIndex));
         newElement.setAttributeNode(firstAttr);
-        Attr secondAttr = xmlDocument.getDoc().createAttribute("to");
+        Attr secondAttr = xmlDocument.getDoc().createAttribute(OpenCorporaDictionaryConst.TO);
         secondAttr.setValue(String.valueOf(toIndex));
         newElement.setAttributeNode(secondAttr);
         Attr thirdAttr = xmlDocument.getDoc().createAttribute("type");
@@ -93,11 +94,11 @@ public class XmlDocumentLemmaCreator {
     private void addLemma(List<WordFormForConverter> forms) {
         try {
             if (forms != null && forms.size() > 0) {
-                if (!wiktionaryTagsData.getToS().contains(forms.get(0).getTags().get(0))) {
+                if (!tagsForOpenCorporaDictionaryConversion.getToS().contains(forms.get(0).getTags().get(0))) {
                     throw new Exception("Неверный формат токена.");
                 }
 
-                Element lemmaElement = createNewElement(xmlDocument.getLemmataElement(), "lemma", "id", String.valueOf(xmlDocument.getLemmaId()));
+                Element lemmaElement = createNewElement(xmlDocument.getLemmataElement(), OpenCorporaDictionaryConst.LEMMA, OpenCorporaDictionaryConst.ID, String.valueOf(xmlDocument.getLemmaId()));
 
                 Element lElement = createNewElement(lemmaElement, "l", "t", forms.get(0).getWord());
 

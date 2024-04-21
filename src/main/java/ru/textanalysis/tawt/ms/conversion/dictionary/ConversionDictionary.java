@@ -41,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ru.textanalysis.tawt.ms.constant.OpenCorporaDictionaryConst;
 import ru.textanalysis.tawt.ms.loader.DatabaseFactory;
 import ru.textanalysis.tawt.ms.loader.DatabaseLemmas;
 import ru.textanalysis.tawt.ms.loader.DatabaseStrings;
@@ -102,11 +103,11 @@ public class ConversionDictionary {
                 }
                 for (int i = 0; i < dictionaryProps.getLength(); i++) {
                     Node lemmata = dictionaryProps.item(i);
-                    if (lemmata.getNodeType() != Node.TEXT_NODE && lemmata.getNodeName().equals("lemmata")) {
+                    if (lemmata.getNodeType() != Node.TEXT_NODE && lemmata.getNodeName().equals(OpenCorporaDictionaryConst.LEMMATA)) {
                         NodeList lemmataProps = lemmata.getChildNodes();
                         for (int j = 0; j < lemmataProps.getLength(); j++) {
                             Node lemma = lemmataProps.item(j);
-                            if (lemma.getNodeType() != Node.TEXT_NODE && lemma.getNodeName().equals("lemma")) {
+                            if (lemma.getNodeType() != Node.TEXT_NODE && lemma.getNodeName().equals(OpenCorporaDictionaryConst.LEMMA)) {
                                 String commonCharacteristics = "";
                                 int formNumber = 0;
                                 boolean isVerb = false;
@@ -154,37 +155,37 @@ public class ConversionDictionary {
                                     }
                                 }
                                 if (isVerb) {
-                                    verbs.put(Integer.valueOf(lemma.getAttributes().getNamedItem("id").getNodeValue()), verbInfn);
+                                    verbs.put(Integer.valueOf(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.ID).getNodeValue()), verbInfn);
                                 } else {
-                                    lemmasMap.put(Integer.valueOf(lemma.getAttributes().getNamedItem("id").getNodeValue()), wordLemma);
+                                    lemmasMap.put(Integer.valueOf(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.ID).getNodeValue()), wordLemma);
                                 }
                                 while (lemma.hasChildNodes()) {
                                     lemma.removeChild(lemma.getFirstChild());
                                 }
                             }
                         }
-                    } else if (lemmata.getNodeType() != Node.TEXT_NODE && lemmata.getNodeName().equals("links")) {
+                    } else if (lemmata.getNodeType() != Node.TEXT_NODE && lemmata.getNodeName().equals(OpenCorporaDictionaryConst.LINKS)) {
                         NodeList lemmataProps = lemmata.getChildNodes();
                         for (int j = 0; j < lemmataProps.getLength(); j++) {
                             Node lemma = lemmataProps.item(j);
-                            if (lemma.getNodeType() != Node.TEXT_NODE && lemma.getNodeName().equals("link")) {
+                            if (lemma.getNodeType() != Node.TEXT_NODE && lemma.getNodeName().equals(OpenCorporaDictionaryConst.LINK)) {
                                 if (Objects.equals(lemma.getAttributes().getNamedItem("type").getNodeValue(), "3")) {
                                     List<FormForConversion> wordLemma = new LinkedList<>();
-                                    List<String> infn = verbs.get(Integer.parseInt(lemma.getAttributes().getNamedItem("from").getNodeValue()));
+                                    List<String> infn = verbs.get(Integer.parseInt(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.FROM).getNodeValue()));
                                     FormForConversion initialForm = createForm(infn.get(0).replaceAll(INFN, VERB), true);
                                     wordLemma.add(initialForm);
-                                    List<String> verb = verbs.get(Integer.parseInt(lemma.getAttributes().getNamedItem("to").getNodeValue()));
+                                    List<String> verb = verbs.get(Integer.parseInt(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.TO).getNodeValue()));
                                     verb.forEach(form -> {
                                         FormForConversion derivativeForm = createForm(form, false);
                                         wordLemma.add(derivativeForm);
                                     });
-                                    lemmasMap.put(Integer.valueOf(lemma.getAttributes().getNamedItem("from").getNodeValue()), wordLemma);
+                                    lemmasMap.put(Integer.valueOf(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.FROM).getNodeValue()), wordLemma);
                                 } else if (!Objects.equals(lemma.getAttributes().getNamedItem("type").getNodeValue(), "11")) {
-                                    if (lemmasMap.containsKey(Integer.parseInt(lemma.getAttributes().getNamedItem("to").getNodeValue()))) {
-                                        lemmasMap.get(Integer.parseInt(lemma.getAttributes().getNamedItem("to").getNodeValue())).forEach(formLemma -> {
-                                            if (lemmasMap.containsKey(Integer.parseInt(lemma.getAttributes().getNamedItem("from").getNodeValue()))) {
-                                                formLemma.setLink(lemmasMap.get(Integer.parseInt(lemma.getAttributes().getNamedItem("from").getNodeValue())).get(0).hashCode(),
-                                                        lemmasMap.get(Integer.parseInt(lemma.getAttributes().getNamedItem("from").getNodeValue())).get(0).getKey());
+                                    if (lemmasMap.containsKey(Integer.parseInt(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.TO).getNodeValue()))) {
+                                        lemmasMap.get(Integer.parseInt(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.TO).getNodeValue())).forEach(formLemma -> {
+                                            if (lemmasMap.containsKey(Integer.parseInt(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.FROM).getNodeValue()))) {
+                                                formLemma.setLink(lemmasMap.get(Integer.parseInt(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.FROM).getNodeValue())).get(0).hashCode(),
+                                                    lemmasMap.get(Integer.parseInt(lemma.getAttributes().getNamedItem(OpenCorporaDictionaryConst.FROM).getNodeValue())).get(0).getKey());
                                             }
                                         });
                                     }
