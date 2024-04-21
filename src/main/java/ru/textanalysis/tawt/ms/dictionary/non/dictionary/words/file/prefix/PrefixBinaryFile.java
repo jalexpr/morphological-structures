@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ru.textanalysis.tawt.ms.constant.Const.LAVAL_COMPRESS;
-import static ru.textanalysis.tawt.ms.model.Property.*;
+import static ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty.*;
 import static template.wrapper.classes.Lzma2FileHelper.compressionFile;
 
 @Slf4j
@@ -26,7 +26,7 @@ public class PrefixBinaryFile {
 	public PrefixBinaryFile(PrefixMorphologicalCharacteristicsChangesInfo prefixMorphologicalCharacteristicsChangesInfo) {
 		this.prefixMorphologicalCharacteristicsChangesInfo = prefixMorphologicalCharacteristicsChangesInfo;
 		String path = System.getProperty("java.io.tmpdir");
-		this.file = Paths.get(path, FOLDER, VERSION, PREFIXES).toFile();
+		this.file = Paths.get(path, FOLDER, MS_VERSION, PREFIXES).toFile();
 	}
 
 	/**

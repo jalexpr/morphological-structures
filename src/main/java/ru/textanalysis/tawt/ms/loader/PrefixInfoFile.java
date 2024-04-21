@@ -6,7 +6,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
 
-import static ru.textanalysis.tawt.ms.model.Property.*;
+import static ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty.*;
 import static template.wrapper.classes.Lzma2FileHelper.ARCHIVE_EXPANSION;
 import static template.wrapper.classes.Lzma2FileHelper.deCompressionFile;
 
@@ -17,7 +17,7 @@ public class PrefixInfoFile {
 	private final File file;
 
 	public PrefixInfoFile() {
-		this.file = Paths.get(path, FOLDER, VERSION, PREFIXES).toFile();
+		this.file = Paths.get(path, FOLDER, MS_VERSION, PREFIXES).toFile();
 	}
 
 	public String getFilePath() {

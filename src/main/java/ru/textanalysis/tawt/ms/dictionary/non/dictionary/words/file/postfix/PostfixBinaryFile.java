@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ru.textanalysis.tawt.ms.constant.Const.LAVAL_COMPRESS;
-import static ru.textanalysis.tawt.ms.model.Property.*;
+import static ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty.*;
 import static template.wrapper.classes.Lzma2FileHelper.compressionFile;
 
 @Slf4j
@@ -26,7 +26,7 @@ public class PostfixBinaryFile {
 	public PostfixBinaryFile(PostfixMorphologicalCharacteristicsInfo postfixMorphologicalCharacteristicsInfo) {
 		this.postfixMorphologicalCharacteristicsInfo = postfixMorphologicalCharacteristicsInfo;
 		String path = System.getProperty("java.io.tmpdir");
-		this.file = Paths.get(path, FOLDER, VERSION, POSTFIXES).toFile();
+		this.file = Paths.get(path, FOLDER, MS_VERSION, POSTFIXES).toFile();
 	}
 
 	/**

@@ -6,7 +6,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
 
-import static ru.textanalysis.tawt.ms.model.Property.*;
+import static ru.textanalysis.tawt.ms.model.MorphologicalStructuresProperty.*;
 import static template.wrapper.classes.Lzma2FileHelper.ARCHIVE_EXPANSION;
 import static template.wrapper.classes.Lzma2FileHelper.deCompressionFile;
 
@@ -17,7 +17,7 @@ public class PostfixInfoFile {
 	private final File file;
 
 	public PostfixInfoFile() {
-		this.file = Paths.get(path, FOLDER, VERSION, POSTFIXES).toFile();
+		this.file = Paths.get(path, FOLDER, MS_VERSION, POSTFIXES).toFile();
 	}
 
 	public String getFilePath() {
