@@ -1,12 +1,13 @@
 package ru.textanalysis.tawt.ms.grammeme;
 
+//todo дополнить список
 public enum ShortBearingForm {
+	NOUN(MorfologyParameters.TypeOfSpeech.NOUN),
 	VERB(MorfologyParameters.TypeOfSpeech.VERB),
 	ADJECTIVE_FULL(MorfologyParameters.TypeOfSpeech.ADJECTIVE_FULL),
 	GERUND(MorfologyParameters.TypeOfSpeech.GERUND),
 	GERUND_IMPERFECT(MorfologyParameters.TypeOfSpeech.GERUND_IMPERFECT),
 	GERUND_SHI(MorfologyParameters.TypeOfSpeech.GERUND_SHI);
-
 
 	private final byte value;
 
