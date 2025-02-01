@@ -82,7 +82,7 @@ public class FormForConversion {
 					partOfSpeech = MorfologyParametersHelper.getTypeOfSpeech(parameters.get(0));
 					parameters.remove(0);
 				}
-				if (partOfSpeech == MorfologyParameters.TypeOfSpeech.ADJECTIVE_FULL || partOfSpeech == MorfologyParameters.TypeOfSpeech.NOUN_PRONOUN) {
+				if (partOfSpeech == MorfologyParameters.TypeOfSpeech.ADJECTIVE_SHORT || partOfSpeech == MorfologyParameters.TypeOfSpeech.ADJECTIVE_FULL || partOfSpeech == MorfologyParameters.TypeOfSpeech.NOUN_PRONOUN) {
 					if (parameters.size() > 3 && parameters.get(3).equals("anph")) {
 						partOfSpeech = MorfologyParametersHelper.getTypeOfSpeech(parameters.get(3));
 						parameters.remove(3);
